@@ -1,6 +1,6 @@
 import './styles/App.css';
 
-function App(): JSX.Element {
+function App() {
   return (
     <div className="app-shell">
       <header className="app-header">

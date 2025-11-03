@@ -10,23 +10,23 @@
     "format:py": "python3 -m black src tests && python3 -m isort src tests",
     "format:js": "prettier --check \"frontend/src/**/*.{ts,tsx,js,jsx,json,md}\" || test $? -eq 2",
     "test": "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -p pytest_cov",
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test:frontend": "vitest run"
+    "dev": "vite --config frontend/vite.config.mjs",
+    "build": "cd frontend && tsc --noEmit && cd .. && vite build --config frontend/vite.config.mjs",
+    "preview": "vite preview --config frontend/vite.config.mjs",
+    "test:frontend": "cd frontend && vitest run"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "bootstrap": "^5.3.8",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.5"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
     "eslint": "^9.39.0",
     "globals": "^16.5.0",
