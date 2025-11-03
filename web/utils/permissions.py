@@ -48,9 +48,7 @@ def check_permission(
     return False
 
 
-def require_permission(
-    resource: str, action: str, require_admin: bool = False
-) -> bool:
+def require_permission(resource: str, action: str, require_admin: bool = False) -> bool:
     """Require permission decorator helper.
 
     Args:
