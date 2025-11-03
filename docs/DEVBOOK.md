@@ -475,15 +475,26 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 
 ---
 
-### Phase 4 : Liste des Releases ⏳
+### Phase 4 : Liste des Releases 🟡
 
-**Statut** : ⏳ Non commencée  
+**Statut** : 🟡 **EN COURS** (API Backend complétée)  
 **Priorité MoSCoW** : Must Have  
-**Dépendances** : Phase 3  
-**Date début estimée** : 2026-01-10  
-**Date fin estimée** : 2026-01-24
+**Dépendances** : Phase 3 🟡  
+**Date début** : 2025-11-03  
+**Date fin estimée** : 2025-11-10
 
 **Voir** : `docs/PRDs/PRD-003-Liste-Releases.md` pour détails.
+
+#### Validation Phase 4 (API Backend)
+
+- ✅ **API Releases** : Endpoints améliorés (filtres, recherche, tri, pagination, PUT, DELETE) - 86% coverage
+- ✅ **Tests Backend Phase 4** : 23 tests, tous passent (100%)
+- ✅ **Couverture Backend** : Releases API 86% (à améliorer pour ≥90%)
+- ✅ **Linting** : 0 erreurs (ruff, black, isort)
+- ✅ **Frontend** : Composants existent (ReleasesTable, ReleasesList) - à améliorer
+- ✅ **Documentation** : En cours de mise à jour
+
+**Note** : Couverture à 86%, besoin de quelques tests supplémentaires pour atteindre ≥90%.
 
 ---
 
