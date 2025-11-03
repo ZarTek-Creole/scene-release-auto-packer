@@ -149,7 +149,7 @@ export function ReleasesTable({ filters = {} }: ReleasesTableProps) {
                           );
                           await releasesApi.delete(release.id);
                           window.location.reload();
-                        } catch (err) {
+                        } catch {
                           alert('Erreur lors de la suppression');
                         }
                       }

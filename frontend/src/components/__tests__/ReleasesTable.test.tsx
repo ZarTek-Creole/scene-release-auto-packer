@@ -16,7 +16,10 @@ vi.mock('../../services/releases', () => ({
 describe('ReleasesTable', () => {
   it('should render loading state', () => {
     vi.mocked(releasesApi.list).mockResolvedValue({
-      data: { releases: [], pagination: { page: 1, per_page: 20, total: 0, pages: 1 } },
+      data: {
+        releases: [],
+        pagination: { page: 1, per_page: 20, total: 0, pages: 1 },
+      },
     });
 
     render(
@@ -60,7 +63,10 @@ describe('ReleasesTable', () => {
 
   it('should render empty state', async () => {
     vi.mocked(releasesApi.list).mockResolvedValue({
-      data: { releases: [], pagination: { page: 1, per_page: 20, total: 0, pages: 1 } },
+      data: {
+        releases: [],
+        pagination: { page: 1, per_page: 20, total: 0, pages: 1 },
+      },
     });
 
     render(

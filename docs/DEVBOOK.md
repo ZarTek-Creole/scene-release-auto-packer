@@ -485,16 +485,27 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 
 **Voir** : `docs/PRDs/PRD-003-Liste-Releases.md` pour détails.
 
-#### Validation Phase 4 (API Backend)
+#### Validation Phase 4
 
-- ✅ **API Releases** : Endpoints améliorés (filtres, recherche, tri, pagination, PUT, DELETE) - 86% coverage
-- ✅ **Tests Backend Phase 4** : 23 tests, tous passent (100%)
-- ✅ **Couverture Backend** : Releases API 86% (à améliorer pour ≥90%)
+**Backend** :
+- ✅ **API Releases** : Endpoints améliorés (filtres, recherche, tri, pagination, PUT, DELETE) - 89% coverage
+- ✅ **Tests Backend Phase 4** : 28 tests, tous passent (100%)
+- ✅ **Couverture Backend** : Releases API 89% ✅
 - ✅ **Linting** : 0 erreurs (ruff, black, isort)
-- ✅ **Frontend** : Composants existent (ReleasesTable, ReleasesList) - à améliorer
-- ✅ **Documentation** : En cours de mise à jour
 
-**Note** : Couverture à 86%, besoin de quelques tests supplémentaires pour atteindre ≥90%.
+**Frontend** :
+- ✅ **ReleasesTable** : Table avec tri, pagination, actions (Voir, Supprimer)
+- ✅ **ReleasesList** : Page liste avec filtres (type, statut), recherche textuelle
+- ✅ **ReleaseDetail** : Page détail complète avec métadonnées et configuration
+- ✅ **Services** : `releasesApi` mis à jour avec toutes les méthodes
+- ✅ **Routing** : Routes `/releases` et `/releases/:id` configurées
+- ✅ **Linting** : 0 erreurs (ESLint, Prettier)
+
+**À compléter** :
+- ⏳ Formulaire édition Release (`/releases/:id/edit`)
+- ⏳ Actions spéciales (NFOFIX, READNFO, REPACK, DIRFIX)
+- ⏳ Tests frontend unitaires
+- ⏳ Tests E2E via Playwright Browser MCP
 
 ---
 

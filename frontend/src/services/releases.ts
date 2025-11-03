@@ -23,7 +23,9 @@ export interface ReleaseListParams {
   group_id?: number;
   search?: string;
   sort?: string;
+  sort_by?: string;
   order?: 'asc' | 'desc';
+  sort_order?: 'asc' | 'desc';
 }
 
 export interface ReleaseListResponse {
@@ -43,14 +45,23 @@ export const releasesApi = {
   async list(params: ReleaseListParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
-    if (params.release_type) queryParams.append('release_type', params.release_type);
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
+    if (params.release_type)
+      queryParams.append('release_type', params.release_type);
     if (params.status) queryParams.append('status', params.status);
-    if (params.user_id) queryParams.append('user_id', params.user_id.toString());
-    if (params.group_id) queryParams.append('group_id', params.group_id.toString());
+    if (params.user_id)
+      queryParams.append('user_id', params.user_id.toString());
+    if (params.group_id)
+      queryParams.append('group_id', params.group_id.toString());
     if (params.search) queryParams.append('search', params.search);
-    if (params.sort) queryParams.append('sort', params.sort);
-    if (params.order) queryParams.append('order', params.order);
+    if (params.sort_by) queryParams.append('sort_by', params.sort_by);
+    if (params.sort_order) queryParams.append('sort_order', params.sort_order);
+    // Legacy support
+    if (params.sort && !params.sort_by)
+      queryParams.append('sort_by', params.sort);
+    if (params.order && !params.sort_order)
+      queryParams.append('sort_order', params.order);
 
     return apiRequest<ReleaseListResponse>(
       `/releases?${queryParams.toString()}`

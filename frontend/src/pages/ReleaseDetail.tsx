@@ -1,9 +1,10 @@
 /** Release detail page component. */
 
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { PageLayout } from '../components/PageLayout';
-import { releasesApi, Release } from '../services/releases';
+import type { Release } from '../services/releases';
+import { releasesApi } from '../services/releases';
 
 /**
  * Release detail page component.
@@ -39,12 +40,28 @@ export function ReleaseDetail() {
     fetchRelease();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (
+      !release ||
+      !confirm('Êtes-vous sûr de vouloir supprimer cette release ?')
+    ) {
+      return;
+    }
+
+    try {
+      await releasesApi.delete(release.id);
+      navigate('/releases');
+    } catch {
+      alert('Erreur lors de la suppression');
+    }
+  };
+
   if (loading) {
     return (
       <PageLayout title="Détail Release" description="Chargement...">
         <div className="text-center">
           <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Chargement...</span>
           </div>
         </div>
       </PageLayout>
@@ -53,20 +70,45 @@ export function ReleaseDetail() {
 
   if (error || !release) {
     return (
-      <PageLayout title="Détail Release" description="Erreur">
+      <PageLayout title="Erreur" description={error || 'Release non trouvée'}>
         <div className="alert alert-danger" role="alert">
           {error || 'Release non trouvée'}
         </div>
+        <Link to="/releases" className="btn btn-primary">
+          Retour à la liste
+        </Link>
       </PageLayout>
     );
   }
 
-  const metadata = release.release_metadata || {};
-  const title = (metadata.title as string) || `Release #${release.id}`;
-  const author = (metadata.author as string) || 'Non spécifié';
+  const metadata = (release.release_metadata as Record<string, unknown>) || {};
+  const config = (release.config as Record<string, unknown>) || {};
 
   return (
-    <PageLayout title={`Release : ${title}`} description={`Auteur : ${author}`}>
+    <PageLayout
+      title={`Release #${release.id}`}
+      description={`Détails de la release ${release.id}`}
+    >
+      <div className="mb-3">
+        <Link to="/releases" className="btn btn-outline-secondary">
+          <i className="bi bi-arrow-left" aria-hidden="true" /> Retour à la
+          liste
+        </Link>
+        <Link
+          to={`/releases/${release.id}/edit`}
+          className="btn btn-primary ms-2"
+        >
+          <i className="bi bi-pencil" aria-hidden="true" /> Éditer
+        </Link>
+        <button
+          className="btn btn-danger ms-2"
+          onClick={handleDelete}
+          aria-label="Supprimer cette release"
+        >
+          <i className="bi bi-trash" aria-hidden="true" /> Supprimer
+        </button>
+      </div>
+
       <div className="row">
         <div className="col-md-6">
           <div className="card mb-3">
@@ -74,7 +116,7 @@ export function ReleaseDetail() {
               <h5 className="mb-0">Informations Générales</h5>
             </div>
             <div className="card-body">
-              <dl className="row">
+              <dl className="row mb-0">
                 <dt className="col-sm-4">ID</dt>
                 <dd className="col-sm-8">{release.id}</dd>
 
@@ -102,8 +144,15 @@ export function ReleaseDetail() {
 
                 <dt className="col-sm-4">Créé le</dt>
                 <dd className="col-sm-8">
-                  {new Date(release.created_at).toLocaleString()}
+                  {new Date(release.created_at).toLocaleString('fr-FR')}
                 </dd>
+
+                {release.group_id && (
+                  <>
+                    <dt className="col-sm-4">Groupe ID</dt>
+                    <dd className="col-sm-8">{release.group_id}</dd>
+                  </>
+                )}
 
                 {release.file_path && (
                   <>
@@ -124,86 +173,41 @@ export function ReleaseDetail() {
               <h5 className="mb-0">Métadonnées</h5>
             </div>
             <div className="card-body">
-              <pre className="bg-light p-3 rounded">
-                {JSON.stringify(metadata, null, 2)}
-              </pre>
+              {Object.keys(metadata).length > 0 ? (
+                <dl className="row mb-0">
+                  {Object.entries(metadata).map(([key, value]) => (
+                    <div key={key}>
+                      <dt className="col-sm-12">{key}</dt>
+                      <dd className="col-sm-12">
+                        {typeof value === 'object' ? (
+                          <pre className="mb-0">
+                            {JSON.stringify(value, null, 2)}
+                          </pre>
+                        ) : (
+                          String(value)
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                <p className="text-muted mb-0">Aucune métadonnée</p>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-3">
-        <button
-          className="btn btn-secondary me-2"
-          onClick={() => navigate('/releases')}
-          aria-label="Retour à la liste"
-        >
-          <i className="bi bi-arrow-left" aria-hidden="true" /> Retour
-        </button>
-        <button
-          className="btn btn-primary me-2"
-          onClick={() => {
-            navigate(`/releases/${release.id}/edit`);
-          }}
-          aria-label="Éditer cette release"
-        >
-          <i className="bi bi-pencil" aria-hidden="true" /> Éditer
-        </button>
-        <button
-          className="btn btn-outline-info me-2"
-          onClick={async () => {
-            try {
-              const response = await fetch(
-                `/api/releases/${release.id}/actions/nfofix`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                  },
-                }
-              );
-              if (response.ok) {
-                alert('NFOFIX job créé avec succès');
-              } else {
-                alert('Erreur lors de la création du job NFOFIX');
-              }
-            } catch (err) {
-              alert('Erreur lors de la création du job NFOFIX');
-            }
-          }}
-          aria-label="Corriger le fichier NFO"
-        >
-          <i className="bi bi-file-text" aria-hidden="true" /> NFOFIX
-        </button>
-        <button
-          className="btn btn-outline-warning me-2"
-          onClick={async () => {
-            try {
-              const response = await fetch(
-                `/api/releases/${release.id}/actions/repack`,
-                {
-                  method: 'POST',
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({}),
-                }
-              );
-              if (response.ok) {
-                alert('REPACK job créé avec succès');
-              } else {
-                alert('Erreur lors de la création du job REPACK');
-              }
-            } catch (err) {
-              alert('Erreur lors de la création du job REPACK');
-            }
-          }}
-          aria-label="Repackager cette release"
-        >
-          <i className="bi bi-arrow-repeat" aria-hidden="true" /> REPACK
-        </button>
-      </div>
+      {Object.keys(config).length > 0 && (
+        <div className="card">
+          <div className="card-header">
+            <h5 className="mb-0">Configuration</h5>
+          </div>
+          <div className="card-body">
+            <pre className="mb-0">{JSON.stringify(config, null, 2)}</pre>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }
