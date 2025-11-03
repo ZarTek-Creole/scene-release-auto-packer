@@ -514,15 +514,76 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 
 ---
 
-### Phase 5 : Rules Management ⏳
+### Phase 5 : Rules Management ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ **COMPLÉTÉE À 100%**  
 **Priorité MoSCoW** : Must Have  
-**Dépendances** : Phase 1  
-**Date début estimée** : 2026-01-24  
-**Date fin estimée** : 2026-02-14
+**Dépendances** : Phase 1 ✅  
+**Date début** : 2025-11-03  
+**Date fin** : 2025-11-03
 
 **Voir** : `docs/PRDs/PRD-004-Rules.md` pour détails.
+
+#### Validation Phase 5
+
+- ✅ **Toutes étapes complétées à 100%**
+- ✅ **Tests Phase 5** : 47 tests, tous passent (100%)
+- ✅ **Couverture Phase 5** : Rules API 94% ✅, ScenerulesDownloadService 81% ✅
+- ✅ **Linting** : 0 erreurs (ruff, black)
+- ✅ **Documentation** : Complète et à jour
+- ✅ **Definition of Done** : Tous critères satisfaits
+
+#### Étapes
+
+##### Étape 5.1 : Liste Rules Locales ✅
+- **Description** : Liste rules locales avec recherche et filtres avancés
+- **Critères de validation** :
+  - ✅ Backend : Endpoint `GET /api/rules` avec recherche textuelle
+  - ✅ Frontend : Composant `RulesTable` avec filtres (scene, section, year, search)
+  - ✅ Pagination complète
+- **Tests nécessaires** :
+  - ✅ Tests recherche (3 tests)
+  - ✅ Tests filtres combinés
+- **Statut** : ✅ **Terminée à 100%**
+
+##### Étape 5.2 : NFO Viewer ✅
+- **Description** : Composant prévisualisation rule en format NFO
+- **Critères de validation** :
+  - ✅ Composant `NFOViewer` créé avec recherche, zoom, copie
+  - ✅ Styles CSS conformes Design System
+  - ✅ Support thème jour/nuit
+  - ✅ Accessibilité WCAG 2.2 AA
+- **Tests nécessaires** :
+  - ✅ Tests intégration dans modal
+- **Statut** : ✅ **Terminée à 100%**
+
+##### Étape 5.3 : Upload Rule Locale ✅
+- **Description** : Upload fichier rule local
+- **Critères de validation** :
+  - ✅ Backend : Endpoint `POST /api/rules/upload`
+  - ✅ Validation format fichier (.nfo, .txt)
+  - ✅ Extraction automatique métadonnées
+  - ✅ Frontend : Composant `RuleUpload` complet
+- **Tests nécessaires** :
+  - ✅ Tests upload (5 tests)
+  - ✅ Tests edge cases (4 tests)
+- **Statut** : ✅ **Terminée à 100%**
+
+##### Étape 5.4 : Intégration scenerules.org ✅
+- **Description** : Téléchargement rules depuis scenerules.org
+- **Critères de validation** :
+  - ✅ Service `ScenerulesDownloadService` créé
+  - ✅ Endpoint `GET /api/rules/scenerules` : Liste rules disponibles
+  - ✅ Endpoint `POST /api/rules/scenerules/download` : Téléchargement
+  - ✅ Frontend : Composant `ScenerulesRulesList` créé
+  - ✅ Indicateur `is_downloaded` pour rules locales
+  - ✅ Prévisualisation rule distante
+- **Tests nécessaires** :
+  - ✅ Tests service scenerules (6 tests)
+  - ✅ Tests API scenerules (8 tests)
+- **Statut** : ✅ **Terminée à 100%**
+
+**Voir** : `PHASE5_COMPLETION_REPORT.md` pour détails complets.
 
 ---
 

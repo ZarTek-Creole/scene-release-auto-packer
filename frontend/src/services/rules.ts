@@ -99,4 +99,52 @@ export const rulesApi = {
       method: 'DELETE',
     });
   },
+
+  /**
+   * List available rules on scenerules.org.
+   */
+  async listScenerules(params?: {
+    scene?: string;
+    section?: string;
+    year?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.scene) queryParams.append('scene', params.scene);
+    if (params?.section) queryParams.append('section', params.section);
+    if (params?.year) queryParams.append('year', params.year.toString());
+
+    const queryString = queryParams.toString();
+    return apiRequest<{
+      rules: Array<{
+        name: string;
+        section: string;
+        year: number;
+        scene: string;
+        url_nfo: string;
+        url_html: string;
+        is_downloaded?: boolean;
+        local_rule_id?: number;
+      }>;
+      total: number;
+    }>(`/rules/scenerules${queryString ? `?${queryString}` : ''}`);
+  },
+
+  /**
+   * Download rule from scenerules.org.
+   */
+  async downloadFromScenerules(data: {
+    section?: string;
+    year?: number;
+    scene?: string;
+    url?: string;
+  }) {
+    return apiRequest<{
+      rule: Rule;
+      message: string;
+      was_existing: boolean;
+    }>('/rules/scenerules/download', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
 };

@@ -5,6 +5,7 @@ import { PageLayout } from '../components/PageLayout';
 import { RulesTable } from '../components/RulesTable';
 import { NFOViewer } from '../components/NFOViewer';
 import { RuleUpload } from '../components/RuleUpload';
+import { ScenerulesRulesList } from '../components/ScenerulesRulesList';
 import { Rule } from '../services/rules';
 
 /**
@@ -19,20 +20,43 @@ export function Rules() {
   }>({});
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
   const [showUpload, setShowUpload] = useState(false);
+  const [showScenerules, setShowScenerules] = useState(false);
 
   return (
     <PageLayout title="Règles" description="Gérer les règles Scene">
       <div className="mb-4 d-flex justify-content-between align-items-center">
-        <h2 className="h4 mb-0">Règles locales</h2>
-        <button
-          className="btn btn-primary"
-          onClick={() => setShowUpload(!showUpload)}
-          aria-label="Uploader une règle"
-        >
-          <i className="bi bi-upload me-2" aria-hidden="true" />
-          Uploader une règle
-        </button>
+        <h2 className="h4 mb-0">Règles</h2>
+        <div className="btn-group" role="group">
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => setShowScenerules(!showScenerules)}
+            aria-label="Voir rules scenerules.org"
+          >
+            <i className="bi bi-cloud-download me-2" aria-hidden="true" />
+            scenerules.org
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowUpload(!showUpload)}
+            aria-label="Uploader une règle"
+          >
+            <i className="bi bi-upload me-2" aria-hidden="true" />
+            Uploader
+          </button>
+        </div>
       </div>
+
+      {showScenerules && (
+        <div className="mb-4">
+          <ScenerulesRulesList
+            filters={filters}
+            onDownloadSuccess={() => {
+              // Refresh local rules table
+              setFilters({ ...filters });
+            }}
+          />
+        </div>
+      )}
 
       {showUpload && (
         <div className="mb-4">
@@ -45,6 +69,12 @@ export function Rules() {
             }}
             onCancel={() => setShowUpload(false)}
           />
+        </div>
+      )}
+
+      {!showScenerules && !showUpload && (
+        <div className="mb-3">
+          <h3 className="h5 mb-3">Règles locales</h3>
         </div>
       )}
 

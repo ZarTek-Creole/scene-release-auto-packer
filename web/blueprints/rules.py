@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
 from web.extensions import db
 from web.models import Rule, User
+from web.services.scenerules_download import ScenerulesDownloadService
 
 rules_bp = Blueprint("rules", __name__)
 
@@ -114,7 +115,7 @@ def create_rule() -> tuple[dict, int]:
     Returns:
         JSON response with created rule.
     """
-    current_user_id = get_jwt_identity()
+    # User already verified by @jwt_required()
     data = request.get_json()
 
     if not data:
@@ -204,6 +205,163 @@ def delete_rule(rule_id: int) -> tuple[dict, int]:
     db.session.commit()
 
     return {"message": "Rule deleted successfully"}, 200
+
+
+@rules_bp.route("/rules/scenerules", methods=["GET"])
+@jwt_required()
+def list_scenerules_rules() -> tuple[dict, int]:
+    """List available rules on scenerules.org.
+
+    Query parameters:
+        - scene: Filter by scene name
+        - section: Filter by section
+        - year: Filter by year
+
+    Returns:
+        JSON response with available rules list.
+    """
+    current_user_id = get_jwt_identity()
+    user = db.session.get(User, current_user_id)
+
+    if not user:
+        return {"message": "User not found"}, 404
+
+    # Get filters
+    scene_filter = request.args.get("scene", "")
+    section_filter = request.args.get("section", "")
+    year_filter = request.args.get("year", type=int)
+
+    # Get available rules from scenerules.org
+    downloader = ScenerulesDownloadService()
+    available_rules = downloader.list_available_rules()
+
+    # Apply filters
+    filtered_rules = available_rules
+    if scene_filter:
+        filtered_rules = [
+            r
+            for r in filtered_rules
+            if r.get("scene", "").lower() == scene_filter.lower()
+        ]
+    if section_filter:
+        filtered_rules = [
+            r
+            for r in filtered_rules
+            if r.get("section", "").lower() == section_filter.lower()
+        ]
+    if year_filter:
+        filtered_rules = [r for r in filtered_rules if r.get("year") == year_filter]
+
+    # Check which rules are already downloaded locally
+    local_rules = Rule.query.all()
+    local_rule_keys = {
+        (r.section, r.year): r.id for r in local_rules if r.section and r.year
+    }
+
+    # Add indicator if rule is already downloaded
+    for rule in filtered_rules:
+        rule_key = (rule.get("section"), rule.get("year"))
+        rule["is_downloaded"] = rule_key in local_rule_keys
+        if rule["is_downloaded"]:
+            rule["local_rule_id"] = local_rule_keys[rule_key]
+
+    return (
+        {
+            "rules": filtered_rules,
+            "total": len(filtered_rules),
+        },
+        200,
+    )
+
+
+@rules_bp.route("/rules/scenerules/download", methods=["POST"])
+@jwt_required()
+def download_scenerules_rule() -> tuple[dict, int]:
+    """Download a rule from scenerules.org.
+
+    Expected JSON:
+        - section: Rule section (eBOOK, TV-720p, etc.)
+        - year: Rule year (optional, default: 2022)
+        - scene: Scene name (optional, default: English)
+        - url: Direct URL to rule NFO (optional, alternative to section/year)
+
+    Returns:
+        JSON response with downloaded rule.
+    """
+    current_user_id = get_jwt_identity()
+    user = db.session.get(User, current_user_id)
+
+    if not user:
+        return {"message": "User not found"}, 404
+
+    # TODO: Check WRITE permission
+
+    data = request.get_json()
+
+    if not data:
+        return {"message": "No data provided"}, 400
+
+    downloader = ScenerulesDownloadService()
+
+    try:
+        # Download rule
+        if "url" in data:
+            rule_data = downloader.download_rule_by_url(data["url"])
+        else:
+            section = data.get("section")
+            if not section:
+                return {"message": "Section is required"}, 400
+
+            year = data.get("year", 2022)
+            scene = data.get("scene", "English")
+            rule_data = downloader.download_rule(section, year, scene)
+
+        # Check if rule already exists locally
+        existing_rule = Rule.query.filter_by(
+            section=rule_data["section"], year=rule_data["year"]
+        ).first()
+
+        if existing_rule:
+            # Update existing rule
+            existing_rule.name = rule_data["name"]
+            existing_rule.content = rule_data["content"]
+            existing_rule.scene = rule_data.get("scene")
+            db.session.commit()
+
+            return (
+                {
+                    "rule": existing_rule.to_dict(),
+                    "message": "Rule updated successfully",
+                    "was_existing": True,
+                },
+                200,
+            )
+
+        # Create new rule
+        rule = Rule(
+            name=rule_data["name"],
+            content=rule_data["content"],
+            section=rule_data["section"],
+            year=rule_data["year"],
+            scene=rule_data.get("scene"),
+        )
+
+        db.session.add(rule)
+        db.session.commit()
+
+        return (
+            {
+                "rule": rule.to_dict(),
+                "message": "Rule downloaded successfully",
+                "was_existing": False,
+            },
+            201,
+        )
+
+    except ValueError as e:
+        return {"message": str(e)}, 404
+    except Exception as e:
+        return {"message": f"Failed to download rule: {str(e)}"}, 500
 
 
 def _extract_metadata_from_content(content: str) -> dict[str, str | int | None]:
