@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { PageLayout } from '../components/PageLayout';
 import { RulesTable } from '../components/RulesTable';
+import { NFOViewer } from '../components/NFOViewer';
 import { Rule } from '../services/rules';
 
 /**
@@ -13,12 +14,30 @@ export function Rules() {
     scene?: string;
     section?: string;
     year?: number;
+    search?: string;
   }>({});
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
 
   return (
     <PageLayout title="Règles" description="Gérer les règles Scene">
       <div className="mb-4">
+        <div className="row g-3 mb-3">
+          <div className="col-md-12">
+            <label htmlFor="filterSearch" className="form-label">
+              Recherche
+            </label>
+            <input
+              id="filterSearch"
+              type="text"
+              className="form-control"
+              value={filters.search || ''}
+              onChange={e =>
+                setFilters({ ...filters, search: e.target.value || undefined })
+              }
+              placeholder="Rechercher dans le nom ou le contenu..."
+            />
+          </div>
+        </div>
         <div className="row g-3">
           <div className="col-md-4">
             <label htmlFor="filterScene" className="form-label">
@@ -100,12 +119,12 @@ export function Rules() {
                 ></button>
               </div>
               <div className="modal-body">
-                <pre
-                  className="bg-light p-3 rounded"
-                  style={{ maxHeight: '400px', overflow: 'auto' }}
-                >
-                  {selectedRule.content}
-                </pre>
+                <NFOViewer
+                  content={selectedRule.content}
+                  lineNumbers={false}
+                  maxWidth={80}
+                  aria-label={`Contenu de la règle ${selectedRule.name}`}
+                />
               </div>
               <div className="modal-footer">
                 <button

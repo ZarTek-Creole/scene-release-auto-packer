@@ -1,0 +1,50 @@
+/* NFO Viewer Styles */
+
+.nfo-viewer-container {
+  width: 100%;
+}
+
+.nfo-viewer-toolbar {
+  border-bottom: 1px solid var(--border-color, #dee2e6);
+  padding-bottom: 0.5rem;
+}
+
+.nfo-viewer {
+  font-family: var(--font-family-monospace, 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background-color: var(--bg-secondary, #f8f9fa);
+  border: 1px solid var(--border-color, #dee2e6);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-all;
+  tab-size: 2;
+  
+  /* ASCII Scene constraints */
+  max-width: 80ch;
+  font-variant-ligatures: none;
+  
+  /* Performance */
+  contain: layout style paint;
+}
+
+.nfo-viewer mark {
+  background-color: #ffc107;
+  color: #000;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.125rem;
+}
+
+[data-theme="dark"] .nfo-viewer {
+  background-color: var(--bg-secondary-dark, #212529);
+  border-color: var(--border-color-dark, #495057);
+  color: var(--text-primary-dark, #f8f9fa);
+}
+
+[data-theme="dark"] .nfo-viewer mark {
+  background-color: #ffc107;
+  color: #000;
+}

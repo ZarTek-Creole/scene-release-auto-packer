@@ -19,6 +19,7 @@ export interface ListRulesParams {
   scene?: string;
   section?: string;
   year?: number;
+  search?: string;
 }
 
 export interface CreateRuleData {
@@ -49,6 +50,7 @@ export const rulesApi = {
     if (params.scene) queryParams.append('scene', params.scene);
     if (params.section) queryParams.append('section', params.section);
     if (params.year) queryParams.append('year', params.year.toString());
+    if (params.search) queryParams.append('search', params.search);
 
     const queryString = queryParams.toString();
     return apiRequest<{

@@ -116,8 +116,16 @@ export function RulesTable({
                 <td>{rule.year || '-'}</td>
                 <td>
                   <button
+                    className="btn btn-sm btn-outline-info me-2"
+                    onClick={() => onEdit && onEdit(rule)}
+                    aria-label={`Voir la règle ${rule.name}`}
+                  >
+                    Voir
+                  </button>
+                  <button
                     className="btn btn-sm btn-outline-primary me-2"
                     onClick={() => onEdit && onEdit(rule)}
+                    aria-label={`Éditer la règle ${rule.name}`}
                   >
                     Éditer
                   </button>

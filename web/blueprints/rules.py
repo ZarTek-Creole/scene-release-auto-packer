@@ -38,6 +38,7 @@ def list_rules() -> tuple[dict, int]:
     scene = request.args.get("scene", "")
     section = request.args.get("section", "")
     year = request.args.get("year", type=int)
+    search = request.args.get("search", "")
 
     # Build query
     query = Rule.query
@@ -50,6 +51,13 @@ def list_rules() -> tuple[dict, int]:
 
     if year:
         query = query.filter(Rule.year == year)
+
+    # Text search in name and content
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            (Rule.name.like(search_pattern)) | (Rule.content.like(search_pattern))
+        )
 
     # Pagination
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
