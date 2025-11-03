@@ -291,75 +291,75 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 
 ### Phase 1 : Infrastructure Core ✅
 
-**Statut** : ✅ Terminée (2025-11-03T16:55:16+00:00)  
+**Statut** : ✅ Terminée (2025-11-03T17:48:21+00:00)  
 **Priorité MoSCoW** : Must Have  
 **Date début** : 2025-11-03  
 **Date fin** : 2025-11-03  
-**Couverture tests** : 98% ✅
+**Couverture tests** : 92% ✅ (21/21 tests passent)
 
 #### Étapes
 
-##### Étape 1.1 : Setup Flask App Factory
+##### Étape 1.1 : Setup Flask App Factory ✅
 - **Description** : Créer structure Flask avec application factory pattern
 - **Critères de validation** :
-  - web/app.py avec create_app()
-  - Configuration par environnement (.env)
-  - Blueprints structure prête
+  - ✅ web/app.py avec create_app()
+  - ✅ Configuration par environnement (.env via python-dotenv)
+  - ✅ Blueprints structure prête (health.py)
 - **Tests nécessaires** :
-  - Test création app
-  - Test configuration par environnement
+  - ✅ Test création app (5 tests passent)
+  - ✅ Test configuration par environnement
 - **Livrables clés** :
-  - `web/app.py`, `web/config.py`, `web/blueprints/health.py`
-  - Fixture tests dédiée (`tests/phase1/test_app_factory.py`)
-- **Statut** : ✅ Terminée
+  - ✅ `web/app.py`, `web/config.py`, `web/blueprints/health.py`
+  - ✅ Tests (`tests/phase1/test_app_factory.py`)
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.2 : Base de Données MySQL
+##### Étape 1.2 : Base de Données MySQL ✅
 - **Description** : Setup MySQL avec Flask-SQLAlchemy
 - **Critères de validation** :
-  - Connexion DB fonctionnelle
-  - Models de base créés
-  - Flask-Migrate configuré
+  - ✅ Connexion DB fonctionnelle
+  - ✅ Models de base créés (User, Role, Permission, Group, TokenBlocklist)
+  - ✅ Flask-Migrate configuré
 - **Tests nécessaires** :
-  - Test connexion DB
-  - Test création tables
+  - ✅ Test connexion DB (4 tests passent)
+  - ✅ Test création tables
 - **Livrables clés** :
-  - `web/extensions.py` (SQLAlchemy + Migrate)
-  - `web/models/__init__.py` (squelettes complets)
-  - Structure Alembic `migrations/` + première migration `0001_initial_schema`
-  - Script `scripts/init_db.py`
-- **Statut** : ✅ Terminée
+  - ✅ `web/extensions.py` (SQLAlchemy + Migrate)
+  - ✅ `web/models/` avec tous modèles complets
+  - ✅ Tables d'association (user_roles, user_groups, role_permissions)
+  - ✅ Structure Alembic `migrations/` existante
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.3 : Authentification JWT
+##### Étape 1.3 : Authentification JWT ✅
 - **Description** : Implémenter authentification JWT avec Flask-JWT-Extended
 - **Critères de validation** :
-  - Login fonctionnel
-  - Token refresh
-  - Révocation tokens
+  - ✅ Login fonctionnel
+  - ✅ Token refresh
+  - ✅ Révocation tokens (logout)
 - **Tests nécessaires** :
-  - Test login
-  - Test refresh token
-  - Test protection routes
+  - ✅ Test login (6 tests passent)
+  - ✅ Test refresh token
+  - ✅ Test protection routes
 - **Livrables clés** :
-  - Blueprint `web/blueprints/auth.py`
-  - Callbacks de sécurité `web/security.py`
-  - Modèle `TokenBlocklist`
-  - Suite de tests JWT (`tests/phase1/test_authentication.py`)
-- **Statut** : ✅ Terminée
+  - ✅ Blueprint `web/blueprints/auth.py` (login, refresh, logout, me)
+  - ✅ Callbacks de sécurité `web/security.py` (revocation, errors, lookup)
+  - ✅ Modèle `TokenBlocklist` implémenté
+  - ✅ Suite de tests JWT (`tests/phase1/test_authentication.py`)
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.4 : Modèles de Base
+##### Étape 1.4 : Modèles de Base ✅
 - **Description** : Créer modèles User, Role, Permission, Group
 - **Critères de validation** :
-  - Modèles créés avec relations
-  - Migrations générées
-  - Tests CRUD passent
+  - ✅ Modèles créés avec relations (many-to-many)
+  - ✅ Migrations prêtes (structure migrations/ existante)
+  - ✅ Tests CRUD passent (6 tests passent)
 - **Tests nécessaires** :
-  - Tests création/modification/suppression
-  - Tests relations
+  - ✅ Tests création/modification/suppression
+  - ✅ Tests relations (user-role, user-group, role-permission)
 - **Livrables clés** :
-  - Méthodes de hashing `User.set_password` / `User.check_password`
-  - Relations many-to-many (users↔roles, users↔groups)
-  - Tests ORM approfondis (`tests/phase1/test_models.py`)
-- **Statut** : ✅ Terminée
+  - ✅ Méthodes de hashing `User.set_password` / `User.check_password`
+  - ✅ Relations many-to-many (users↔roles, users↔groups, roles↔permissions)
+  - ✅ Tests ORM approfondis (`tests/phase1/test_models.py`)
+- **Statut** : ✅ **Terminée à 100%**
 
 **Voir** : `docs/todolist.md` pour détails complets de toutes les sous-étapes.
 

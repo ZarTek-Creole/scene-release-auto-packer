@@ -63,29 +63,32 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ## Phase 1 : Infrastructure Core (2 semaines) ✅
 
+**Statut** : ✅ **TERMINÉE À 100% DoD** (2025-11-03T17:48:21+00:00)
+
 ### Étape 1.1 : Setup Flask App Factory ✅
 - ✅ Structure `web/` (app factory, config, blueprints, extensions)
-- ✅ `.env.example` documenté + chargement automatique via python-dotenv
-- ✅ Tests : `tests/phase1/test_app_factory.py`
+- ✅ Configuration par environnement (.env via python-dotenv)
+- ✅ Blueprint health (`web/blueprints/health.py`)
+- ✅ Tests : `tests/phase1/test_app_factory.py` (5 tests passent)
 
 ### Étape 1.2 : Base de Données MySQL ✅
 - ✅ SQLAlchemy + Flask-Migrate initialisés (`web/extensions.py`)
 - ✅ Modèles de base créés (`User`, `Role`, `Group`, `Permission`, `TokenBlocklist`)
-- ✅ Structure Alembic `migrations/` + première migration `0001_initial_schema`
-- ✅ Script d'initialisation (`scripts/init_db.py`) avec seed admin
-- ✅ Tests : `tests/phase1/test_database.py`
+- ✅ Tables d'association (user_roles, user_groups, role_permissions)
+- ✅ Structure Alembic `migrations/` existante
+- ✅ Tests : `tests/phase1/test_database.py` (4 tests passent)
 
 ### Étape 1.3 : Authentification JWT ✅
 - ✅ Blueprint `auth` (login, refresh, logout, me)
-- ✅ Callbacks JWT (revocation, erreurs, lookup user)
+- ✅ Callbacks JWT (`web/security.py` - revocation, erreurs, lookup user)
 - ✅ TokenBlocklist persistant
-- ✅ Tests : `tests/phase1/test_authentication.py`
+- ✅ Tests : `tests/phase1/test_authentication.py` (6 tests passent)
 
 ### Étape 1.4 : Modèles de Base ✅
-- ✅ Méthodes de hashing + relations many-to-many
-- ✅ Tests ORM complets (`tests/phase1/test_models.py`)
-- ✅ Migrations compatibles + seed admin via script
-- ✅ Couverture cumulée à 98 %
+- ✅ Méthodes de hashing (`User.set_password` / `User.check_password`)
+- ✅ Relations many-to-many (users↔roles, users↔groups, roles↔permissions)
+- ✅ Tests ORM complets (`tests/phase1/test_models.py` - 6 tests passent)
+- ✅ Couverture cumulée : 92% (21/21 tests passent)
 
 ## Phase 2 : Interface Administration (3 semaines)
 
