@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PageLayout } from '../components/PageLayout';
 import { RulesTable } from '../components/RulesTable';
 import { NFOViewer } from '../components/NFOViewer';
+import { RuleUpload } from '../components/RuleUpload';
 import { Rule } from '../services/rules';
 
 /**
@@ -17,9 +18,36 @@ export function Rules() {
     search?: string;
   }>({});
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
+  const [showUpload, setShowUpload] = useState(false);
 
   return (
     <PageLayout title="Règles" description="Gérer les règles Scene">
+      <div className="mb-4 d-flex justify-content-between align-items-center">
+        <h2 className="h4 mb-0">Règles locales</h2>
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowUpload(!showUpload)}
+          aria-label="Uploader une règle"
+        >
+          <i className="bi bi-upload me-2" aria-hidden="true" />
+          Uploader une règle
+        </button>
+      </div>
+
+      {showUpload && (
+        <div className="mb-4">
+          <RuleUpload
+            onUploadSuccess={rule => {
+              setShowUpload(false);
+              setSelectedRule(null);
+              // Refresh table by resetting filters
+              setFilters({ ...filters });
+            }}
+            onCancel={() => setShowUpload(false)}
+          />
+        </div>
+      )}
+
       <div className="mb-4">
         <div className="row g-3 mb-3">
           <div className="col-md-12">
