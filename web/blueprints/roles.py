@@ -25,7 +25,7 @@ def list_roles() -> tuple[dict, int]:
         JSON response with roles list and pagination info.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -70,7 +70,7 @@ def get_role(role_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with role data.
     """
-    role = Role.query.get(role_id)
+    role = db.session.get(Role, role_id)
 
     if not role:
         return {"message": "Role not found"}, 404
@@ -92,7 +92,7 @@ def create_role() -> tuple[dict, int]:
         JSON response with created role.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -141,7 +141,7 @@ def update_role(role_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with updated role.
     """
-    role = Role.query.get(role_id)
+    role = db.session.get(Role, role_id)
 
     if not role:
         return {"message": "Role not found"}, 404
@@ -186,7 +186,7 @@ def delete_role(role_id: int) -> tuple[dict, int]:
     Returns:
         JSON response.
     """
-    role = Role.query.get(role_id)
+    role = db.session.get(Role, role_id)
 
     if not role:
         return {"message": "Role not found"}, 404

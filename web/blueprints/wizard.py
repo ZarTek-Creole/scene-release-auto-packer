@@ -29,7 +29,7 @@ def create_draft() -> tuple[dict, int]:
     if not current_user_id:
         return {"message": "User not found"}, 404
 
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -56,7 +56,7 @@ def create_draft() -> tuple[dict, int]:
         db.session.flush()
 
     # Verify rule exists
-    rule = Rule.query.get(data["rule_id"])
+    rule = db.session.get(Rule, data["rule_id"])
     if not rule:
         return {"message": "Rule not found"}, 404
 

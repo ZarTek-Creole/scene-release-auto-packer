@@ -4,11 +4,36 @@ from __future__ import annotations
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import String, cast
+from sqlalchemy.orm import Query
 
 from web.extensions import db
 from web.models import Release, User
 
 releases_bp = Blueprint("releases", __name__)
+
+
+def _apply_sorting(query: Query, sort_by: str, sort_order: str) -> Query:
+    """Apply sorting to query.
+
+    Args:
+        query: SQLAlchemy query object.
+        sort_by: Field to sort by (created_at, release_type, status).
+        sort_order: Sort order (asc, desc).
+
+    Returns:
+        Query with sorting applied.
+    """
+    sort_fields = {
+        "created_at": Release.created_at,
+        "release_type": Release.release_type,
+        "status": Release.status,
+    }
+
+    field = sort_fields.get(sort_by, Release.created_at)
+    if sort_order == "desc":
+        return query.order_by(field.desc())
+    return query.order_by(field.asc())
 
 
 @releases_bp.route("/releases", methods=["GET"])
@@ -31,7 +56,7 @@ def list_releases() -> tuple[dict, int]:
         JSON response with releases list and pagination info.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -69,33 +94,13 @@ def list_releases() -> tuple[dict, int]:
     # Text search (in metadata JSON)
     if search:
         # MySQL JSON search: convert JSON to text and use LIKE
-        # Cast JSON column to TEXT for LIKE search
-        from sqlalchemy import String, cast
-
         search_pattern = f"%{search}%"
         query = query.filter(
             cast(Release.release_metadata, String).like(search_pattern)
         )
 
     # Sorting
-    if sort_by == "created_at":
-        if sort_order == "desc":
-            query = query.order_by(Release.created_at.desc())
-        else:
-            query = query.order_by(Release.created_at.asc())
-    elif sort_by == "release_type":
-        if sort_order == "desc":
-            query = query.order_by(Release.release_type.desc())
-        else:
-            query = query.order_by(Release.release_type.asc())
-    elif sort_by == "status":
-        if sort_order == "desc":
-            query = query.order_by(Release.status.desc())
-        else:
-            query = query.order_by(Release.status.asc())
-    else:
-        # Default: newest first
-        query = query.order_by(Release.created_at.desc())
+    query = _apply_sorting(query, sort_by, sort_order)
 
     # Pagination
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -127,7 +132,7 @@ def get_release(release_id: int) -> tuple[dict, int]:
         JSON response with release data.
     """
     current_user_id = get_jwt_identity()
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
@@ -157,7 +162,7 @@ def update_release(release_id: int) -> tuple[dict, int]:
         JSON response with updated release data.
     """
     current_user_id = get_jwt_identity()
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
@@ -197,7 +202,7 @@ def delete_release(release_id: int) -> tuple[dict, int]:
         JSON response.
     """
     current_user_id = get_jwt_identity()
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404

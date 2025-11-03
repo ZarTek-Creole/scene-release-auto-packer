@@ -45,12 +45,12 @@ def nfofix_release(release_id: int) -> tuple[dict, int]:
         JSON response with job ID.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
 
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
@@ -92,12 +92,12 @@ def readnfo_release(release_id: int) -> tuple[dict, int]:
         JSON response with job ID.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
 
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
@@ -146,12 +146,12 @@ def repack_release(release_id: int) -> tuple[dict, int]:
         JSON response with job ID.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
 
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
@@ -197,12 +197,12 @@ def dirfix_release(release_id: int) -> tuple[dict, int]:
         JSON response with job ID.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
 
-    release = Release.query.get(release_id)
+    release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404

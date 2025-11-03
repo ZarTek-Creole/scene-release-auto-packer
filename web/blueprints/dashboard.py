@@ -21,7 +21,7 @@ def get_stats() -> tuple[dict, int]:
         JSON response with statistics.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404

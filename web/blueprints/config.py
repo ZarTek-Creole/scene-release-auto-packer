@@ -26,7 +26,7 @@ def list_configurations() -> tuple[dict, int]:
         JSON response with configurations list and pagination info.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -77,7 +77,7 @@ def get_configuration(config_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with configuration data.
     """
-    config = Configuration.query.get(config_id)
+    config = db.session.get(Configuration, config_id)
 
     if not config:
         return {"message": "Configuration not found"}, 404
@@ -119,7 +119,7 @@ def create_configuration() -> tuple[dict, int]:
         JSON response with created configuration.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -170,7 +170,7 @@ def update_configuration(config_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with updated configuration.
     """
-    config = Configuration.query.get(config_id)
+    config = db.session.get(Configuration, config_id)
 
     if not config:
         return {"message": "Configuration not found"}, 404
@@ -215,7 +215,7 @@ def delete_configuration(config_id: int) -> tuple[dict, int]:
     Returns:
         JSON response.
     """
-    config = Configuration.query.get(config_id)
+    config = db.session.get(Configuration, config_id)
 
     if not config:
         return {"message": "Configuration not found"}, 404

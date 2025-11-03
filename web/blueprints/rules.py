@@ -27,7 +27,7 @@ def list_rules() -> tuple[dict, int]:
         JSON response with rules list and pagination info.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -80,7 +80,7 @@ def get_rule(rule_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with rule data.
     """
-    rule = Rule.query.get(rule_id)
+    rule = db.session.get(Rule, rule_id)
 
     if not rule:
         return {"message": "Rule not found"}, 404
@@ -146,7 +146,7 @@ def update_rule(rule_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with updated rule.
     """
-    rule = Rule.query.get(rule_id)
+    rule = db.session.get(Rule, rule_id)
 
     if not rule:
         return {"message": "Rule not found"}, 404
@@ -184,7 +184,7 @@ def delete_rule(rule_id: int) -> tuple[dict, int]:
     Returns:
         JSON response.
     """
-    rule = Rule.query.get(rule_id)
+    rule = db.session.get(Rule, rule_id)
 
     if not rule:
         return {"message": "Rule not found"}, 404

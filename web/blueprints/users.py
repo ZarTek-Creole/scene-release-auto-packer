@@ -27,7 +27,7 @@ def list_users() -> tuple[dict, int]:
         JSON response with users list and pagination info.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -83,7 +83,7 @@ def get_user(user_id: int) -> tuple[dict, int]:
     Returns:
         JSON response with user data.
     """
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -105,7 +105,7 @@ def create_user() -> tuple[dict, int]:
         JSON response with created user.
     """
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.get(User, current_user_id)
 
     if not current_user:
         return {"message": "User not found"}, 404
@@ -156,12 +156,12 @@ def update_user(user_id: int) -> tuple[dict, int]:
         JSON response with updated user.
     """
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.get(User, current_user_id)
 
     if not current_user:
         return {"message": "User not found"}, 404
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
     if not user:
         return {"message": "User not found"}, 404
@@ -213,12 +213,12 @@ def delete_user(user_id: int) -> tuple[dict, int]:
         JSON response.
     """
     current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
+    current_user = db.session.get(User, current_user_id)
 
     if not current_user:
         return {"message": "User not found"}, 404
 
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
 
     if not user:
         return {"message": "User not found"}, 404
