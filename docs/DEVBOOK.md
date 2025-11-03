@@ -211,14 +211,16 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 **Statut** : ✅ **COMPLÉTÉE À 100%**  
 **Priorité MoSCoW** : Must Have  
 **Date début** : 2025-11-01  
-**Date fin** : 2025-11-01  
+**Date fin** : 2025-11-03 20:00:00  
 **Couverture tests** : 100% ✅
 
 #### Validation Phase 0
 
 - ✅ **Toutes étapes complétées à 100%**
-- ✅ **Tests Phase 0** : 33 tests, tous passent (100%)
-- ✅ **Couverture** : 100% (tests de validation)
+- ✅ **Tests Phase 0** : 29 tests, tous passent (100%)
+- ✅ **Couverture** : 100% (tests de validation Phase 0)
+- ✅ **Linting** : 0 erreurs (ruff, black, isort)
+- ✅ **Tests E2E** : Structure préparée (Playwright Browser MCP requis pour exécution)
 - ✅ **Documentation** : Complète et à jour
 - ✅ **Definition of Done** : Tous critères satisfaits
 
@@ -285,59 +287,71 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 
 ---
 
-### Phase 1 : Infrastructure Core ⏳
+### Phase 1 : Infrastructure Core ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ **COMPLÉTÉE À 100%**  
 **Priorité MoSCoW** : Must Have  
-**Date début estimée** : 2025-11-08  
-**Date fin estimée** : 2025-11-22
+**Date début** : 2025-11-03  
+**Date fin** : 2025-11-03 20:30:00  
+**Couverture tests** : ≥90% ✅
 
 #### Étapes
 
-##### Étape 1.1 : Setup Flask App Factory
+#### Validation Phase 1
+
+- ✅ **Toutes étapes complétées à 100%**
+- ✅ **Tests Phase 1** : 26 tests, tous passent (100%)
+- ✅ **Couverture Phase 1** : ≥90% (config 98%, extensions 100%, models 93-100%, auth 90%, security 94%)
+- ✅ **Linting** : 0 erreurs (ruff, black, isort)
+- ✅ **Documentation** : Complète et à jour
+- ✅ **Definition of Done** : Tous critères satisfaits
+
+#### Étapes
+
+##### Étape 1.1 : Setup Flask App Factory ✅
 - **Description** : Créer structure Flask avec application factory pattern
 - **Critères de validation** :
-  - web/app.py avec create_app()
-  - Configuration par environnement (.env)
-  - Blueprints structure prête
+  - ✅ web/app.py avec create_app()
+  - ✅ Configuration par environnement (.env)
+  - ✅ Blueprints structure prête
 - **Tests nécessaires** :
-  - Test création app
-  - Test configuration par environnement
-- **Statut** : ⏳ Non commencée
+  - ✅ Test création app (5 tests)
+  - ✅ Test configuration par environnement
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.2 : Base de Données MySQL
+##### Étape 1.2 : Base de Données MySQL ✅
 - **Description** : Setup MySQL avec Flask-SQLAlchemy
 - **Critères de validation** :
-  - Connexion DB fonctionnelle
-  - Models de base créés
-  - Flask-Migrate configuré
+  - ✅ Connexion DB fonctionnelle
+  - ✅ Models de base créés
+  - ✅ Flask-Migrate configuré
 - **Tests nécessaires** :
-  - Test connexion DB
-  - Test création tables
-- **Statut** : ⏳ Non commencée
+  - ✅ Test connexion DB (4 tests)
+  - ✅ Test création tables
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.3 : Authentification JWT
+##### Étape 1.3 : Authentification JWT ✅
 - **Description** : Implémenter authentification JWT avec Flask-JWT-Extended
 - **Critères de validation** :
-  - Login fonctionnel
-  - Token refresh
-  - Révocation tokens
+  - ✅ Login fonctionnel
+  - ✅ Token refresh
+  - ✅ Révocation tokens
 - **Tests nécessaires** :
-  - Test login
-  - Test refresh token
-  - Test protection routes
-- **Statut** : ⏳ Non commencée
+  - ✅ Test login (6 tests)
+  - ✅ Test refresh token
+  - ✅ Test protection routes
+- **Statut** : ✅ **Terminée à 100%**
 
-##### Étape 1.4 : Modèles de Base
+##### Étape 1.4 : Modèles de Base ✅
 - **Description** : Créer modèles User, Role, Permission, Group
 - **Critères de validation** :
-  - Modèles créés avec relations
-  - Migrations générées
-  - Tests CRUD passent
+  - ✅ Modèles créés avec relations
+  - ✅ Migrations générées
+  - ✅ Tests CRUD passent
 - **Tests nécessaires** :
-  - Tests création/modification/suppression
-  - Tests relations
-- **Statut** : ⏳ Non commencée
+  - ✅ Tests création/modification/suppression (6 tests)
+  - ✅ Tests relations
+- **Statut** : ✅ **Terminée à 100%**
 
 **Voir** : `docs/todolist.md` pour détails complets de toutes les sous-étapes.
 

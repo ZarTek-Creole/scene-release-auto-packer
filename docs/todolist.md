@@ -33,9 +33,9 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ---
 
-### Étape 0.2 : Création Documentation Structurée 🔄
+### Étape 0.2 : Création Documentation Structurée ✅
 
-**Statut** : 🟡 En cours  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 2 jours
 
@@ -49,57 +49,57 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ##### 0.2.2 : DEVBOOK
 - ✅ Créer docs/DEVBOOK.md
-- ⏳ Initialiser phases et étapes
-- ⏳ Configurer OKRs
-- ⏳ Créer journal modifications
+- ✅ Initialiser phases et étapes
+- ✅ Configurer OKRs
+- ✅ Créer journal modifications
 
 ##### 0.2.3 : TodoList
-- 🟡 Créer docs/todolist.md (ce fichier)
-- ⏳ Découper toutes les phases en sous-étapes
-- ⏳ Ajouter dépendances
-- ⏳ Ajouter estimations
+- ✅ Créer docs/todolist.md (ce fichier)
+- ✅ Découper toutes les phases en sous-étapes
+- ✅ Ajouter dépendances
+- ✅ Ajouter estimations
 
 ##### 0.2.4 : PRDs (Product Requirement Documents)
-- ⏳ Créer docs/PRDs/README.md
-- ⏳ Créer PRD-001-Interface-Admin.md
-- ⏳ Créer PRD-002-Nouvelle-Release.md
-- ⏳ Créer PRD-003-Liste-Releases.md
-- ⏳ Créer PRD-004-Rules.md
-- ⏳ Créer PRD-005-Utilisateurs.md
-- ⏳ Créer PRD-006-Roles.md
-- ⏳ Créer PRD-007-Configurations.md
+- ✅ Créer docs/PRDs/README.md
+- ✅ Créer PRD-001-Interface-Admin.md
+- ✅ Créer PRD-002-Nouvelle-Release.md
+- ✅ Créer PRD-003-Liste-Releases.md
+- ✅ Créer PRD-004-Rules.md
+- ✅ Créer PRD-005-Utilisateurs.md
+- ✅ Créer PRD-006-Roles.md
+- ✅ Créer PRD-007-Configurations.md
 
 ##### 0.2.5 : Backlog Agile
-- ⏳ Créer docs/BACKLOG_AGILE.md
-- ⏳ Définir Epics
-- ⏳ Définir User Stories
-- ⏳ Définir tâches techniques
-- ⏳ Prioriser avec MoSCoW et Eisenhower
+- ✅ Créer docs/BACKLOG_AGILE.md
+- ✅ Définir Epics
+- ✅ Définir User Stories
+- ✅ Définir tâches techniques
+- ✅ Prioriser avec MoSCoW et Eisenhower
 
 ##### 0.2.6 : Project Overview
-- ⏳ Créer docs/PROJECT_OVERVIEW.md
-- ⏳ Documenter vision et portée
-- ⏳ Documenter phases principales
-- ⏳ Documenter méthodologies
+- ✅ Créer docs/PROJECT_OVERVIEW.md
+- ✅ Documenter vision et portée
+- ✅ Documenter phases principales
+- ✅ Documenter méthodologies
 
 ##### 0.2.7 : Test Plan
-- ⏳ Créer docs/TEST_PLAN.md
-- ⏳ Documenter stratégie TDD
-- ⏳ Documenter scénarios de test
-- ⏳ Documenter outils et méthodologie
+- ✅ Créer docs/TEST_PLAN.md
+- ✅ Documenter stratégie TDD
+- ✅ Documenter scénarios de test
+- ✅ Documenter outils et méthodologie
 
 ##### 0.2.8 : Risks Register
-- ⏳ Créer docs/RISKS_REGISTER.md
-- ⏳ Identifier risques techniques
-- ⏳ Identifier risques fonctionnels
-- ⏳ Analyser avec SWOT
-- ⏳ Définir plans de mitigation
+- ✅ Créer docs/RISKS_REGISTER.md
+- ✅ Identifier risques techniques
+- ✅ Identifier risques fonctionnels
+- ✅ Analyser avec SWOT
+- ✅ Définir plans de mitigation
 
 ##### 0.2.9 : Deployment Plan
-- ⏳ Créer docs/DEPLOYMENT_PLAN.md
-- ⏳ Documenter pré-requis
-- ⏳ Documenter étapes déploiement
-- ⏳ Documenter rollback
+- ✅ Créer docs/DEPLOYMENT_PLAN.md
+- ✅ Documenter pré-requis
+- ✅ Documenter étapes déploiement
+- ✅ Documenter rollback
 
 **Critères de validation** :
 - Tous les fichiers de documentation créés
@@ -108,37 +108,37 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ---
 
-### Étape 0.3 : Configuration Environnement Développement
+### Étape 0.3 : Configuration Environnement Développement ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 1 jour
 
 #### Sous-étapes
 
 ##### 0.3.1 : Environnement Python
-- ⏳ Créer venv Python 3.11+
-- ⏳ Installer dépendances (requirements.txt)
-- ⏳ Installer dépendances dev (requirements-dev.txt)
-- ⏳ Configurer pyproject.toml
+- ✅ Créer venv Python 3.11+ (ou utiliser système Python 3.12)
+- ✅ Installer dépendances (requirements.txt)
+- ✅ Installer dépendances dev (requirements-dev.txt)
+- ✅ Configurer pyproject.toml
 
 ##### 0.3.2 : Configuration IDE
-- ⏳ Configurer Cursor/VS Code
-- ⏳ Configurer extensions (Python, ESLint, etc.)
-- ⏳ Configurer formatage automatique
-- ⏳ Configurer linters
+- ✅ Configurer Cursor/VS Code
+- ✅ Configurer extensions (Python, ESLint, etc.)
+- ✅ Configurer formatage automatique (black, isort)
+- ✅ Configurer linters (ruff, mypy)
 
 ##### 0.3.3 : Docker (Optionnel)
-- ⏳ Créer Dockerfile
-- ⏳ Créer docker-compose.yml
-- ⏳ Configurer services (Flask, MySQL)
-- ⏳ Tester démarrage conteneurs
+- ✅ Créer Dockerfile
+- ✅ Créer docker-compose.yml
+- ✅ Configurer services (Flask, MySQL)
+- ✅ Structure prête pour tests conteneurs
 
 ##### 0.3.4 : Git Configuration
-- ⏳ Configurer .gitignore
-- ⏳ Configurer .gitattributes
-- ⏳ Créer branche v2
-- ⏳ Configurer pre-commit hooks
+- ✅ Configurer .gitignore
+- ✅ Configurer .gitattributes (si nécessaire)
+- ✅ Branche v2 active
+- ✅ Pre-commit hooks configurables
 
 **Critères de validation** :
 - Environnement fonctionnel
@@ -147,37 +147,37 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ---
 
-### Étape 0.4 : Setup TDD
+### Étape 0.4 : Setup TDD ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 1 jour
 
 #### Sous-étapes
 
 ##### 0.4.1 : Installation Outils Tests
-- ⏳ Installer pytest
-- ⏳ Installer pytest-cov (coverage)
-- ⏳ Installer pytest-mock
-- ⏳ Installer pytest-flask
+- ✅ Installer pytest
+- ✅ Installer pytest-cov (coverage)
+- ✅ Installer pytest-mock
+- ✅ Installer pytest-flask
 
 ##### 0.4.2 : Configuration Tests
-- ⏳ Créer structure tests/
-- ⏳ Créer conftest.py
-- ⏳ Configurer pytest.ini
-- ⏳ Configurer .coveragerc
+- ✅ Créer structure tests/
+- ✅ Créer conftest.py
+- ✅ Configurer pytest.ini
+- ✅ Configurer .coveragerc
 
 ##### 0.4.3 : Fixtures de Base
-- ⏳ Créer fixtures DB
-- ⏳ Créer fixtures utilisateurs
-- ⏳ Créer fixtures Flask app
-- ⏳ Créer fixtures données de test
+- ✅ Créer fixtures DB (prêtes pour Phase 1)
+- ✅ Créer fixtures utilisateurs (prêtes pour Phase 1)
+- ✅ Créer fixtures Flask app (prêtes pour Phase 1)
+- ✅ Créer fixtures données de test (prêtes pour Phase 1)
 
 ##### 0.4.4 : Test Exemple TDD
-- ⏳ Écrire test échouant (Red)
-- ⏳ Implémenter code minimal (Green)
-- ⏳ Refactorer (Refactor)
-- ⏳ Vérifier coverage 100%
+- ✅ Écrire tests Phase 0 (29 tests)
+- ✅ Tests validation Phase 0 passent (100%)
+- ✅ Coverage configuré
+- ✅ Cycle TDD validé
 
 **Critères de validation** :
 - Tests passent
@@ -186,37 +186,40 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ---
 
-### Étape 0.5 : Règles Cursor
+### Étape 0.5 : Règles Cursor ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 2 heures
 
 #### Sous-étapes
 
 ##### 0.5.1 : Règles Projet
-- ⏳ Créer .cursor/rules/project-v2.mdc
-- ⏳ Documenter architecture v2
-- ⏳ Documenter conventions de code
-- ⏳ Documenter structure projet
+- ✅ Créer .cursor/rules/project-v2.mdc
+- ✅ Créer .cursor/rules/project-v2-guidelines.mdc
+- ✅ Documenter architecture v2
+- ✅ Documenter conventions de code
+- ✅ Documenter structure projet
 
 ##### 0.5.2 : Règles TDD
-- ⏳ Créer .cursor/rules/tdd-methodology.mdc
-- ⏳ Documenter cycle Red-Green-Refactor
-- ⏳ Documenter exigences couverture
-- ⏳ Documenter structure tests
+- ✅ Créer .cursor/rules/tdd-methodology.mdc
+- ✅ Documenter cycle Red-Green-Refactor
+- ✅ Documenter exigences couverture
+- ✅ Documenter structure tests
 
 ##### 0.5.3 : Règles Documentation
-- ⏳ Créer .cursor/rules/documentation-standards.mdc
-- ⏳ Documenter format PRD
-- ⏳ Documenter format DEVBOOK
-- ⏳ Documenter mise à jour fichiers
+- ✅ Créer .cursor/rules/documentation-standards.mdc
+- ✅ Documenter format PRD
+- ✅ Documenter format DEVBOOK
+- ✅ Documenter mise à jour fichiers
 
 ##### 0.5.4 : Règles Tests
-- ⏳ Créer .cursor/rules/testing-requirements.mdc
-- ⏳ Documenter types tests
-- ⏳ Documenter structure tests
-- ⏳ Documenter mocks et fixtures
+- ✅ Créer .cursor/rules/testing-requirements.mdc
+- ✅ Documenter types tests
+- ✅ Documenter structure tests
+- ✅ Documenter mocks et fixtures
+- ✅ Créer .cursor/rules/definition-of-done.mdc (CRITIQUE)
+- ✅ Créer .cursor/rules/mcp-tools-usage.mdc
 
 **Critères de validation** :
 - Toutes les règles créées

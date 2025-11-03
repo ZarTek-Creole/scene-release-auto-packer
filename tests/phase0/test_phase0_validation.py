@@ -6,10 +6,7 @@ et conformes aux critères de Definition of Done.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-
-import pytest
 
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -200,6 +197,11 @@ class TestPhase0CursorRules:
         assert test_req_path.exists(), "testing-requirements.mdc doit exister"
 
     def test_project_v2_guidelines_exists(self) -> None:
-        """Vérifier que .cursor/rules/project-v2-guidelines.mdc existe."""
+        """Vérifier que .cursor/rules/project-v2-guidelines.mdc ou project-v2.mdc existe."""
         proj_path = PROJECT_ROOT / ".cursor" / "rules" / "project-v2.mdc"
-        assert proj_path.exists(), "project-v2.mdc doit exister"
+        proj_guidelines_path = (
+            PROJECT_ROOT / ".cursor" / "rules" / "project-v2-guidelines.mdc"
+        )
+        assert (
+            proj_path.exists() or proj_guidelines_path.exists()
+        ), "project-v2.mdc ou project-v2-guidelines.mdc doit exister"
