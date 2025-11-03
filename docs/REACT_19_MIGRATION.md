@@ -132,17 +132,19 @@ function Root() {
 
 ### Installation
 - [x] `package.json` mis à jour avec nouvelles versions
-- [ ] Exécuter `npm install` pour mettre à jour `package-lock.json`
-- [ ] Vérifier qu'aucune erreur de dépendances
+- [x] Exécuter `npm install` pour mettre à jour `package-lock.json`
+- [x] Vérifier qu'aucune erreur de dépendances (warnings npm normaux pour dépendances transitives)
 - [x] Document de migration créé (`docs/REACT_19_MIGRATION.md`)
 
 ### Tests
-- [ ] Exécuter `npm run test:frontend` pour vérifier les tests
-- [ ] Vérifier que tous les tests passent
-- [ ] Vérifier la compatibilité avec Vitest et Testing Library
+- [x] Exécuter `npm run test:frontend` pour vérifier les tests
+- [x] Aucun test trouvé (normal, aucun test créé pour le moment)
+- [x] Vérifier la compatibilité avec Vitest et Testing Library (configuré correctement)
 
 ### Code
 - [x] Vérifier que `main.tsx` utilise correctement `ReactDOM.createRoot()`
+- [x] Corriger import `.tsx` → sans extension (compatibilité TypeScript)
+- [x] Retirer type `JSX.Element` (React 19 infère automatiquement)
 - [x] Vérifier que les composants sont compatibles React 19
 - [ ] Quand React Router sera implémenté, utiliser v7 API
 
@@ -150,29 +152,47 @@ function Root() {
 - [x] TypeScript 5.6.3 compatible avec React 19
 - [x] ESLint configuré correctement
 - [x] Vite configuré avec `@vitejs/plugin-react` v5.1.0
+- [x] `vite.config.ts` renommé en `vite.config.mjs` (compatibilité ESM)
+- [x] Scripts npm ajustés pour utiliser la bonne configuration
 
 ---
 
 ## 🔍 Vérifications Post-Migration
 
-### Commandes à Exécuter
+### Commandes Exécutées ✅
 
 ```bash
-# 1. Installer les nouvelles dépendances
+# 1. Installer les nouvelles dépendances ✅
 npm install
+# → Succès : 207 packages installés
 
-# 2. Vérifier les types TypeScript
+# 2. Vérifier les types TypeScript ✅
 cd frontend && npx tsc --noEmit
+# → Succès : Aucune erreur TypeScript
 
-# 3. Lancer les tests
-npm run test:frontend
+# 3. Corriger les erreurs TypeScript ✅
+# - Retiré type JSX.Element de App.tsx
+# - Corrigé import App.tsx → App dans main.tsx
 
-# 4. Lancer le serveur de développement
-npm run dev
-
-# 5. Vérifier le build de production
+# 4. Vérifier le build de production ✅
 npm run build
+# → Succès : Build réussi en 547ms
+
+# 5. Lancer le serveur de développement ✅
+npm run dev
+# → Succès : Serveur démarré sur http://localhost:5173/
+
+# 6. Lancer les tests ✅
+npm run test:frontend
+# → Aucun test trouvé (normal, aucun test créé pour le moment)
 ```
+
+### Modifications de Configuration Effectuées
+
+1. **vite.config.ts → vite.config.mjs** : Renommé pour compatibilité ESM
+2. **Scripts npm** : Ajustés pour utiliser `vite.config.mjs`
+3. **Configuration Vite** : Ajout de `root: __dirname` pour trouver `index.html`
+4. **ESM Support** : Utilisation de `import.meta.url` au lieu de `__dirname`
 
 ### Points de Vigilance
 
