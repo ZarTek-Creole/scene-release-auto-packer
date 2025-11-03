@@ -49,6 +49,7 @@ def create_app(config_name: str | None = None) -> Flask:
     from web.blueprints.config import config_bp
     from web.blueprints.dashboard import dashboard_bp
     from web.blueprints.health import health_bp
+    from web.blueprints.jobs import jobs_bp
     from web.blueprints.releases import releases_bp
     from web.blueprints.releases_actions import releases_actions_bp
     from web.blueprints.roles import roles_bp
@@ -66,5 +67,6 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(users_bp, url_prefix="/api")
     app.register_blueprint(roles_bp, url_prefix="/api")
     app.register_blueprint(config_bp, url_prefix="/api")
+    app.register_blueprint(jobs_bp, url_prefix="/api")
 
     return app
