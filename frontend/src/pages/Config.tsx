@@ -8,7 +8,9 @@ import { ConfigurationsTable } from '../components/ConfigurationsTable';
  * Config page component.
  */
 export function Config() {
-  const [filters, setFilters] = useState<{ category?: string; key?: string }>({});
+  const [filters, setFilters] = useState<{ category?: string; key?: string }>(
+    {}
+  );
 
   return (
     <PageLayout title="Configurations" description="Gérer les configurations">
@@ -23,8 +25,11 @@ export function Config() {
               type="text"
               className="form-control"
               value={filters.category || ''}
-              onChange={(e) =>
-                setFilters({ ...filters, category: e.target.value || undefined })
+              onChange={e =>
+                setFilters({
+                  ...filters,
+                  category: e.target.value || undefined,
+                })
               }
               placeholder="Filtrer par catégorie"
             />
@@ -38,14 +43,17 @@ export function Config() {
               type="text"
               className="form-control"
               value={filters.key || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFilters({ ...filters, key: e.target.value || undefined })
               }
               placeholder="Filtrer par key"
             />
           </div>
           <div className="col-md-4 d-flex align-items-end">
-            <button className="btn btn-secondary" onClick={() => setFilters({})}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setFilters({})}
+            >
               Réinitialiser
             </button>
           </div>

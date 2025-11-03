@@ -19,6 +19,7 @@ export interface ListRulesParams {
   scene?: string;
   section?: string;
   year?: number;
+  search?: string;
 }
 
 export interface CreateRuleData {
@@ -44,10 +45,12 @@ export const rulesApi = {
   async list(params: ListRulesParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
     if (params.scene) queryParams.append('scene', params.scene);
     if (params.section) queryParams.append('section', params.section);
     if (params.year) queryParams.append('year', params.year.toString());
+    if (params.search) queryParams.append('search', params.search);
 
     const queryString = queryParams.toString();
     return apiRequest<{
@@ -94,6 +97,54 @@ export const rulesApi = {
   async delete(ruleId: number) {
     return apiRequest<{ message: string }>(`/rules/${ruleId}`, {
       method: 'DELETE',
+    });
+  },
+
+  /**
+   * List available rules on scenerules.org.
+   */
+  async listScenerules(params?: {
+    scene?: string;
+    section?: string;
+    year?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params?.scene) queryParams.append('scene', params.scene);
+    if (params?.section) queryParams.append('section', params.section);
+    if (params?.year) queryParams.append('year', params.year.toString());
+
+    const queryString = queryParams.toString();
+    return apiRequest<{
+      rules: Array<{
+        name: string;
+        section: string;
+        year: number;
+        scene: string;
+        url_nfo: string;
+        url_html: string;
+        is_downloaded?: boolean;
+        local_rule_id?: number;
+      }>;
+      total: number;
+    }>(`/rules/scenerules${queryString ? `?${queryString}` : ''}`);
+  },
+
+  /**
+   * Download rule from scenerules.org.
+   */
+  async downloadFromScenerules(data: {
+    section?: string;
+    year?: number;
+    scene?: string;
+    url?: string;
+  }) {
+    return apiRequest<{
+      rule: Rule;
+      message: string;
+      was_existing: boolean;
+    }>('/rules/scenerules/download', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   },
 };

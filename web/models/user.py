@@ -87,6 +87,18 @@ class User(db.Model):
             "modify_at": self.modify_at.isoformat() if self.modify_at else None,
         }
 
+    def is_admin(self) -> bool:
+        """Check if user is admin.
+
+        Admin is determined by having a role named "admin" or "administrator".
+
+        Returns:
+            True if user is admin, False otherwise.
+        """
+        admin_roles = ["admin", "administrator"]
+        user_role_names = [role.name.lower() for role in self.roles.all()]
+        return any(role_name in admin_roles for role_name in user_role_names)
+
     def __repr__(self) -> str:
         """String representation."""
         return f"<User {self.username}>"

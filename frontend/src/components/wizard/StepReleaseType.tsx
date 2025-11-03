@@ -6,7 +6,11 @@ interface StepReleaseTypeProps {
 }
 
 const RELEASE_TYPES = [
-  { value: 'EBOOK', label: 'EBOOK', description: 'Livres électroniques (EPUB, PDF, MOBI)' },
+  {
+    value: 'EBOOK',
+    label: 'EBOOK',
+    description: 'Livres électroniques (EPUB, PDF, MOBI)',
+  },
   { value: 'TV', label: 'TV', description: 'Séries télévisées' },
   { value: 'DOCS', label: 'DOCS', description: 'Documentaires' },
   { value: 'AUDIOBOOK', label: 'AUDIOBOOK', description: 'Livres audio' },
@@ -16,7 +20,10 @@ const RELEASE_TYPES = [
 /**
  * Step 2: Release type selection component.
  */
-export function StepReleaseType({ initialValue, onNext }: StepReleaseTypeProps) {
+export function StepReleaseType({
+  initialValue,
+  onNext,
+}: StepReleaseTypeProps) {
   const handleSelect = (releaseType: string) => {
     onNext({ release_type: releaseType });
   };
@@ -27,7 +34,7 @@ export function StepReleaseType({ initialValue, onNext }: StepReleaseTypeProps) 
       <p className="text-muted">Sélectionnez le type de release à créer.</p>
 
       <div className="row g-3">
-        {RELEASE_TYPES.map((type) => (
+        {RELEASE_TYPES.map(type => (
           <div key={type.value} className="col-md-6 col-lg-4">
             <div
               className={`card h-100 cursor-pointer ${
@@ -37,7 +44,7 @@ export function StepReleaseType({ initialValue, onNext }: StepReleaseTypeProps) 
               style={{ cursor: 'pointer' }}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   handleSelect(type.value);
                 }

@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import pytest
-
 from web.extensions import db
-from web.models import Group, Permission, Role, User
+from web.models import Group, Role, User
 
 
 def test_db_connection(app) -> None:

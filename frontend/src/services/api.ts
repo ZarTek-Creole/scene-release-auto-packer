@@ -1,6 +1,7 @@
 /** API service for backend communication. */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 export interface ApiResponse<T> {
   data?: T;
@@ -37,7 +38,9 @@ export async function apiRequest<T>(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Request failed' }));
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Request failed' }));
     throw new Error(error.message || `HTTP ${response.status}`);
   }
 
@@ -82,7 +85,9 @@ export const authApi = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Login failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Login failed' }));
       throw new Error(error.message || 'Login failed');
     }
 
@@ -107,6 +112,8 @@ export const authApi = {
    * Get current user.
    */
   async getCurrentUser() {
-    return apiRequest<{ user: { id: number; username: string; email: string } }>('/auth/me');
+    return apiRequest<{
+      user: { id: number; username: string; email: string };
+    }>('/auth/me');
   },
 };

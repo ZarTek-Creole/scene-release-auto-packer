@@ -39,7 +39,11 @@ export function WizardNavigation({
             Suivant
           </button>
         ) : (
-          <button type="button" className="btn btn-success" disabled={!canGoNext}>
+          <button
+            type="button"
+            className="btn btn-success"
+            disabled={!canGoNext}
+          >
             Finaliser
           </button>
         )}

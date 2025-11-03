@@ -36,7 +36,8 @@ export const rolesApi = {
   async list(params: ListRolesParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
     if (params.name) queryParams.append('name', params.name);
 
     const queryString = queryParams.toString();

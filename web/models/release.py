@@ -39,5 +39,8 @@ class Release(db.Model):
             "group_id": self.group_id,
             "release_type": self.release_type,
             "status": self.status,
+            "release_metadata": self.release_metadata or {},
+            "config": self.config or {},
+            "file_path": self.file_path,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

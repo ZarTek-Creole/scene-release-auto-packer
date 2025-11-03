@@ -1,7 +1,9 @@
 /** Tests for Dashboard component. */
 
 import { render, screen, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
+import { ThemeProvider } from '../../contexts/ThemeContext';
 import { Dashboard } from '../../pages/Dashboard';
 import * as api from '../../services/api';
 
@@ -13,7 +15,13 @@ describe('Dashboard', () => {
       () => new Promise(() => {}) // Never resolves
     );
 
-    render(<Dashboard />);
+    render(
+      <ThemeProvider>
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      </ThemeProvider>
+    );
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
@@ -33,7 +41,13 @@ describe('Dashboard', () => {
       },
     });
 
-    render(<Dashboard />);
+    render(
+      <ThemeProvider>
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      </ThemeProvider>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Total Releases')).toBeInTheDocument();
@@ -46,7 +60,13 @@ describe('Dashboard', () => {
       new Error('Failed to load')
     );
 
-    render(<Dashboard />);
+    render(
+      <ThemeProvider>
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      </ThemeProvider>
+    );
 
     await waitFor(() => {
       expect(screen.getByText(/failed to load/i)).toBeInTheDocument();

@@ -20,11 +20,14 @@ const STEP_LABELS = [
 /**
  * Wizard progress indicator component.
  */
-export function WizardProgress({ currentStep, totalSteps }: WizardProgressProps) {
+export function WizardProgress({
+  currentStep,
+  totalSteps,
+}: WizardProgressProps) {
   return (
     <div className="wizard-progress mb-4">
       <div className="progress" style={{ height: '30px' }}>
-        {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
+        {Array.from({ length: totalSteps }, (_, i) => i + 1).map(step => (
           <div
             key={step}
             className={`progress-step ${step <= currentStep ? 'active' : ''} ${

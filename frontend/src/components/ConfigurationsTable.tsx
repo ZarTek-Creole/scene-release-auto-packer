@@ -43,25 +43,32 @@ export function ConfigurationsTable({
         setConfigurations(response.data?.configurations || []);
         setPagination(response.data?.pagination || pagination);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load configurations');
+        setError(
+          err instanceof Error ? err.message : 'Failed to load configurations'
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchConfigurations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filters]);
 
   const handleDelete = async (configId: number) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette configuration ?')) {
+    if (
+      window.confirm('Êtes-vous sûr de vouloir supprimer cette configuration ?')
+    ) {
       try {
         await configurationsApi.delete(configId);
-        setConfigurations(configurations.filter((c) => c.id !== configId));
+        setConfigurations(configurations.filter(c => c.id !== configId));
         if (onDelete) {
           onDelete(configId);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to delete configuration');
+        setError(
+          err instanceof Error ? err.message : 'Failed to delete configuration'
+        );
       }
     }
   };
@@ -105,7 +112,7 @@ export function ConfigurationsTable({
               </td>
             </tr>
           ) : (
-            configurations.map((config) => (
+            configurations.map(config => (
               <tr key={config.id}>
                 <td>{config.id}</td>
                 <td>
@@ -155,7 +162,9 @@ export function ConfigurationsTable({
                 Page {page} sur {pagination.pages}
               </span>
             </li>
-            <li className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}
+            >
               <button className="page-link" onClick={() => setPage(page + 1)}>
                 Suivant
               </button>

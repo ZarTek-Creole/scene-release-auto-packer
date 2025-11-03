@@ -67,7 +67,7 @@ def refresh() -> tuple[dict, int]:
         JSON response with new access token.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user or not user.active:
         return {"message": "User not found or inactive"}, 404
@@ -108,7 +108,7 @@ def get_current_user() -> tuple[dict, int]:
         JSON response with user data.
     """
     current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
+    user = db.session.get(User, current_user_id)
 
     if not user:
         return {"message": "User not found"}, 404

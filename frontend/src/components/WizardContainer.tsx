@@ -20,7 +20,7 @@ export function WizardContainer({
   totalSteps,
   onStepChange,
 }: WizardContainerProps) {
-  const [jobId, setJobId] = useState<number | null>(null);
+  const [_jobId, _setJobId] = useState<number | null>(null);
 
   return (
     <div className="wizard-container">

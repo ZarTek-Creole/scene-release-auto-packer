@@ -14,7 +14,11 @@ interface RolesTableProps {
 /**
  * Roles table component with filters and pagination.
  */
-export function RolesTable({ filters = {}, onEdit, onDelete }: RolesTableProps) {
+export function RolesTable({
+  filters = {},
+  onEdit,
+  onDelete,
+}: RolesTableProps) {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,13 +49,14 @@ export function RolesTable({ filters = {}, onEdit, onDelete }: RolesTableProps) 
     };
 
     fetchRoles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filters]);
 
   const handleDelete = async (roleId: number) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')) {
       try {
         await rolesApi.delete(roleId);
-        setRoles(roles.filter((r) => r.id !== roleId));
+        setRoles(roles.filter(r => r.id !== roleId));
         if (onDelete) {
           onDelete(roleId);
         }
@@ -100,14 +105,14 @@ export function RolesTable({ filters = {}, onEdit, onDelete }: RolesTableProps) 
               </td>
             </tr>
           ) : (
-            roles.map((role) => (
+            roles.map(role => (
               <tr key={role.id}>
                 <td>{role.id}</td>
                 <td>{role.name}</td>
                 <td>{role.description || '-'}</td>
                 <td>
                   {role.permissions.length > 0
-                    ? role.permissions.map((p) => (
+                    ? role.permissions.map(p => (
                         <span key={p.id} className="badge bg-info me-1">
                           {p.name}
                         </span>
@@ -121,13 +126,17 @@ export function RolesTable({ filters = {}, onEdit, onDelete }: RolesTableProps) 
                   <button
                     className="btn btn-sm btn-outline-primary me-2"
                     onClick={() => onEdit && onEdit(role)}
+                    aria-label={`Éditer rôle ${role.name}`}
                   >
+                    <i className="bi bi-pencil me-1" aria-hidden="true" />
                     Éditer
                   </button>
                   <button
                     className="btn btn-sm btn-outline-danger"
                     onClick={() => handleDelete(role.id)}
+                    aria-label={`Supprimer rôle ${role.name}`}
                   >
+                    <i className="bi bi-trash me-1" aria-hidden="true" />
                     Supprimer
                   </button>
                 </td>
@@ -150,7 +159,9 @@ export function RolesTable({ filters = {}, onEdit, onDelete }: RolesTableProps) 
                 Page {page} sur {pagination.pages}
               </span>
             </li>
-            <li className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}
+            >
               <button className="page-link" onClick={() => setPage(page + 1)}>
                 Suivant
               </button>

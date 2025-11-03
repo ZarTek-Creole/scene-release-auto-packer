@@ -32,6 +32,8 @@ export interface UpdateUserData {
   username?: string;
   email?: string;
   password?: string;
+  note?: string;
+  active?: boolean;
   role_ids?: number[];
 }
 
@@ -42,10 +44,12 @@ export const usersApi = {
   async list(params: ListUsersParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
     if (params.username) queryParams.append('username', params.username);
     if (params.email) queryParams.append('email', params.email);
-    if (params.role_id) queryParams.append('role_id', params.role_id.toString());
+    if (params.role_id)
+      queryParams.append('role_id', params.role_id.toString());
 
     const queryString = queryParams.toString();
     return apiRequest<{

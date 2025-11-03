@@ -24,7 +24,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const resolvedTheme = useMemo<ResolvedTheme>(() => {
     if (theme === 'system') {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     }
     return theme;
   }, [theme]);

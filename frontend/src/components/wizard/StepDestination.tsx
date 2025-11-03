@@ -8,7 +8,7 @@ interface StepDestinationProps {
  * Step 9: Destination selection component.
  */
 export function StepDestination({ onFinalize }: StepDestinationProps) {
-  const handleFinalize = () => {
+  const _handleFinalize = () => {
     onFinalize({});
   };
 
@@ -16,10 +16,12 @@ export function StepDestination({ onFinalize }: StepDestinationProps) {
     <div className="wizard-step">
       <h3>Étape 9 : Destination</h3>
       <p className="text-muted">
-        Sélectionnez la destination pour l'upload du package. Cette fonctionnalité sera implémentée
-        dans les prochaines phases.
+        Sélectionnez la destination pour l'upload du package. Cette
+        fonctionnalité sera implémentée dans les prochaines phases.
       </p>
-      <div className="alert alert-info">Aucune destination configurée. Le package sera créé localement.</div>
+      <div className="alert alert-info">
+        Aucune destination configurée. Le package sera créé localement.
+      </div>
     </div>
   );
 }

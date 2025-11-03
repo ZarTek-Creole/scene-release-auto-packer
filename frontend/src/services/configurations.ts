@@ -40,7 +40,8 @@ export const configurationsApi = {
   async list(params: ListConfigurationsParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
     if (params.category) queryParams.append('category', params.category);
     if (params.key) queryParams.append('key', params.key);
 

@@ -16,7 +16,11 @@ interface UsersTableProps {
 /**
  * Users table component with filters and pagination.
  */
-export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) {
+export function UsersTable({
+  filters = {},
+  onEdit,
+  onDelete,
+}: UsersTableProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,13 +51,16 @@ export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) 
     };
 
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filters]);
 
   const handleDelete = async (userId: number) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+    if (
+      window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')
+    ) {
       try {
         await usersApi.delete(userId);
-        setUsers(users.filter((u) => u.id !== userId));
+        setUsers(users.filter(u => u.id !== userId));
         if (onDelete) {
           onDelete(userId);
         }
@@ -103,14 +110,14 @@ export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) 
               </td>
             </tr>
           ) : (
-            users.map((user) => (
+            users.map(user => (
               <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>
                   {user.roles.length > 0
-                    ? user.roles.map((r) => (
+                    ? user.roles.map(r => (
                         <span key={r.id} className="badge bg-primary me-1">
                           {r.name}
                         </span>
@@ -119,7 +126,7 @@ export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) 
                 </td>
                 <td>
                   {user.groups.length > 0
-                    ? user.groups.map((g) => (
+                    ? user.groups.map(g => (
                         <span key={g.id} className="badge bg-secondary me-1">
                           {g.name}
                         </span>
@@ -127,7 +134,9 @@ export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) 
                     : '-'}
                 </td>
                 <td>
-                  <span className={`badge bg-${user.active ? 'success' : 'danger'}`}>
+                  <span
+                    className={`badge bg-${user.active ? 'success' : 'danger'}`}
+                  >
                     {user.active ? 'Actif' : 'Inactif'}
                   </span>
                 </td>
@@ -164,7 +173,9 @@ export function UsersTable({ filters = {}, onEdit, onDelete }: UsersTableProps) 
                 Page {page} sur {pagination.pages}
               </span>
             </li>
-            <li className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}
+            >
               <button className="page-link" onClick={() => setPage(page + 1)}>
                 Suivant
               </button>
