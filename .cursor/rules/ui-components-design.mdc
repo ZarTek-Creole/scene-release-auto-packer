@@ -1,0 +1,298 @@
+---
+name: ui-components-design
+description: Règles strictes pour Composants UI - Structure, Props, États, Accessibilité selon Design System
+globs:
+  - "**/*.{ts,tsx,js,jsx}"
+---
+
+# UI Components Design - eBook Scene Packer v2
+
+## 🎯 Principe Fondamental
+
+**Tous les composants UI DOIVENT suivre strictement le Design System** documenté dans `docs/DESIGN_SYSTEM_UI_UX.md` et la règle `design-system-ui-ux.mdc`.
+
+---
+
+## 🏗️ Structure Composants
+
+### Format Standard
+
+```tsx
+// ✅ Bon : Composant selon Design System
+import React from 'react';
+import { PlusIcon } from 'bootstrap-icons-react';
+import './Button.css';  // Styles selon Design System
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  disabled?: boolean;
+  loading?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+  'aria-label'?: string;
+}
+
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  icon,
+  iconPosition = 'left',
+  disabled = false,
+  loading = false,
+  onClick,
+  children,
+  'aria-label': ariaLabel,
+}) => {
+  return (
+    <button
+      className={`btn btn-${variant} btn-${size}`}
+      disabled={disabled || loading}
+      onClick={onClick}
+      aria-label={ariaLabel || (typeof children === 'string' ? children : undefined)}
+      aria-busy={loading}
+    >
+      {loading && <SpinnerIcon className="icon-sm" />}
+      {icon && iconPosition === 'left' && <span className="icon-left">{icon}</span>}
+      {children}
+      {icon && iconPosition === 'right' && <span className="icon-right">{icon}</span>}
+    </button>
+  );
+};
+```
+
+### Règles Structure
+
+1. **TypeScript strict** : Tous props typés, pas de `any`
+2. **Props Interface** : Interface dédiée avec `Props` suffix
+3. **Default Props** : Valeurs par défaut cohérentes avec Design System
+4. **Accessibilité** : ARIA labels, roles, états ARIA
+5. **Styles** : Classes CSS selon Design System (variables CSS)
+
+---
+
+## 🎨 Composants Principaux
+
+### Button
+
+**Variantes** :
+- `primary` : Action principale (bleu Bootstrap)
+- `secondary` : Action secondaire (gris)
+- `outline` : Bordure, fond transparent
+- `ghost` : Pas de bordure, fond au hover
+- `link` : Style lien
+
+**Tailles** :
+- `sm` : Padding `0.375rem 0.75rem`, font-size `0.875rem`
+- `md` : Padding `0.625rem 1.25rem`, font-size `1rem` - **DÉFAUT**
+- `lg` : Padding `0.75rem 1.5rem`, font-size `1.125rem`
+
+**États** :
+- `disabled` : Opacity 0.65, cursor not-allowed
+- `loading` : Spinner affiché, disabled automatique
+
+### Input
+
+**Props** :
+- `type` : text, email, password, number, etc.
+- `placeholder` : Texte placeholder
+- `error` : Message d'erreur affiché
+- `icon` : Icône Bootstrap Icons (optionnel)
+- `required` : Champ requis (astérisque)
+- `aria-describedby` : Lien vers help/error text
+
+**Validation** :
+- Affichage erreur : Rouge, icône erreur
+- Help text : Gris, icône info
+- Border rouge si erreur
+
+### Card
+
+**Structure** :
+- `CardHeader` : Titre, sous-titre, actions
+- `CardBody` : Contenu principal
+- `CardFooter` : Actions, boutons
+
+**Styles** :
+- Border radius : `var(--border-radius-lg)`
+- Border : `var(--border-width) var(--border-style) var(--border-color)`
+- Box shadow : `var(--shadow-sm)` (hover : `var(--shadow-md)`)
+- Padding : `var(--spacing-6)`
+
+### Tabs
+
+**Structure** :
+- `TabList` : Liste onglets avec icônes
+- `Tab` : Onglet individuel (aria-selected, aria-controls)
+- `TabPanels` : Conteneur panels
+- `TabPanel` : Panel contenu (aria-labelledby)
+
+**Accessibilité** :
+- `role="tablist"` sur TabList
+- `role="tab"` sur Tab
+- `role="tabpanel"` sur TabPanel
+- `aria-selected`, `aria-controls`, `aria-labelledby`
+
+---
+
+## 🎯 NFO Viewer (Composant Spécial)
+
+**Spécifique au projet** : Visualisation fichiers NFO Scene
+
+```tsx
+interface NFOViewerProps {
+  content: string;
+  lineNumbers?: boolean;
+  maxWidth?: number;  // 80 colonnes par défaut
+  theme?: 'light' | 'dark';
+}
+
+export const NFOViewer: React.FC<NFOViewerProps> = ({
+  content,
+  lineNumbers = false,
+  maxWidth = 80,
+  theme = 'light',
+}) => {
+  return (
+    <pre
+      className="nfo-viewer"
+      style={{
+        fontFamily: 'var(--font-family-monospace)',
+        fontSize: 'var(--font-size-sm)',
+        maxWidth: `${maxWidth}ch`,
+      }}
+    >
+      {content}
+    </pre>
+  );
+};
+```
+
+**Styles** :
+- Font : `var(--font-family-monospace)`
+- Font size : `var(--font-size-sm)` (14px)
+- Line height : `var(--line-height-tight)` (1.25)
+- Background : `var(--bg-secondary)`
+- Border : `var(--border-width) var(--border-style) var(--border-color)`
+- Border radius : `var(--border-radius)`
+- White-space : `pre-wrap`
+- Max width : 80 colonnes (ASCII Scene standard)
+
+---
+
+## 🎨 Progress Bar
+
+**Props** :
+- `value` : Valeur actuelle (0-100)
+- `max` : Valeur maximale (défaut 100)
+- `label` : Label visible
+- `showPercentage` : Afficher pourcentage
+
+**Styles** :
+- Background : `var(--bg-tertiary)`
+- Fill : `var(--color-primary)`
+- Border radius : `var(--border-radius-full)` (pill)
+- Height : `1.25rem`
+- Transition : `var(--transition-normal)`
+
+---
+
+## ♿ Accessibilité Obligatoire
+
+### Contraste Couleurs
+- ✅ Texte normal : Ratio ≥ 4.5:1
+- ✅ Texte large (18px+) : Ratio ≥ 3:1
+- ✅ Éléments interactifs : Ratio ≥ 3:1
+
+### Focus Visible
+```css
+/* ✅ Obligatoire : Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+```
+
+### ARIA Labels
+```tsx
+// ✅ Bon : ARIA labels présents
+<Button
+  aria-label="Ajouter une nouvelle release"
+  aria-busy={loading}
+>
+  <PlusIcon aria-hidden="true" />
+  Ajouter
+</Button>
+
+// ❌ Éviter : Pas d'ARIA
+<button onClick={handleClick}>
+  <PlusIcon />
+</button>
+```
+
+### Navigation Clavier
+- ✅ Tab order logique
+- ✅ Skip links pour navigation principale
+- ✅ Événements clavier (Enter, Space, Escape)
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Props Non Typés
+```tsx
+// ❌ Mauvais
+export const Button = (props: any) => {
+  // ...
+};
+
+// ✅ Bon
+interface ButtonProps {
+  variant: 'primary' | 'secondary';
+  // ...
+}
+export const Button: React.FC<ButtonProps> = (props) => {
+  // ...
+};
+```
+
+### ❌ Styles Inline Hardcodés
+```tsx
+// ❌ Mauvais
+<div style={{ padding: '20px', backgroundColor: '#fff' }}>
+
+// ✅ Bon
+<div className="card" style={{ padding: 'var(--spacing-8)' }}>
+```
+
+### ❌ Composants Sans Accessibilité
+```tsx
+// ❌ Mauvais
+<button onClick={handleClick}>
+  <Icon />
+</button>
+
+// ✅ Bon
+<button
+  onClick={handleClick}
+  aria-label="Action description"
+>
+  <Icon aria-hidden="true" />
+</button>
+```
+
+---
+
+## 📚 Références
+
+- **Design System** : `docs/DESIGN_SYSTEM_UI_UX.md` ⭐
+- **Règle Design System** : `.cursor/rules/design-system-ui-ux.mdc`
+- **Bootstrap Icons** : https://icons.getbootstrap.com/
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

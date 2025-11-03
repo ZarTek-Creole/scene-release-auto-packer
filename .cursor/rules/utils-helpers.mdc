@@ -1,0 +1,46 @@
+---
+name: utils-helpers
+description: Règles strictes pour Utils Helpers - Utilitaires Réutilisables
+globs:
+  - "**/*.py"
+---
+
+# Utils Helpers - Règles Strictes
+
+## 🎯 Objectif
+
+Utilitaires réutilisables sans logique métier (crypto, validators, helpers).
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Chiffrement Fernet
+
+**Obligatoire** : Credentials (API keys, passwords)
+
+**Module** : `web/utils/crypto.py`
+
+---
+
+### 2. Validators
+
+**Format** : Regex validation (groups, etc.)
+
+**Module** : `web/utils/validators.py`
+
+---
+
+### 3. Pas de Logique Métier
+
+**Interdiction** : Logique métier dans utils (→ Services)
+
+---
+
+## 📚 Références
+
+- **PRD-007** : `docs/PRDs/PRD-007-Configurations.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01

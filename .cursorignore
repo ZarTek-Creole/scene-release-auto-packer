@@ -1,0 +1,129 @@
+# ===========================================
+# .cursorignore - eBook Scene Packer v2
+# Fichiers/dossiers à exclure de l'indexation Cursor
+# ===========================================
+
+# ===========================================
+# Dependencies
+# ===========================================
+node_modules/
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ===========================================
+# Build outputs
+# ===========================================
+dist/
+build/
+frontend/dist/
+frontend/build/
+.htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# ===========================================
+# Cache and temporary files
+# ===========================================
+.pytest_cache/
+.mypy_cache/
+.cache/
+*.log
+*.tmp
+*.bak
+.cursor-cache/
+.mcp-cache/
+
+# ===========================================
+# Large binary files
+# ===========================================
+*.zip
+*.rar
+*.ZIP
+*.RAR
+*.pdf
+*.epub
+*.mobi
+*.avi
+*.mkv
+*.mp4
+releases/
+uploads/
+ebooks/
+
+# ===========================================
+# Version 1 (backup) - Garder structure mais ignorer contenu détaillé
+# ===========================================
+v1/**/*.py
+v1/**/*.js
+v1/**/*.html
+v1/**/*.css
+# Mais garder la structure pour référence
+!v1/
+!v1/README.md
+
+# ===========================================
+# Tests artifacts
+# ===========================================
+test-results/
+playwright-report/
+playwright/.cache/
+htmlcov/
+.coverage
+
+# ===========================================
+# Documentation générée
+# ===========================================
+docs/_build/
+docs/.doctrees/
+site/
+
+# ===========================================
+# Database files
+# ===========================================
+*.db
+*.sqlite
+*.sqlite3
+instance/*.db
+
+# ===========================================
+# IDE files
+# ===========================================
+.vscode/
+.idea/
+*.sublime-*
+
+# ===========================================
+# OS files
+# ===========================================
+.DS_Store
+Thumbs.db
+.directory
+
+# ===========================================
+# Secrets
+# ===========================================
+.env
+.env.local
+*.key
+*.pem
+secrets/
+
+# ===========================================
+# Large generated files
+# ===========================================
+# Audit results (commenter si besoin)
+audit_results/
+*.json.bak
+
+# ===========================================
+# Cache directories spécifiques projet
+# ===========================================
+rules_cache/
+cache/
+.backup-*/
+

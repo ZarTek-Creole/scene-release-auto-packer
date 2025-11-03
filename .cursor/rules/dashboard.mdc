@@ -1,0 +1,51 @@
+---
+name: dashboard
+description: Règles strictes pour Dashboard - Statistiques et Navigation
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Dashboard - Règles Strictes
+
+## 🎯 Objectif
+
+Dashboard avec statistiques, navigation rapide et informations utilisateur.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Statistiques
+
+**Affichage** :
+- Nombre releases (total, par groupe)
+- Jobs en cours/drafts
+- Utilisateurs actifs
+
+---
+
+### 2. Navigation Rapide
+
+**Liens** : Accès rapide sections principales
+
+---
+
+### 3. Jobs Drafts
+
+**Liste** : Jobs drafts avec bouton "Reprendre"
+
+---
+
+### 4. Thème Jour/Nuit
+
+**Toggle** : Basculer thème (sauvegarde préférence)
+
+---
+
+## 📚 Références
+
+- **PRD-001** : `docs/PRDs/PRD-001-Interface-Admin.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01

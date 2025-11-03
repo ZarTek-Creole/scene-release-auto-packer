@@ -1,0 +1,251 @@
+---
+alwaysApply: true
+---
+---
+name: mcp-tools-usage
+description: Règles d'utilisation des MCP Tools pour améliorer productivité et qualité
+globs:
+  - "**/*.{py,js,jsx,ts,tsx,md}"
+---
+
+# MCP Tools Usage - eBook Scene Packer v2
+
+## 🎯 Objectif
+
+Utiliser les **MCP (Model Context Protocol) Tools** pour améliorer productivité, qualité et documentation.
+
+**Documentation complète** : Voir `docs/MCP_TOOLS_GUIDE.md`
+
+---
+
+## 📋 Règles Générales
+
+### 1. Toujours Utiliser MCP Tools quand Approprié
+- ✅ **Utiliser MCP Tools** au lieu de méthodes manuelles
+- ✅ **Préférer MCP Tools** pour :
+  - Tests E2E (Playwright Browser MCP)
+  - Recherche documentation (Docs MCP, Context7 MCP)
+  - Analyse codebase (Repomix MCP)
+  - Résolution problèmes complexes (Sequential Thinking MCP)
+
+### 2. Connaître les MCP Tools Disponibles
+
+**Catégories** :
+1. **Repomix MCP** : Analyse et packaging codebase
+2. **Docs MCP Server** : Documentation bibliothèques
+3. **Playwright Browser MCP** : Tests E2E et validation UI
+4. **Context7 MCP** : Documentation structurée
+5. **Memory MCP** : Knowledge graph et entités
+6. **Sequential Thinking MCP** : Résolution problèmes complexes
+
+---
+
+## 🔧 Utilisation par Scénario
+
+### Scénario 1 : Tests E2E
+
+**⚠️ OBLIGATOIRE** : Utiliser **Playwright Browser MCP** pour tous les tests E2E au lieu de Playwright standard.
+
+```python
+# ✅ Bon : Utiliser Playwright MCP pour tests E2E
+def test_login_e2e():
+    """Test login E2E avec Playwright MCP."""
+    # 1. Naviguer vers application
+    mcp_playwright_browser_navigate(url="http://localhost:5000")
+    
+    # 2. Capturer état initial
+    snapshot = mcp_playwright_browser_snapshot()
+    assert "Login" in snapshot
+    
+    # 3. Interagir
+    mcp_playwright_browser_type(
+        element="username input",
+        ref="input[name='username']",
+        text="admin"
+    )
+    mcp_playwright_browser_type(
+        element="password input",
+        ref="input[name='password']",
+        text="password"
+    )
+    mcp_playwright_browser_click(
+        element="login button",
+        ref="button[type='submit']"
+    )
+    
+    # 4. Valider résultat
+    mcp_playwright_browser_wait_for(text="Dashboard")
+    final_snapshot = mcp_playwright_browser_snapshot()
+    assert "Dashboard" in final_snapshot
+
+# ❌ Éviter : Playwright standard si MCP disponible
+# from playwright.sync_api import sync_playwright
+# with sync_playwright() as p:
+#     browser = p.chromium.launch()
+#     # ...
+```
+
+---
+
+### Scénario 2 : Recherche Documentation
+
+**Quand** : Avant implémentation, résolution problème technique
+
+**Tools à utiliser** :
+1. `mcp_docs-mcp-server_search_docs` - Rechercher documentation
+2. `mcp_context7_get-library-docs` - Documentation structurée
+
+```python
+# ✅ Bon : Rechercher documentation avant implémentation
+def implement_react_component():
+    # 1. Rechercher documentation React
+    results = mcp_docs-mcp-server_search_docs(
+        library="react",
+        query="useState hook examples",
+        limit=5
+    )
+    
+    # 2. Si besoin, documentation plus détaillée
+    docs = mcp_context7_get-library-docs(
+        context7CompatibleLibraryID="/facebook/react",
+        topic="hooks",
+        tokens=5000
+    )
+    
+    # Utiliser résultats pour implémenter...
+```
+
+---
+
+### Scénario 3 : Analyse Codebase
+
+**Quand** : Refactoring majeur, audit code, début projet
+
+**Tools à utiliser** :
+1. `mcp_repomix_pack_codebase` - Packager codebase
+2. `mcp_repomix_grep_repomix_output` - Rechercher patterns
+
+```python
+# ✅ Bon : Packager codebase pour analyse majeure
+output = mcp_repomix_pack_codebase(
+    directory="/home/deffice/projects/ebook.scene.packer",
+    style="markdown",
+    compress=False
+)
+
+# Rechercher patterns spécifiques
+mcp_repomix_grep_repomix_output(
+    outputId=output.id,
+    pattern="def.*test_",
+    contextLines=5
+)
+```
+
+**⚠️ Important** : Ne pas packager pour petits changements. Utiliser `grep` directement.
+
+---
+
+### Scénario 4 : Résolution Problème Complexe
+
+**Quand** : Bug complexe, décision architecture
+
+**Tools à utiliser** :
+1. `mcp_sequential-thinking_sequentialthinking` - Pensée séquentielle
+2. `mcp_repomix_grep_repomix_output` - Analyser code
+3. `mcp_memory_search_nodes` - Rechercher connaissances
+
+```python
+# ✅ Bon : Analyser problème complexe
+mcp_sequential-thinking_sequentialthinking(
+    thought="Le wizard 9 étapes devient complexe à maintenir...",
+    thoughtNumber=1,
+    totalThoughts=5,
+    nextThoughtNeeded=True
+)
+```
+
+---
+
+## 🎯 Intégration avec TDD
+
+### Workflow TDD avec MCP Tools
+
+1. **Red** : Écrire test
+   - Utiliser `mcp_playwright_browser_snapshot` pour valider état initial
+   
+2. **Green** : Implémenter code minimal
+   - Utiliser `mcp_docs-mcp-server_search_docs` pour recherche documentation
+   - Utiliser `mcp_repomix_grep_repomix_output` pour trouver patterns similaires
+   
+3. **Refactor** : Améliorer code
+   - Utiliser `mcp_sequential-thinking_sequentialthinking` pour analyser améliorations
+   - Utiliser `mcp_playwright_browser_*` pour valider pas de régression
+
+4. **Validation** : Tests passent
+   - Utiliser `mcp_playwright_browser_take_screenshot` pour documentation
+   - Utiliser `mcp_memory_create_entities` pour documenter décisions
+
+---
+
+## ✅ Checklist Utilisation MCP Tools
+
+### Avant Utilisation
+- [ ] Objectif clair identifié
+- [ ] Tool approprié sélectionné
+- [ ] Pré-requis vérifiés (serveur démarré, etc.)
+
+### Pendant Utilisation
+- [ ] Utiliser tool de manière isolée
+- [ ] Capturer résultats pour documentation
+- [ ] Vérifier résultats cohérents
+
+### Après Utilisation
+- [ ] Analyser résultats
+- [ ] Intégrer dans code/documentation
+- [ ] Mettre à jour mémoire si pertinent
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Surutilisation
+```python
+# ❌ Mauvais : Packager codebase pour petit changement
+mcp_repomix_pack_codebase(...)  # Trop lourd pour changement mineur
+
+# ✅ Bon : Utiliser grep directement pour petits changements
+# Utiliser pack_codebase seulement pour analyses majeures
+```
+
+### ❌ Tests E2E Sans MCP
+```python
+# ❌ Mauvais : Playwright standard si MCP disponible
+from playwright.sync_api import sync_playwright
+
+# ✅ Bon : Toujours utiliser Playwright MCP pour E2E
+mcp_playwright_browser_navigate(...)
+```
+
+### ❌ Documentation Redondante
+```python
+# ❌ Mauvais : Indexer même bibliothèque plusieurs fois
+mcp_docs-mcp-server_scrape_docs(library="react")  # Déjà indexé
+
+# ✅ Bon : Vérifier d'abord avec list_libraries
+libraries = mcp_docs-mcp-server_list_libraries()
+if "react" not in libraries:
+    mcp_docs-mcp-server_scrape_docs(...)
+```
+
+---
+
+## 🔗 Liens
+
+- **Guide MCP Tools** : `docs/MCP_TOOLS_GUIDE.md`
+- **TDD Methodology** : `.cursor/rules/tdd-methodology.mdc`
+- **Test Plan** : `docs/TEST_PLAN.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

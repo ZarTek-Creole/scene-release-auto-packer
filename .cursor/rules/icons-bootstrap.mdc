@@ -1,0 +1,288 @@
+---
+name: icons-bootstrap
+description: Règles strictes pour Icônes Bootstrap - Bibliothèque exclusive, tailles, usage
+globs:
+  - "**/*.{ts,tsx,js,jsx}"
+---
+
+# Icônes Bootstrap - eBook Scene Packer v2
+
+## 🎯 Principe Fondamental
+
+**Bootstrap Icons OBLIGATOIRE** : Toutes les icônes DOIVENT provenir de Bootstrap Icons (2 000+ icônes). Aucune autre bibliothèque d'icônes autorisée.
+
+---
+
+## 🚨 RÈGLES ABSOLUES
+
+### 1. Bibliothèque Unique
+- ✅ **Bootstrap Icons UNIQUEMENT** (pas Font Awesome, Heroicons, Material Icons, etc.)
+- ✅ **Installation** : `npm install bootstrap-icons` ou `npm install bootstrap-icons-react`
+- ✅ **JAMAIS** mélanger plusieurs bibliothèques d'icônes
+
+### 2. Tailles Standardisées
+- ✅ **Tailles** : xs, sm, md, lg, xl (selon Design System)
+- ✅ **DÉFAUT** : `icon-md` (1.25rem / 20px)
+- ✅ **TOUJOURS** utiliser classes CSS ou tailles standardisées
+
+### 3. Accessibilité
+- ✅ **ARIA** : `aria-hidden="true"` si icône décorative
+- ✅ **Label** : `aria-label` sur élément parent si icône seule (sans texte)
+- ✅ **Screen readers** : Texte alternatif si nécessaire
+
+---
+
+## 📦 Installation
+
+### Option 1 : Bootstrap Icons React
+
+```bash
+npm install bootstrap-icons-react
+```
+
+```tsx
+// ✅ Bon : Import Bootstrap Icons React
+import { Plus, List, FileText, Users, Shield, Settings } from 'bootstrap-icons-react';
+
+<Plus className="icon-md" />
+```
+
+### Option 2 : Bootstrap Icons (SVG)
+
+```bash
+npm install bootstrap-icons
+```
+
+```tsx
+// ✅ Bon : Import SVG Bootstrap Icons
+import * as BootstrapIcons from 'bootstrap-icons/icons';
+
+// Utilisation via composant wrapper
+<Icon name="plus" className="icon-md" />
+```
+
+---
+
+## 🎨 Tailles Standardisées
+
+### Classes CSS
+
+```css
+/* Tailles standardisées */
+.icon-xs {
+  width: 0.75rem;   /* 12px */
+  height: 0.75rem;
+}
+
+.icon-sm {
+  width: 1rem;       /* 16px */
+  height: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;   /* 20px - DÉFAUT */
+  height: 1.25rem;
+}
+
+.icon-lg {
+  width: 1.5rem;    /* 24px */
+  height: 1.5rem;
+}
+
+.icon-xl {
+  width: 2rem;      /* 32px */
+  height: 2rem;
+}
+```
+
+### Usage
+
+```tsx
+// ✅ Bon : Taille standardisée
+<PlusIcon className="icon-md" />
+
+// ✅ Bon : Taille inline (si nécessaire)
+<PlusIcon style={{ width: '1.25rem', height: '1.25rem' }} />
+
+// ❌ Éviter : Taille non standardisée
+<PlusIcon size={18} />
+```
+
+---
+
+## 🎯 Mapping Icônes par Fonctionnalité
+
+### Navigation
+```tsx
+import { Plus, List, FileText, People, ShieldCheck, Gear } from 'bootstrap-icons-react';
+
+// Onglets navigation
+<Plus className="icon-md" />           // Nouvelle Release
+<List className="icon-md" />           // Liste Releases
+<FileText className="icon-md" />       // Rules
+<People className="icon-md" />         // Utilisateurs
+<ShieldCheck className="icon-md" />    // Rôles
+<Gear className="icon-md" />           // Configurations
+```
+
+### Actions Communes
+```tsx
+import { Pencil, Trash, Save, X, Check, Search, Filter, Download, Upload, ArrowClockwise } from 'bootstrap-icons-react';
+
+<Pencil />      // Éditer
+<Trash />       // Supprimer
+<Save />        // Sauvegarder
+<X />           // Fermer/Annuler
+<Check />       // Valider
+<Search />      // Rechercher
+<Filter />      // Filtrer
+<Download />    // Télécharger
+<Upload />      // Uploader
+<ArrowClockwise />  // Rafraîchir
+```
+
+### Wizard
+```tsx
+import { ArrowLeft, ArrowRight, CheckCircle, Circle, Play } from 'bootstrap-icons-react';
+
+<ArrowLeft />       // Précédent
+<ArrowRight />      // Suivant
+<CheckCircle />     // Étape complétée
+<Circle />          // Étape incomplète
+<Play />            // Démarrer packaging
+```
+
+### Thème
+```tsx
+import { Sun, Moon } from 'bootstrap-icons-react';
+
+<Sun />     // Thème jour
+<Moon />    // Thème nuit
+```
+
+### États
+```tsx
+import { InfoCircle, ExclamationTriangle, XCircle, CheckCircle } from 'bootstrap-icons-react';
+
+<InfoCircle />            // Information
+<ExclamationTriangle />   // Avertissement
+<XCircle />              // Erreur
+<CheckCircle />          // Succès
+```
+
+---
+
+## ✅ Usage Correct
+
+### Avec Texte
+
+```tsx
+// ✅ Bon : Icône + texte
+<Button>
+  <Plus className="icon-md" aria-hidden="true" />
+  Ajouter
+</Button>
+
+// ✅ Bon : Icône seule avec aria-label
+<Button aria-label="Ajouter une nouvelle release">
+  <Plus className="icon-md" aria-hidden="true" />
+</Button>
+```
+
+### Sans Texte
+
+```tsx
+// ✅ Bon : Icône seule avec aria-label explicite
+<button
+  aria-label="Basculer vers thème sombre"
+  onClick={toggleTheme}
+>
+  <Moon className="icon-md" aria-hidden="true" />
+</button>
+```
+
+### Dans Navigation
+
+```tsx
+// ✅ Bon : Onglet avec icône
+<Tab id="new-release" aria-selected={active === 'new-release'}>
+  <Plus className="icon-md" aria-hidden="true" />
+  <span>Nouvelle Release</span>
+</Tab>
+```
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Autres Bibliothèques
+```tsx
+// ❌ Mauvais : Font Awesome
+import { FaPlus } from 'react-icons/fa';
+
+// ❌ Mauvais : Heroicons
+import { PlusIcon } from '@heroicons/react/24/outline';
+
+// ❌ Mauvais : Material Icons
+import AddIcon from '@mui/icons-material/Add';
+
+// ✅ Bon : Bootstrap Icons uniquement
+import { Plus } from 'bootstrap-icons-react';
+```
+
+### ❌ Tailles Non Standardisées
+```tsx
+// ❌ Mauvais : Taille hardcodée
+<PlusIcon size={18} />
+
+// ❌ Mauvais : Taille non standardisée
+<PlusIcon width="17px" height="17px" />
+
+// ✅ Bon : Classe standardisée
+<PlusIcon className="icon-md" />
+```
+
+### ❌ Pas d'Accessibilité
+```tsx
+// ❌ Mauvais : Pas d'ARIA
+<button onClick={handleClick}>
+  <PlusIcon />
+</button>
+
+// ✅ Bon : ARIA labels présents
+<button
+  onClick={handleClick}
+  aria-label="Ajouter"
+>
+  <PlusIcon aria-hidden="true" />
+</button>
+```
+
+---
+
+## 📚 Références
+
+- **Bootstrap Icons** : https://icons.getbootstrap.com/
+- **Design System** : `docs/DESIGN_SYSTEM_UI_UX.md` (section Icônes)
+- **Règle Design System** : `.cursor/rules/design-system-ui-ux.mdc`
+
+---
+
+## ✅ Checklist Utilisation Icônes
+
+### Obligatoire
+- [ ] Bootstrap Icons uniquement (pas d'autres bibliothèques)
+- [ ] Taille standardisée (xs, sm, md, lg, xl)
+- [ ] ARIA labels si icône seule (sans texte)
+- [ ] `aria-hidden="true"` si icône décorative (avec texte)
+
+### Recommandé
+- [ ] Import groupé pour performance
+- [ ] Icon component wrapper si réutilisation fréquente
+- [ ] Documentation mapping icônes par fonctionnalité
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

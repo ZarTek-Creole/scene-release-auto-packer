@@ -1,0 +1,1308 @@
+---
+name: ui-ux-modern-2025
+description: Règles complètes/totales/intégrales pour Design UX/UI Moderne 2025 - Meilleures pratiques, tendances, accessibilité, performance, React 19
+globs:
+  - "**/*.{tsx,ts,jsx,js,css,scss}"
+alwaysApply: true
+---
+
+# 🎨 Design UX/UI Moderne 2025 - Règles Complètes/Total/Intégrales
+
+**Date** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️  
+**Objectif** : Design intégralement clair, moderne, professionnel et accessible selon meilleures pratiques 2025
+
+---
+
+## 🚨 PRINCIPES ABSOLUS
+
+### 1. Design Intégralement Clair et Moderne
+- ✅ **Clarté totale** : Aucune ambiguïté visuelle, interface intuitive
+- ✅ **Modernité 2025** : Design contemporain, tendances actuelles
+- ✅ **Cohérence absolue** : Même langage visuel partout
+- ✅ **Accessibilité WCAG 2.2 AA minimum** : Contraste, focus, ARIA
+- ✅ **Performance** : Chargement rapide, interactions fluides (< 100ms)
+
+### 2. Règles Non Négociables
+- ❌ **JAMAIS** d'éléments UI non conformes au Design System
+- ❌ **JAMAIS** de polices, couleurs, icônes hors Design System
+- ❌ **JAMAIS** d'espacements arbitraires (toujours système 4px)
+- ❌ **JAMAIS** de bordures non standardisées
+- ❌ **JAMAIS** d'accessibilité négligée
+
+---
+
+## 🎨 SYSTÈME DE COULEURS (Tendances 2025)
+
+### Palette Moderne 2025
+
+**Tendances 2025** :
+- Couleurs douces mais contrastées
+- Gradients subtils (optionnels)
+- Mode sombre par défaut préféré
+- Couleurs accessibles (WCAG 2.2 AA)
+
+```css
+:root {
+  /* === COULEURS PRIMAIRES (Jour) === */
+  --primary: #0d6efd;              /* Bleu moderne Bootstrap 5 */
+  --primary-hover: #0b5ed7;
+  --primary-active: #0a58ca;
+  --primary-light: #cfe2ff;
+  --primary-dark: #084298;
+  
+  /* === COULEURS PRIMAIRES (Nuit) === */
+  --primary-dark-mode: #4dabf7;    /* Bleu plus clair pour contraste */
+  --primary-hover-dark: #339af0;
+  --primary-active-dark: #228be6;
+  
+  /* === COULEURS SECONDAIRES === */
+  --secondary: #6c757d;
+  --success: #198754;               /* Vert moderne */
+  --danger: #dc3545;                 /* Rouge moderne */
+  --warning: #ffc107;                /* Jaune moderne */
+  --info: #0dcaf0;                   /* Cyan moderne */
+  
+  /* === COULEURS DE FOND (Jour) === */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --bg-hover: #f1f3f5;
+  --bg-active: #dee2e6;
+  
+  /* === COULEURS DE FOND (Nuit) === */
+  --bg-primary-dark: #1a1d20;       /* Noir moderne (pas pur #000) */
+  --bg-secondary-dark: #212529;
+  --bg-tertiary-dark: #2b2f33;
+  --bg-hover-dark: #343a40;
+  --bg-active-dark: #495057;
+  
+  /* === COULEURS DE TEXTE === */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  --text-inverse: #ffffff;
+  
+  --text-primary-dark: #f8f9fa;
+  --text-secondary-dark: #adb5bd;
+  --text-muted-dark: #6c757d;
+  
+  /* === ÉTATS (Tendances 2025) === */
+  --state-success-bg: #d1e7dd;
+  --state-success-text: #0f5132;
+  --state-error-bg: #f8d7da;
+  --state-error-text: #842029;
+  --state-warning-bg: #fff3cd;
+  --state-warning-text: #664d03;
+  --state-info-bg: #cff4fc;
+  --state-info-text: #055160;
+  
+  /* === TRANSITIONS (Tendances 2025) === */
+  --transition-fast: 150ms ease-in-out;     /* Micro-interactions */
+  --transition-normal: 250ms ease-in-out;   /* Interactions standards */
+  --transition-slow: 350ms ease-in-out;     /* Transitions complexes */
+  
+  /* === OMBRES (Tendances 2025 - Subtiles) === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* === BORDURES (Tendances 2025) === */
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--bg-tertiary);
+  --border-radius: 0.375rem;      /* 6px - Standard moderne */
+  --border-radius-sm: 0.25rem;   /* 4px - Petits éléments */
+  --border-radius-lg: 0.5rem;     /* 8px - Cards, modals */
+  --border-radius-xl: 0.75rem;   /* 12px - Grands éléments */
+  --border-radius-full: 9999px;   /* Pills, badges */
+}
+
+[data-theme="dark"] {
+  --primary: var(--primary-dark-mode);
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --border-color: var(--bg-tertiary-dark);
+}
+```
+
+### Contraste WCAG 2.2 AA (Obligatoire)
+
+**Vérification automatique requise** :
+```css
+/* ✅ Texte normal : Ratio ≥ 4.5:1 */
+.text-primary { color: var(--text-primary); }  /* #212529 sur #ffffff = 16.59:1 ✅ */
+.text-secondary { color: var(--text-secondary); }  /* #6c757d sur #ffffff = 4.95:1 ✅ */
+
+/* ✅ Texte large (18px+) : Ratio ≥ 3:1 */
+h1, h2, h3 { color: var(--text-primary); }  /* ✅ */
+
+/* ✅ Éléments interactifs : Ratio ≥ 3:1 */
+.btn-primary { 
+  color: #fff; 
+  background-color: var(--primary); 
+}  /* #fff sur #0d6efd = 4.54:1 ✅ */
+```
+
+---
+
+## 📝 TYPOGRAPHIE (Meilleures Pratiques 2025)
+
+### Stack Polices Moderne 2025
+
+**Tendances 2025** :
+- Polices système pour performance
+- Variable fonts si disponible
+- Lisible sur tous supports
+
+```css
+/* === STACK POLICES PRINCIPALE === */
+--font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                     "Helvetica Neue", Arial, sans-serif, 
+                     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+/* === POLICE MONOSPACE (NFO, Code) === */
+--font-family-monospace: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", 
+                          Consolas, "Courier New", monospace;
+
+/* === TAILLES (Tendances 2025 - Hiérarchie Claire) === */
+--font-size-xs: 0.75rem;    /* 12px - Labels, captions */
+--font-size-sm: 0.875rem;  /* 14px - Small text, secondary */
+--font-size-base: 1rem;    /* 16px - Body text (standard) */
+--font-size-lg: 1.125rem;  /* 18px - Large body, emphasis */
+--font-size-xl: 1.25rem;   /* 20px - H4, subheadings */
+--font-size-2xl: 1.5rem;   /* 24px - H3 */
+--font-size-3xl: 1.875rem; /* 30px - H2 */
+--font-size-4xl: 2.25rem;  /* 36px - H1 */
+--font-size-5xl: 3rem;     /* 48px - Hero */
+
+/* === POIDS (Tendances 2025) === */
+--font-weight-light: 300;
+--font-weight-normal: 400;
+--font-weight-medium: 500;       /* ⭐ Standard moderne 2025 */
+--font-weight-semibold: 600;     /* ⭐ Headings, emphasis */
+--font-weight-bold: 700;
+
+/* === LINE HEIGHTS (Meilleures Pratiques 2025) === */
+--line-height-tight: 1.25;       /* Headings */
+--line-height-normal: 1.5;       /* Body text standard */
+--line-height-relaxed: 1.75;     /* Body text large, description */
+```
+
+### Hiérarchie Typographique (Obligatoire)
+
+```css
+/* ✅ H1 - Titres Principaux */
+h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;  /* ⭐ Trend 2025 : Légère compression */
+}
+
+/* ✅ H2 - Sous-titres */
+h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+/* ✅ H3 - Sections */
+h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+/* ✅ Body - Texte Standard */
+p {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+```
+
+---
+
+## 🧩 COMPOSANTS UI MODERNES 2025
+
+### Onglets (Navigation Moderne 2025)
+
+**Tendances 2025** :
+- Icônes + texte (pas uniquement texte)
+- États hover/active clairs
+- Animation fluide
+- Accessibilité totale
+
+```tsx
+// ✅ BON : Onglets Moderne 2025
+<TabsContainer>
+  <TabList role="tablist" aria-label="Navigation principale">
+    <Tab
+      id="new-release"
+      role="tab"
+      aria-selected={activeTab === 'new-release'}
+      aria-controls="panel-new-release"
+      icon={<PlusIcon className="icon-md" />}
+      className="tab"
+    >
+      Nouvelle Release
+    </Tab>
+    {/* ... autres onglets ... */}
+  </TabList>
+</TabsContainer>
+```
+
+**Styles CSS Moderne 2025** :
+```css
+.tab {
+  /* === BASE === */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.25rem;
+  
+  /* === TYPOGRAPHIE === */
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);  /* ⭐ 2025 : Medium au lieu de normal */
+  line-height: var(--line-height-normal);
+  color: var(--text-secondary);
+  
+  /* === BORDURES === */
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  
+  /* === INTERACTIONS === */
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  
+  /* === ACCESSIBILITÉ === */
+  outline: none;
+}
+
+.tab:hover {
+  color: var(--primary);
+  background-color: var(--bg-hover);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--primary);
+  font-weight: var(--font-weight-semibold);  /* ⭐ 2025 : Semibold pour actif */
+  border-bottom-color: var(--primary);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.tab-icon {
+  width: 1.25rem;   /* 20px */
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+```
+
+### Boutons (Tendances 2025)
+
+**Tendances 2025** :
+- Boutons avec icônes par défaut (si action claire)
+- États hover/active/pressed clairs
+- Loading states avec animations
+- Touch-friendly (min 44x44px)
+
+```tsx
+// ✅ BON : Bouton Moderne 2025
+<Button
+  variant="primary"
+  size="md"
+  icon={<PlusIcon />}
+  loading={isLoading}
+  disabled={isDisabled}
+  onClick={handleClick}
+>
+  Ajouter
+</Button>
+```
+
+**Styles CSS Moderne 2025** :
+```css
+.btn {
+  /* === BASE === */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  /* === TAILLE MINIMALE (Touch-friendly 2025) === */
+  min-height: 44px;           /* ⭐ iOS/Android recommandation */
+  min-width: 44px;
+  padding: 0.625rem 1.25rem;
+  
+  /* === TYPOGRAPHIE === */
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);  /* ⭐ 2025 : Medium */
+  line-height: 1.5;
+  text-align: center;
+  
+  /* === BORDURES === */
+  border: var(--border-width) var(--border-style) transparent;
+  border-radius: var(--border-radius);
+  
+  /* === INTERACTIONS === */
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  
+  /* === ACCESSIBILITÉ === */
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);  /* ⭐ 2025 : Légère élévation hover */
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);     /* Reset sur click */
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* === VARIANTES === */
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-outline {
+  color: var(--primary);
+  background-color: transparent;
+  border-color: var(--primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+  color: #fff;
+  background-color: var(--primary);
+}
+
+/* === LOADING STATE (Tendances 2025) === */
+.btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: 50%;
+  left: 50%;
+  margin-left: -0.5rem;
+  margin-top: -0.5rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+```
+
+### Cards (Tendances 2025)
+
+**Tendances 2025** :
+- Ombres subtiles (pas fortes)
+- Bordures élégantes
+- Hover states avec élévation
+- Espacements généreux
+
+```css
+.card {
+  /* === BASE === */
+  display: flex;
+  flex-direction: column;
+  
+  /* === BORDURES & OMBRES === */
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-sm);  /* ⭐ 2025 : Ombres subtiles */
+  
+  /* === ESPACEMENTS === */
+  padding: 1.5rem;
+  
+  /* === TRANSITIONS === */
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);  /* ⭐ 2025 : Élévation hover */
+  border-color: var(--primary);
+  transform: translateY(-2px);  /* ⭐ 2025 : Légère élévation */
+}
+
+.card-header {
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-body {
+  flex: 1;
+}
+
+.card-footer {
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+```
+
+### Inputs (Tendances 2025)
+
+**Tendances 2025** :
+- Labels flottants (optionnel, si place disponible)
+- Validation en temps réel
+- États visuels clairs
+- Help text accessible
+
+```css
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);  /* ⭐ 2025 : Medium */
+  color: var(--text-primary);
+}
+
+.label.required::after {
+  content: "*";
+  color: var(--state-error-text);
+  margin-left: 0.25rem;
+  font-weight: var(--font-weight-bold);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius);
+  transition: all var(--transition-fast);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);  /* ⭐ 2025 : Focus ring subtil */
+}
+
+.input:disabled {
+  background-color: var(--bg-secondary);
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.input-error {
+  border-color: var(--state-error-text);
+}
+
+.input-error:focus {
+  border-color: var(--state-error-text);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+}
+
+.help-text {
+  margin-top: 0.375rem;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.error-text {
+  margin-top: 0.375rem;
+  font-size: var(--font-size-sm);
+  color: var(--state-error-text);
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+```
+
+---
+
+## 🎯 ICÔNES (Bootstrap Icons - Standard)
+
+### Bibliothèque Exclusive
+
+**⚠️ OBLIGATOIRE** : **Bootstrap Icons** uniquement (pas Font Awesome, pas Heroicons, pas Material Icons).
+
+**Avantages** :
+- ✅ 2 000+ icônes gratuites
+- ✅ Compatible Bootstrap 5
+- ✅ Format SVG optimisé
+- ✅ Légère (~150KB)
+- ✅ Cohérence garantie
+
+### Tailles Standardisées
+
+```css
+/* === TAILLES (Obligatoires) === */
+.icon-xs {
+  width: 0.75rem;   /* 12px - Très petits éléments */
+  height: 0.75rem;
+}
+
+.icon-sm {
+  width: 1rem;      /* 16px - Petits éléments */
+  height: 1rem;
+}
+
+.icon-md {
+  width: 1.25rem;  /* 20px - Standard (onglets, boutons) */
+  height: 1.25rem;
+}
+
+.icon-lg {
+  width: 1.5rem;    /* 24px - Grands éléments */
+  height: 1.5rem;
+}
+
+.icon-xl {
+  width: 2rem;      /* 32px - Très grands éléments */
+  height: 2rem;
+}
+
+.icon {
+  color: currentColor;
+  fill: currentColor;
+  stroke: currentColor;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+```
+
+### Usage dans Composants
+
+```tsx
+// ✅ BON : Icônes Bootstrap Icons avec tailles standardisées
+import { PlusIcon, ListIcon, FileTextIcon } from 'bootstrap-icons-react';
+
+<Button icon={<PlusIcon className="icon-md" />}>Ajouter</Button>
+<Tab icon={<ListIcon className="icon-md" />}>Liste</Tab>
+```
+
+---
+
+## 📐 ESPACEMENTS (Système 4px - Moderne 2025)
+
+### Système Basé sur 4px
+
+**Tendances 2025** : Système d'espacement cohérent basé sur 4px (0.25rem).
+
+```css
+/* === ESPACEMENTS STANDARDISÉS === */
+--spacing-0: 0;
+--spacing-1: 0.25rem;   /* 4px */
+--spacing-2: 0.5rem;    /* 8px */
+--spacing-3: 0.75rem;   /* 12px */
+--spacing-4: 1rem;      /* 16px */
+--spacing-5: 1.25rem;   /* 20px */
+--spacing-6: 1.5rem;    /* 24px */
+--spacing-8: 2rem;      /* 32px */
+--spacing-10: 2.5rem;   /* 40px */
+--spacing-12: 3rem;     /* 48px */
+--spacing-16: 4rem;     /* 64px */
+--spacing-20: 5rem;     /* 80px */
+--spacing-24: 6rem;     /* 96px */
+
+/* === UTILITAIRES === */
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-4 { padding: var(--spacing-4); }
+.p-6 { padding: var(--spacing-6); }
+.p-8 { padding: var(--spacing-8); }
+
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-4 { margin: var(--spacing-4); }
+.m-6 { margin: var(--spacing-6); }
+.m-8 { margin: var(--spacing-8); }
+
+.gap-2 { gap: var(--spacing-2); }
+.gap-4 { gap: var(--spacing-4); }
+.gap-6 { gap: var(--spacing-6); }
+.gap-8 { gap: var(--spacing-8); }
+```
+
+**⚠️ RÈGLE ABSOLUE** : **JAMAIS** utiliser des valeurs arbitraires (ex: `padding: 13px`). Toujours utiliser le système 4px.
+
+---
+
+## 🔘 BORDURES (Élégantes et Cohérentes)
+
+### Système de Bordures Moderne 2025
+
+```css
+/* === BORDURES STANDARDISÉES === */
+.border {
+  border: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.border-top {
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.border-bottom {
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+
+/* === RAYONS MODERNES 2025 === */
+.rounded {
+  border-radius: var(--border-radius);       /* 6px - Standard */
+}
+
+.rounded-sm {
+  border-radius: var(--border-radius-sm);   /* 4px - Petits éléments */
+}
+
+.rounded-lg {
+  border-radius: var(--border-radius-lg);   /* 8px - Cards, modals */
+}
+
+.rounded-xl {
+  border-radius: var(--border-radius-xl);   /* 12px - Grands éléments */
+}
+
+.rounded-full {
+  border-radius: var(--border-radius-full); /* Pills, badges */
+}
+
+/* === CARDS AVEC BORDURES ÉLÉGANTES === */
+.card {
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+```
+
+---
+
+## 🌓 THÈME JOUR/NUIT (Moderne 2025)
+
+### Système de Thème Complet
+
+**Tendances 2025** :
+- Transition fluide automatique
+- Préférence utilisateur respectée
+- Variables CSS pour performance
+- Support système (prefers-color-scheme)
+
+```tsx
+// ✅ BON : ThemeContext Moderne 2025
+import { createContext, useContext, useState, useEffect } from 'react';
+
+type Theme = 'light' | 'dark' | 'system';
+
+interface ThemeContextType {
+  theme: Theme;
+  resolvedTheme: 'light' | 'dark';
+  setTheme: (theme: Theme) => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem('theme');
+    return (saved as Theme) || 'system';
+  });
+
+  const resolvedTheme = useMemo(() => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return theme;
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', resolvedTheme);
+    localStorage.setItem('theme', theme);
+  }, [resolvedTheme, theme]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+**CSS avec Transition Fluide** :
+```css
+/* ⭐ 2025 : Transition automatique pour toutes propriétés */
+* {
+  transition: background-color var(--transition-normal),
+              color var(--transition-normal),
+              border-color var(--transition-normal);
+}
+
+/* Pas de transition sur : transform, opacity pour animations */
+.no-transition {
+  transition: none !important;
+}
+```
+
+---
+
+## ♿ ACCESSIBILITÉ WCAG 2.2 AA (Obligatoire)
+
+### Contraste Couleurs
+
+**Exigences Obligatoires** :
+- Texte normal (16px) : Ratio ≥ 4.5:1
+- Texte large (18px+, bold 14px+) : Ratio ≥ 3:1
+- Éléments interactifs : Ratio ≥ 3:1
+- États : hover, focus, active visibles
+
+**Vérification** :
+```css
+/* ✅ Exemples Validés */
+.text-primary {
+  color: var(--text-primary);  /* #212529 sur #ffffff = 16.59:1 ✅ */
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary);  /* #fff sur #0d6efd = 4.54:1 ✅ */
+}
+```
+
+### Focus Visible (Tendances 2025)
+
+**Obligatoire** : Focus visible sur TOUS éléments interactifs.
+
+```css
+/* === FOCUS MODERNE 2025 === */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Skip Link (Accessibilité) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  border-radius: var(--border-radius);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+```
+
+### ARIA et Sémantique (Obligatoire)
+
+```tsx
+// ✅ BON : Navigation Accessible
+<nav aria-label="Navigation principale">
+  <Tabs role="tablist" aria-orientation="horizontal">
+    <Tab
+      id="new-release"
+      role="tab"
+      aria-selected={activeTab === 'new-release'}
+      aria-controls="panel-new-release"
+      tabIndex={activeTab === 'new-release' ? 0 : -1}
+    >
+      <PlusIcon className="icon-md" aria-hidden="true" />
+      <span>Nouvelle Release</span>
+    </Tab>
+  </Tabs>
+</nav>
+
+// ✅ BON : Formulaires Accessibles
+<FormGroup>
+  <Label htmlFor="username" required>
+    Nom d'utilisateur
+    <span className="sr-only"> (requis)</span>
+  </Label>
+  <Input
+    id="username"
+    type="text"
+    aria-required="true"
+    aria-invalid={hasError}
+    aria-describedby="username-error username-help"
+  />
+  <ErrorText id="username-error" role="alert">
+    {error}
+  </ErrorText>
+  <HelpText id="username-help">
+    Minimum 3 caractères
+  </HelpText>
+</FormGroup>
+```
+
+---
+
+## 📱 RESPONSIVE DESIGN (Tendances 2025)
+
+### Breakpoints Modernes
+
+```css
+/* === BREAKPOINTS BOOTSTRAP 5 === */
+--breakpoint-xs: 0;
+--breakpoint-sm: 576px;
+--breakpoint-md: 768px;
+--breakpoint-lg: 992px;
+--breakpoint-xl: 1200px;
+--breakpoint-xxl: 1400px;
+
+/* === MOBILE FIRST (Tendances 2025) === */
+.tabs-container {
+  padding: 0 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;  /* ⭐ 2025 : Smooth scroll iOS */
+}
+
+.tab {
+  padding: 0.75rem 1rem;
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 768px) {
+  .tabs-container {
+    padding: 0 1.5rem;
+    overflow-x: visible;
+  }
+  
+  .tab {
+    padding: 0.875rem 1.25rem;
+    font-size: var(--font-size-base);
+  }
+}
+```
+
+### Touch Targets (Obligatoire)
+
+**Tendances 2025** : Tous éléments interactifs ≥ 44x44px.
+
+```css
+/* === TOUCH TARGETS MINIMUM === */
+.btn, .tab, .input, .checkbox, .radio {
+  min-height: 44px;  /* ⭐ iOS/Android recommandation */
+  min-width: 44px;
+}
+```
+
+---
+
+## ⚡ PERFORMANCE (Tendances 2025)
+
+### Optimisations Obligatoires
+
+**Tendances 2025** :
+- Lazy loading composants
+- Code splitting automatique
+- Images optimisées (WebP, lazy)
+- CSS minimal (critical CSS inline)
+
+```tsx
+// ✅ BON : Lazy Loading Moderne 2025
+const ReleasesList = lazy(() => import('./pages/ReleasesList'));
+const Rules = lazy(() => import('./pages/Rules'));
+
+<Suspense fallback={<LoadingSpinner />}>
+  <Routes>
+    <Route path="/releases" element={<ReleasesList />} />
+    <Route path="/rules" element={<Rules />} />
+  </Routes>
+</Suspense>
+```
+
+### Animations Performantes
+
+**Tendances 2025** :
+- Utiliser `transform` et `opacity` (GPU-accelerated)
+- Éviter `width`, `height`, `top`, `left` pour animations
+
+```css
+/* ✅ BON : Animation Performante */
+.card-hover {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);  /* GPU-accelerated */
+  box-shadow: var(--shadow-md);
+}
+
+/* ❌ MAUVAIS : Animation Non Performante */
+.card-hover-bad:hover {
+  top: -2px;  /* Reflow, pas GPU */
+  height: 200px;  /* Reflow */
+}
+```
+
+---
+
+## 🎭 COMPOSANTS SPÉCIAUX
+
+### React 19 + TypeScript Strict (Obligatoire)
+
+**Tendances 2025** :
+- React 19 avec hooks uniquement (pas de classes)
+- TypeScript strict mode
+- Props typées strictement
+- Composants fonctionnels avec hooks
+
+```tsx
+// ✅ BON : Composant Moderne 2025 avec TypeScript Strict
+import { FC, useState, useCallback } from 'react';
+import { PlusIcon } from 'bootstrap-icons-react';
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+  loading?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+  'aria-label'?: string;
+}
+
+export const Button: FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  icon,
+  loading = false,
+  disabled = false,
+  onClick,
+  children,
+  'aria-label': ariaLabel,
+}) => {
+  const handleClick = useCallback(() => {
+    if (!disabled && !loading && onClick) {
+      onClick();
+    }
+  }, [disabled, loading, onClick]);
+
+  return (
+    <button
+      type="button"
+      className={`btn btn-${variant} btn-${size} ${loading ? 'loading' : ''}`}
+      disabled={disabled || loading}
+      onClick={handleClick}
+      aria-label={ariaLabel}
+      aria-busy={loading}
+    >
+      {loading ? (
+        <span className="btn-spinner" aria-hidden="true" />
+      ) : (
+        icon && <span className="btn-icon" aria-hidden="true">{icon}</span>
+      )}
+      <span>{children}</span>
+    </button>
+  );
+};
+```
+
+### NFO Viewer (Projet Spécifique)
+
+```tsx
+// ✅ BON : NFO Viewer Moderne 2025 avec TypeScript
+import { FC, memo } from 'react';
+
+interface NFOViewerProps {
+  content: string;
+  lineNumbers?: boolean;
+  maxWidth?: number;
+  theme?: 'light' | 'dark';
+  className?: string;
+}
+
+export const NFOViewer: FC<NFOViewerProps> = memo(({
+  content,
+  lineNumbers = false,
+  maxWidth = 80,
+  theme = 'light',
+  className = '',
+}) => {
+  return (
+    <pre
+      className={`nfo-viewer ${lineNumbers ? 'with-line-numbers' : ''} ${className}`}
+      style={{ maxWidth: `${maxWidth}ch` }}
+      role="textbox"
+      aria-label="NFO Viewer"
+      aria-readonly="true"
+    >
+      {content}
+    </pre>
+  );
+});
+
+NFOViewer.displayName = 'NFOViewer';
+```
+
+**Styles CSS** :
+```css
+.nfo-viewer {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  background-color: var(--bg-secondary);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-all;
+  tab-size: 2;
+  
+  /* ⭐ 2025 : Contraintes ASCII Scene */
+  max-width: 80ch;  /* ASCII ≤ 80 colonnes */
+  font-variant-ligatures: none;
+  
+  /* ⭐ 2025 : Performance */
+  contain: layout style paint;
+}
+```
+
+### Progress Bar (Moderne 2025)
+
+```css
+.progress-bar-container {
+  width: 100%;
+  height: 1.25rem;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: var(--border-radius-full);
+  transition: width var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  color: #fff;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  
+  /* ⭐ 2025 : Animation fluide */
+  will-change: width;
+}
+```
+
+---
+
+## 🚫 ANTI-PATTERNS À ÉVITER
+
+### ❌ Polices Arbitraires
+```css
+/* ❌ MAUVAIS */
+font-size: 13px;  /* Pas dans le système */
+font-weight: 550;  /* Poids non standardisé */
+
+/* ✅ BON */
+font-size: var(--font-size-sm);  /* 14px */
+font-weight: var(--font-weight-medium);  /* 500 */
+```
+
+### ❌ Couleurs Hardcodées
+```css
+/* ❌ MAUVAIS */
+color: #333;
+background: #f0f0f0;
+
+/* ✅ BON */
+color: var(--text-primary);
+background: var(--bg-secondary);
+```
+
+### ❌ Espacements Arbitraires
+```css
+/* ❌ MAUVAIS */
+padding: 13px;
+margin: 17px;
+
+/* ✅ BON */
+padding: var(--spacing-4);  /* 16px */
+margin: var(--spacing-6);   /* 24px */
+```
+
+### ❌ Icônes Hors Bootstrap Icons
+```tsx
+/* ❌ MAUVAIS */
+import { Plus } from 'heroicons-react';
+import { Add } from '@material-ui/icons';
+
+/* ✅ BON */
+import { PlusIcon } from 'bootstrap-icons-react';
+```
+
+### ❌ Accessibilité Négligée
+```tsx
+/* ❌ MAUVAIS */
+<button onClick={handleClick}>Action</button>
+
+/* ✅ BON */
+<button
+  onClick={handleClick}
+  aria-label="Action principale"
+  aria-describedby="help-action"
+>
+  <PlusIcon className="icon-md" aria-hidden="true" />
+  <span>Action</span>
+</button>
+```
+
+---
+
+## ✅ Checklist Design UX/UI Moderne 2025
+
+### Avant Créer Composant
+- [ ] Variables CSS définies (couleurs, espacements, bordures)
+- [ ] Typographie selon hiérarchie Design System
+- [ ] Icônes Bootstrap Icons uniquement
+- [ ] Espacements selon système 4px
+- [ ] Bordures selon rayons standardisés
+
+### Pendant Création
+- [ ] Contraste WCAG 2.2 AA vérifié
+- [ ] Focus visible implémenté
+- [ ] ARIA labels présents
+- [ ] Touch targets ≥ 44x44px
+- [ ] Transitions fluides (150-350ms)
+
+### Après Création
+- [ ] Tests accessibilité passent
+- [ ] Performance vérifiée (pas de reflow)
+- [ ] Responsive testé (mobile/tablet/desktop)
+- [ ] Thème jour/nuit fonctionnel
+- [ ] Documentation composant créée
+
+---
+
+## 🔗 Références et Sources
+
+### Documentation Projet
+- **Design System** : `docs/DESIGN_SYSTEM_UI_UX.md` ⭐ (1 420 lignes)
+- **Plan Implémentation** : `docs/UI_UX_IMPLEMENTATION_PLAN.md`
+- **Vérification** : `docs/DESIGN_SYSTEM_VERIFICATION.md`
+
+### Bibliothèques Externes
+- **Bootstrap Icons** : https://icons.getbootstrap.com/ (2 000+ icônes)
+- **Bootstrap 5** : https://getbootstrap.com/docs/5.3/
+- **React 19** : Documentation officielle (Context7 MCP vérifié)
+
+### Standards et Guidelines
+- **WCAG 2.2 AA** : https://www.w3.org/WAI/WCAG22/quickref/
+- **Web Content Accessibility Guidelines 2.2** : W3C
+- **Touch Target Guidelines** : iOS/Android (44x44px minimum)
+
+### Recherche 2025
+- ✅ **Context7 MCP** : React 19 + TypeScript best practices vérifiés
+- ✅ **Web Search** : Tendances UX/UI 2025, design moderne, accessibilité
+- ✅ **Meilleures pratiques** : Design systems modernes, composants réutilisables
+
+### Règles Cursor Complémentaires
+- `.cursor/rules/frontend-components.mdc` : Structure composants React
+- `.cursor/rules/design-system-ui-ux.mdc` : Design System général
+- `.cursor/rules/project-v2-guidelines.mdc` : Guidelines projet générales
+
+---
+
+## ⚠️ RAPPEL CRITIQUE
+
+**Cette règle est ABSOLUE et NON NÉGOCIABLE.**
+
+Design intégralement clair, moderne et cohérent dès le début :
+- ✅ Polices selon Design System
+- ✅ Onglets avec icônes Bootstrap Icons
+- ✅ Bordures élégantes et cohérentes
+- ✅ Espacements système 4px
+- ✅ Couleurs thème jour/nuit
+- ✅ Accessibilité WCAG 2.2 AA
+
+**Mieux vaut refactorer que laisser un design incohérent.**
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️  
+**Source** : Meilleures pratiques UX/UI 2025, Context7 MCP, Recherche web, Bootstrap 5, React 19

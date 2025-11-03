@@ -1,0 +1,159 @@
+---
+name: templates-nfo
+description: Règles strictes pour Templates NFO - Conformité Scene
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Templates NFO - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer conformité absolue des Templates NFO avec les standards Scene et la règle eBOOK [2022] scenerules.org.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Format Template
+
+**Obligatoire** :
+- ✅ Format ASCII ≤ 80 colonnes par ligne
+- ✅ Support UTF-8 si nécessaire (mais ASCII préféré)
+- ✅ Placeholders : `{{variable}}` (ex: `{{title}}`, `{{author}}`)
+- ✅ Conditionnelles : `{% if condition %}...{% endif %}`
+- ✅ Fonctions : `{{format_date(date)}}`, `{{uppercase(text)}}`, etc.
+
+**Structure** :
+```python
+# ✅ Bon : Template conforme
+template = """
+Title: {{title}}
+Author: {{author}}
+Publisher: {{publisher}}
+Release Date: {{format_date(release_date)}}
+{% if language %}
+Language: {{language}}
+{% endif %}
+Group: {{group}}
+Size: {{format_size(size)}}
+"""
+```
+
+### 2. Source Template
+
+**Priorité** :
+1. ⭐ **Template extrait de règle eBOOK [2022]** (scenerules.org)
+2. Templates locaux (disque ou base de données)
+3. Templates personnalisés uploadés
+
+**Validation** :
+- ✅ Template conforme à structure règle eBOOK [2022]
+- ✅ Largeur ≤ 80 colonnes vérifiée
+- ✅ Placeholders valides uniquement
+
+### 3. Stockage Templates
+
+**Options** :
+- **Disque** : Fichiers `.nfo` ou `.template` dans répertoire configuré
+- **Base de données** : Table `templates` (optionnel selon configuration)
+
+**Configuration** :
+- Paramètre système (PRD-007) détermine stockage
+- Migration possible disque ↔ DB
+
+### 4. Rendu Template
+
+**Processus** :
+1. Charger template (règle ou local)
+2. Injecter métadonnées dans placeholders
+3. Exécuter conditionnelles `{% if %}`
+4. Appliquer fonctions `{{format_date()}}`, etc.
+5. Valider largeur ≤ 80 colonnes
+6. Retourner NFO final
+
+**Validation** :
+- ✅ Tous placeholders remplacés
+- ✅ Format ASCII conforme
+- ✅ Largeur ≤ 80 colonnes
+- ✅ Structure conforme règle
+
+### 5. Prévisualisation
+
+**UI** :
+- **NFO Viewer** : Monospace UTF-8
+- **Mise à jour temps réel** : < 100ms
+- **Validation largeur** : Avertissement si ligne > 80 colonnes
+- **Syntax highlighting** : Si possible
+
+---
+
+## 🔍 Validation Stricte
+
+### Avant Sauvegarde Template
+
+```python
+def validate_template(template: str) -> tuple[bool, list[str]]:
+    """Valide template NFO."""
+    errors = []
+    
+    # Validation largeur ≤ 80 colonnes
+    for line in template.split('\n'):
+        if len(line) > 80:
+            errors.append(f"Ligne > 80 colonnes: {line[:50]}...")
+    
+    # Validation placeholders valides
+    import re
+    placeholders = re.findall(r'\{\{(\w+)\}\}', template)
+    valid_placeholders = ['title', 'author', 'publisher', 'language', 
+                         'format', 'source', 'release_date', 'group', 
+                         'size', 'url']
+    for placeholder in placeholders:
+        if placeholder not in valid_placeholders:
+            errors.append(f"Placeholder invalide: {placeholder}")
+    
+    return len(errors) == 0, errors
+```
+
+### Avant Packaging
+
+**Vérifications** :
+- ✅ Template sélectionné valide
+- ✅ Tous placeholders remplis
+- ✅ NFO généré conforme ≤ 80 colonnes
+- ✅ Structure conforme règle eBOOK [2022]
+
+---
+
+## 🚨 Points Critiques
+
+### Template Source Règle
+
+**⚠️ OBLIGATOIRE** : Template doit être basé sur template de règle eBOOK [2022] si disponible.
+
+**Workflow** :
+1. Charger règle eBOOK [2022] (Étape 3)
+2. Extraire template de la règle
+3. Pré-remplir template dans Étape 7
+4. Permettre édition manuelle (mais validation règle maintenue)
+
+### Conformité ASCII
+
+**Règle absolue** : Toutes lignes ≤ 80 colonnes.
+
+**Exception** : UTF-8 accepté mais ASCII préféré selon règle Scene.
+
+---
+
+## 📚 Références
+
+- **Règle eBOOK [2022]** : [scenerules.org](https://scenerules.org/)
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 7)
+- **Scenerules Integration** : `docs/SCENERULES_INTEGRATION.md`
+- **Database ERD** : `docs/DATABASE_ERD.md` (table `templates`)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

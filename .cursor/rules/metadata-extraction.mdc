@@ -1,0 +1,74 @@
+---
+name: metadata-extraction
+description: Règles strictes pour Metadata Extraction - Extraction maximale métadonnées
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Metadata Extraction - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer extraction maximale possible de métadonnées pour tous types de fichiers (EBOOK, TV, DOCS, etc.).
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Types Métadonnées
+
+**EBOOK** :
+- ✅ Titre, Auteur, Éditeur
+- ✅ ISBN, Langue
+- ✅ Date publication
+- ✅ Description
+- ✅ Format (EPUB, PDF, MOBI, etc.)
+- ✅ MediaInfo (taille, structure interne)
+
+**TV** :
+- ✅ MediaInfo (codec, résolution, audio, etc.)
+- ✅ Durée, Qualité
+- ✅ Saison/Épisode (si applicable)
+
+---
+
+### 2. Extraction Tools
+
+**MediaInfo** : Pour tous types (métriques techniques)
+
+**Bibliothèques** :
+- `ebooklib` : EPUB
+- `PyPDF2` : PDF
+- `exifread` : Images
+
+---
+
+### 3. Format Standardisé
+
+**JSON** :
+```json
+{
+  "title": "Book Title",
+  "author": "Author Name",
+  "isbn": "1234567890",
+  "language": "en",
+  "format": "EPUB",
+  "mediainfo": {...}
+}
+```
+
+---
+
+### 4. Barre Progression
+
+**Update** : Toutes les 100ms
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 5)
+
+---
+
+**Dernière mise à jour** : 2025-11-01

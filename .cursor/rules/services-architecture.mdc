@@ -1,0 +1,423 @@
+---
+name: services-architecture
+description: Règles strictes pour Services Métier - Architecture et Séparation Logique
+globs:
+  - "**/*.py"
+---
+
+# Services Architecture - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer architecture cohérente des services métier avec séparation logique, interfaces claires et gestion erreurs appropriée.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Structure Service
+
+**Template Standard** :
+```python
+from typing import Optional, Dict, Any, List, Tuple
+import logging
+from web.models import ModelName
+from web.extensions import db
+
+logger = logging.getLogger(__name__)
+
+class ServiceName:
+    """Description du service."""
+    
+    def __init__(self):
+        """Initialise service."""
+        pass
+    
+    def method_name(self, param: str) -> Dict[str, Any]:
+        """Description méthode.
+        
+        Args:
+            param: Description paramètre
+            
+        Returns:
+            Dictionnaire avec résultats
+            
+        Raises:
+            ValueError: Si paramètre invalide
+            ServiceError: Si erreur service
+        """
+        try:
+            # Logique service
+            logger.info(f"Processing {param}")
+            result = self._process(param)
+            return {'success': True, 'data': result}
+        except ValueError as e:
+            logger.error(f"Validation error: {e}")
+            raise
+        except Exception as e:
+            logger.exception(f"Service error: {e}")
+            raise ServiceError(f"Failed to process: {e}")
+    
+    def _process(self, param: str) -> Any:
+        """Méthode privée pour traitement."""
+        # Logique interne
+        pass
+```
+
+---
+
+### 2. Services Obligatoires
+
+**Services Must Have** :
+
+#### Core Services
+- ✅ `PackagingService` : Logique packaging (package_ebook, package_tv, etc.)
+- ✅ `MetadataService` : Extraction/enrichissement métadonnées
+- ✅ `TemplateService` : Rendu templates NFO
+- ✅ `JobService` : Gestion jobs (création, statut, logs)
+- ✅ `AuthService` : Logique authentification (login, refresh, logout)
+
+#### Critical Services (EBOOK)
+- ⚠️ `RuleParserService` : Parse règle eBOOK [2022] complète
+  - Méthode `parse_ebook_rule_2022(content: str) -> EbookRuleSpec`
+  - Extraction formats, template, contraintes
+- ⚠️ `RuleValidationService` : Valide release contre règle
+  - Méthode `validate_against_rule(release_data: dict, rule_spec: EbookRuleSpec) -> tuple[bool, list[str]]`
+- ⚠️ `ScenerulesDownloadService` : Télécharge règles depuis scenerules.org
+  - Méthode `download_ebook_rule_2022() -> str`
+
+#### Support Services
+- ✅ `FtpUploadService` : Upload FTP/SFTP
+- ✅ `RuleService` : Gestion rules (locales + scenerules.org)
+- ✅ `UserService` : Logique utilisateurs
+- ✅ `PermissionService` : Vérification permissions
+
+---
+
+### 3. Principes Architecture
+
+**Séparation Logique** :
+- ✅ **Services** : Logique métier uniquement
+- ✅ **Models** : Structure données, relations
+- ✅ **Blueprints** : Endpoints API, validation inputs
+- ✅ **Utils** : Fonctions utilitaires (pas de logique métier)
+
+**Interfaces Claires** :
+```python
+# ✅ Bon : Interface claire, paramètres typés
+def package_ebook(
+    file_path: Path,
+    group: str,
+    rule_spec: EbookRuleSpec
+) -> Dict[str, Any]:
+    """Package ebook selon règle."""
+    pass
+
+# ❌ Éviter : Interface vague
+def package(data):
+    """Package."""
+    pass
+```
+
+---
+
+### 4. Gestion Erreurs
+
+**Exceptions Spécifiques** :
+```python
+class ServiceError(Exception):
+    """Erreur générique service."""
+    pass
+
+class ValidationError(ServiceError):
+    """Erreur validation."""
+    pass
+
+class ProcessingError(ServiceError):
+    """Erreur traitement."""
+    pass
+
+class RuleParsingError(ServiceError):
+    """Erreur parsing règle."""
+    pass
+```
+
+**Utilisation** :
+```python
+def process(self, data: dict):
+    """Process data."""
+    if not data:
+        raise ValidationError("Data is required")
+    
+    try:
+        result = self._process(data)
+    except Exception as e:
+        logger.exception(f"Processing error: {e}")
+        raise ProcessingError(f"Failed to process: {e}")
+    
+    return result
+```
+
+---
+
+### 5. Logging
+
+**Obligatoire** :
+- ✅ Logger par service : `logger = logging.getLogger(__name__)`
+- ✅ Log info : Actions importantes
+- ✅ Log error : Erreurs avec contexte
+- ✅ Log exception : Exceptions avec stack trace
+
+**Exemple** :
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+def package_ebook(self, file_path: Path):
+    """Package ebook."""
+    logger.info(f"Starting packaging for {file_path}")
+    
+    try:
+        # Packaging
+        result = self._do_packaging(file_path)
+        logger.info(f"Packaging completed successfully: {result['release_name']}")
+        return result
+    except Exception as e:
+        logger.exception(f"Packaging failed for {file_path}: {e}")
+        raise
+```
+
+---
+
+### 6. Tests Services
+
+**Mock Dependencies** :
+```python
+from unittest.mock import Mock, patch
+import pytest
+
+class TestPackagingService:
+    @patch('web.services.packaging.MediaInfo')
+    def test_package_ebook_success(self, mock_mediainfo):
+        """Test packaging ebook success."""
+        service = PackagingService()
+        mock_mediainfo.return_value.get_info.return_value = {...}
+        
+        result = service.package_ebook(
+            Path('test.epub'),
+            'TESTGROUP',
+            rule_spec
+        )
+        
+        assert result['success'] is True
+        assert 'release_name' in result
+```
+
+---
+
+### 7. Services Critiques EBOOK
+
+#### RuleParserService
+
+**Responsabilités** :
+- ✅ Télécharger règle eBOOK [2022] depuis scenerules.org
+- ✅ Parser règle complète (formats, template, contraintes)
+- ✅ Extraire spécifications dans `EbookRuleSpec`
+
+**Méthodes** :
+```python
+class RuleParserService:
+    def download_ebook_rule_2022(self) -> str:
+        """Télécharge règle eBOOK [2022]."""
+        pass
+    
+    def parse_ebook_rule_2022(self, content: str) -> EbookRuleSpec:
+        """Parse règle complète."""
+        # Extraction formats, template, contraintes
+        pass
+```
+
+#### RuleValidationService
+
+**Responsabilités** :
+- ✅ Valider release contre règle complète
+- ✅ Validation format, nommage, structure, NFO
+- ✅ Retourner erreurs détaillées
+
+**Méthodes** :
+```python
+class RuleValidationService:
+    def validate_against_rule(
+        self,
+        release_data: dict,
+        rule_spec: EbookRuleSpec
+    ) -> Tuple[bool, List[str]]:
+        """Valide release contre règle."""
+        errors = []
+        # Validations complètes
+        return len(errors) == 0, errors
+```
+
+#### ScenerulesDownloadService
+
+**Responsabilités** :
+- ✅ Télécharger règles depuis scenerules.org
+- ✅ Mise en cache locale
+- ✅ Parsing automatique après téléchargement
+
+**Méthodes** :
+```python
+class ScenerulesDownloadService:
+    BASE_URL = "https://scenerules.org"
+    
+    def download_ebook_rule_2022(self) -> str:
+        """Télécharge règle eBOOK [2022]."""
+        pass
+    
+    def cache_rule(self, rule_name: str, content: str):
+        """Met en cache règle locale."""
+        pass
+```
+
+---
+
+### 8. Services et Base de Données
+
+**Session Management** :
+```python
+from web.extensions import db
+
+class ServiceName:
+    def create_item(self, data: dict):
+        """Crée item."""
+        item = ModelName(**data)
+        db.session.add(item)
+        db.session.commit()
+        return item
+```
+
+**Transactions** :
+```python
+def process_with_transaction(self, data: dict):
+    """Process avec transaction."""
+    try:
+        # Opérations DB
+        item = ModelName(**data)
+        db.session.add(item)
+        db.session.commit()
+        return item
+    except Exception:
+        db.session.rollback()
+        raise
+```
+
+---
+
+### 9. Services et Fichiers
+
+**Gestion Fichiers** :
+```python
+from pathlib import Path
+import shutil
+
+class FileService:
+    def process_file(self, file_path: Path):
+        """Process file."""
+        if not file_path.exists():
+            raise FileNotFoundError(f"File not found: {file_path}")
+        
+        # Traitement
+        result_path = self._process(file_path)
+        return result_path
+```
+
+---
+
+### 10. Performance
+
+**Optimisation** :
+- ✅ Cache résultats coûteux
+- ✅ Lazy loading pour relations DB
+- ✅ Batch processing si possible
+
+**Exemple** :
+```python
+from functools import lru_cache
+
+class RuleService:
+    @lru_cache(maxsize=100)
+    def get_rule(self, rule_id: int) -> Rule:
+        """Cache rule."""
+        return Rule.query.get(rule_id)
+```
+
+---
+
+## ✅ Checklist Service
+
+### Avant Commit
+- [ ] Service conforme template standard
+- [ ] Méthodes avec types (type hints)
+- [ ] Docstrings complètes
+- [ ] Exceptions spécifiques
+- [ ] Logging approprié
+- [ ] Tests unitaires (mocks)
+- [ ] Pas de logique métier dans modèle
+- [ ] Gestion erreurs robuste
+- [ ] Documentation claire
+
+---
+
+## 🚨 Anti-Patterns
+
+### ❌ Logique Métier dans Blueprint
+```python
+# ❌ Mauvais : Logique dans blueprint
+@blueprint.route('/pack', methods=['POST'])
+def pack():
+    # Logique packaging ici
+    file_path = request.json['file']
+    # ... 100 lignes de logique
+    return jsonify({'success': True})
+
+# ✅ Bon : Logique dans service
+@blueprint.route('/pack', methods=['POST'])
+def pack():
+    data = request.json
+    result = PackagingService().package_ebook(
+        Path(data['file']),
+        data['group'],
+        rule_spec
+    )
+    return jsonify(result)
+```
+
+### ❌ Services Dépendants Directement
+```python
+# ❌ Mauvais : Dépendance directe
+class ServiceA:
+    def process(self):
+        ServiceB().do_something()  # Dépendance forte
+
+# ✅ Bon : Injection dépendance ou factory
+class ServiceA:
+    def __init__(self, service_b: ServiceB = None):
+        self.service_b = service_b or ServiceB()
+    
+    def process(self):
+        self.service_b.do_something()
+```
+
+---
+
+## 📚 Références
+
+- **SCENERULES_INTEGRATION** : `docs/SCENERULES_INTEGRATION.md` (services critiques)
+- **PRDs** : `docs/PRDs/` (spécifications fonctionnelles)
+- **API** : `docs/API_REFERENCE.md` (endpoints)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

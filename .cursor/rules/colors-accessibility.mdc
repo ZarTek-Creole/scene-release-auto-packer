@@ -1,0 +1,260 @@
+---
+name: colors-accessibility
+description: Règles strictes pour Couleurs et Accessibilité - Variables CSS, contraste WCAG 2.2 AA, focus visible
+globs:
+  - "**/*.{ts,tsx,js,jsx,css,scss}"
+---
+
+# Couleurs et Accessibilité - eBook Scene Packer v2
+
+## 🎯 Principe Fondamental
+
+**Couleurs adaptatives et accessibles** : Toutes les couleurs DOIVENT utiliser variables CSS avec support thème jour/nuit et respecter WCAG 2.2 AA (contraste ≥ 4.5:1).
+
+---
+
+## 🚨 RÈGLES ABSOLUES
+
+### 1. Variables CSS Obligatoires
+- ✅ **TOUJOURS** utiliser variables CSS pour couleurs
+- ✅ **JAMAIS** couleurs hardcodées (#ffffff, rgb(), etc.)
+- ✅ **Support thème** : Toutes couleurs adaptatives jour/nuit
+
+### 2. Contraste WCAG 2.2 AA
+- ✅ **Texte normal** : Ratio ≥ 4.5:1
+- ✅ **Texte large (18px+)** : Ratio ≥ 3:1
+- ✅ **Éléments interactifs** : Ratio ≥ 3:1
+- ✅ **Vérification** : Outils de vérification contraste (WebAIM)
+
+### 3. Focus Visible
+- ✅ **Outline** : 2px couleur primaire
+- ✅ **Offset** : 2px (outline-offset)
+- ✅ **TOUJOURS** visible (pas de outline: none sans alternative)
+
+---
+
+## 🎨 Variables CSS Couleurs
+
+### Couleurs Principales
+
+```css
+:root {
+  /* Thème Clair (Jour) */
+  --color-primary: #0d6efd;
+  --color-bg: #ffffff;
+  --color-text: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  
+  /* Couleurs État */
+  --state-success-bg: #d1e7dd;
+  --state-success-text: #0f5132;
+  --state-error-bg: #f8d7da;
+  --state-error-text: #842029;
+  --state-warning-bg: #fff3cd;
+  --state-warning-text: #664d03;
+  --state-info-bg: #cff4fc;
+  --state-info-text: #055160;
+}
+
+[data-theme="dark"] {
+  /* Thème Sombre (Nuit) */
+  --color-primary: #4dabf7;
+  --color-bg: #1a1d20;
+  --color-text: #f8f9fa;
+  --text-secondary: #adb5bd;
+  --text-muted: #6c757d;
+  
+  /* Couleurs État (adaptées thème sombre) */
+  --state-success-bg: #2b8a3e;
+  --state-success-text: #d3f9d8;
+  --state-error-bg: #c92a2a;
+  --state-error-text: #ffc9c9;
+  --state-warning-bg: #f59f00;
+  --state-warning-text: #fff9db;
+  --state-info-bg: #1c7ed6;
+  --state-info-text: #d0ebff;
+}
+```
+
+---
+
+## ♿ Accessibilité WCAG 2.2 AA
+
+### Contraste Couleurs
+
+**Obligatoire** :
+- Texte sur fond : Ratio ≥ 4.5:1
+- Texte large (18px+) : Ratio ≥ 3:1
+- Éléments interactifs : Ratio ≥ 3:1
+
+**Vérification** :
+```bash
+# Utiliser WebAIM Contrast Checker ou équivalent
+# URL : https://webaim.org/resources/contrastchecker/
+```
+
+### Focus Visible
+
+```css
+/* ✅ Obligatoire : Focus visible */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ❌ JAMAIS : Supprimer focus sans alternative */
+button:focus {
+  outline: none;  /* ❌ INTERDIT */
+}
+
+/* ✅ Alternative : Focus visible personnalisé */
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+```
+
+### Skip Links
+
+```tsx
+// ✅ Obligatoire : Skip link pour navigation clavier
+<a href="#main-content" className="skip-link">
+  Aller au contenu principal
+</a>
+
+<style>
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: #fff;
+  padding: var(--spacing-2) var(--spacing-4);
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+</style>
+```
+
+---
+
+## ✅ Usage Correct
+
+### Couleurs
+
+```tsx
+// ✅ Bon : Variables CSS
+<div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
+
+// ✅ Bon : Classes CSS
+<div className="card">  {/* Card utilise variables CSS */}
+
+// ❌ Éviter : Couleurs hardcodées
+<div style={{ backgroundColor: '#ffffff', color: '#212529' }}>
+```
+
+### Contraste
+
+```css
+/* ✅ Bon : Contraste vérifié WCAG 2.2 AA */
+.text-primary {
+  color: var(--text-primary);  /* #212529 sur #ffffff = 12.6:1 ✅ */
+  background-color: var(--color-bg);
+}
+
+.text-secondary {
+  color: var(--text-secondary);  /* #6c757d sur #ffffff = 4.8:1 ✅ */
+  background-color: var(--color-bg);
+}
+
+/* ❌ Éviter : Contraste insuffisant */
+.text-light {
+  color: #cccccc;  /* Sur #ffffff = 1.6:1 ❌ < 4.5:1 */
+}
+```
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Couleurs Hardcodées
+```css
+/* ❌ Mauvais */
+.button {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+/* ✅ Bon */
+.button {
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
+}
+```
+
+### ❌ Focus Invisible
+```css
+/* ❌ Mauvais */
+button:focus {
+  outline: none;
+}
+
+/* ✅ Bon */
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+```
+
+### ❌ Contraste Insuffisant
+```css
+/* ❌ Mauvais : Contraste < 4.5:1 */
+.text-light {
+  color: #cccccc;  /* Sur fond blanc */
+}
+
+/* ✅ Bon : Contraste ≥ 4.5:1 */
+.text-light {
+  color: var(--text-secondary);  /* Vérifié ≥ 4.5:1 */
+}
+```
+
+---
+
+## ✅ Checklist Accessibilité
+
+### Couleurs
+- [ ] Variables CSS utilisées (pas de hardcodées)
+- [ ] Support thème jour/nuit
+- [ ] Contraste vérifié (≥ 4.5:1 texte normal)
+- [ ] Contraste vérifié (≥ 3:1 texte large)
+
+### Focus
+- [ ] Focus visible (outline 2px)
+- [ ] Focus offset 2px
+- [ ] Tous éléments interactifs focusables
+
+### Navigation Clavier
+- [ ] Tab order logique
+- [ ] Skip links présents
+- [ ] Événements clavier (Enter, Space, Escape)
+
+---
+
+## 📚 Références
+
+- **WCAG 2.2** : https://www.w3.org/WAI/WCAG22/quickref/
+- **WebAIM Contrast Checker** : https://webaim.org/resources/contrastchecker/
+- **Design System** : `docs/DESIGN_SYSTEM_UI_UX.md` (sections Couleurs, Accessibilité)
+- **Règle Design System** : `.cursor/rules/design-system-ui-ux.mdc`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

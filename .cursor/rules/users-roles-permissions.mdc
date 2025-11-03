@@ -1,0 +1,226 @@
+---
+name: users-roles-permissions
+description: Règles strictes pour Users, Roles et Permissions granulaires
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Users, Roles & Permissions - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer gestion stricte des utilisateurs, rôles et permissions granulaires selon matrice READ/WRITE/MOD/DELETE.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Users
+
+**Validation** :
+- ✅ Username unique (UNIQUE)
+- ✅ Email valide (format)
+- ✅ Password fort (min 8 caractères, complexité)
+- ✅ Username non vide
+
+**Structure** :
+```python
+users (
+    id INT PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255),
+    note TEXT,
+    password_hash VARCHAR(255) NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    modify_at DATETIME,
+    created_at DATETIME,
+    created_by INT
+)
+```
+
+**Password** :
+- Hash avec bcrypt/argon2
+- Validation force avant hash
+- Jamais stocké en clair
+
+### 2. Roles
+
+**Rôles par défaut** :
+- **Admin** : Toutes permissions
+- **Operator** : Permissions limitées (READ/WRITE sur releases)
+
+**Structure** :
+```python
+roles (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    created_at DATETIME
+)
+```
+
+**Validation** :
+- ✅ Nom unique (UNIQUE)
+- ✅ Nom non vide
+- ✅ Description optionnelle
+
+### 3. Permissions Granulaires
+
+**Matrice** :
+- **Resource** : `releases`, `rules`, `users`, `roles`, `config`
+- **Action** : `READ`, `WRITE`, `MOD`, `DELETE`
+
+**Logique automatique** :
+- `MOD` → implique `WRITE` → implique `READ`
+- `DELETE` → indépendant mais vérifie `MOD` recommandé
+
+**Structure** :
+```python
+permissions (
+    id INT PRIMARY KEY,
+    role_id INT,
+    resource VARCHAR(50) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    created_at DATETIME,
+    UNIQUE(role_id, resource, action)
+)
+
+# Relations
+role_permissions (role_id, permission_id)
+user_permissions (user_id, permission_id)
+```
+
+### 4. User ↔ Role (Many-to-Many)
+
+**Règle** : Un utilisateur peut avoir UN rôle unique à la fois.
+
+**Structure** :
+```python
+user_roles (
+    user_id INT,
+    role_id INT,
+    PRIMARY KEY (user_id, role_id)
+)
+```
+
+**Validation** :
+- ✅ Un utilisateur = un rôle unique
+- ✅ Rôle valide (existe)
+- ✅ Permission automatique selon rôle
+
+### 5. User ↔ Group (Many-to-Many)
+
+**Règle** : Un utilisateur peut appartenir à PLUSIEURS groupes.
+
+**Structure** :
+```python
+groups (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    created_at DATETIME
+)
+
+user_groups (
+    user_id INT,
+    group_id INT,
+    PRIMARY KEY (user_id, group_id)
+)
+```
+
+**Validation** :
+- ✅ Format groupe conforme (majuscules, chiffres)
+- ✅ Unicité `name` garantie
+
+### 6. Vérification Permissions
+
+**Décorateur** :
+```python
+from functools import wraps
+from flask_jwt_extended import get_jwt_identity
+
+def require_permission(resource: str, action: str):
+    """Décorateur vérification permission."""
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            user = get_current_user()
+            if not user.has_permission(resource, action):
+                return jsonify({"error": "Forbidden"}), 403
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# Usage
+@require_permission("releases", "WRITE")
+def create_release():
+    pass
+```
+
+**Logique vérification** :
+- Permissions directes utilisateur
+- Permissions via rôle
+- Logique automatique (MOD → WRITE → READ)
+
+---
+
+## 🔍 Validation Stricte
+
+### Users
+
+**Avant création** :
+- ✅ Username unique
+- ✅ Email valide (si fourni)
+- ✅ Password fort
+
+**Avant modification** :
+- ✅ Username unique (si changé)
+- ✅ Validation permissions
+
+### Roles
+
+**Avant création** :
+- ✅ Nom unique
+- ✅ Permissions valides (resource, action)
+
+**Avant suppression** :
+- ✅ Vérifier utilisateurs assignés
+- ✅ Avertissement si utilisateurs affectés
+
+### Permissions
+
+**Logique automatique** :
+- ✅ `MOD` → ajouter automatiquement `WRITE` et `READ`
+- ✅ `WRITE` → ajouter automatiquement `READ`
+- ✅ `DELETE` → indépendant mais recommandé avec `MOD`
+
+---
+
+## 🚨 Points Critiques
+
+### Rôle Unique
+
+**Règle** : Un utilisateur = UN rôle unique à la fois.
+
+**Pas d'exception** : Matrice READ/WRITE/MOD/DELETE appliquée strictement.
+
+### Permissions Granulaires
+
+**Matrice complète** : Toutes ressources × toutes actions configurées.
+
+**Vérification** : Toujours vérifier permissions avant action.
+
+---
+
+## 📚 Références
+
+- **PRD-005** : `docs/PRDs/PRD-005-Utilisateurs.md`
+- **PRD-006** : `docs/PRDs/PRD-006-Roles.md`
+- **Database ERD** : `docs/DATABASE_ERD.md` (tables `users`, `roles`, `permissions`, etc.)
+- **API Reference** : `docs/API_REFERENCE.md` (endpoints users, roles)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

@@ -1,0 +1,564 @@
+---
+alwaysApply: true
+---
+---
+name: maintenance-evolutive
+description: Règles strictes de maintenance évolutive et nettoyage continu pour maintenir le projet toujours propre et cohérent
+globs:
+  - "**/*.{py,js,jsx,ts,tsx,md,yml,yaml,json}"
+---
+
+# 🧹 Maintenance Évolutive & Nettoyage Continu - eBook Scene Packer v2
+
+## 🎯 Mission
+
+Maintenir le projet **toujours propre, cohérent et aligné avec la réalité** en appliquant une approche de nettoyage continu et de documentation évolutive.
+
+---
+
+## 🚨 RÈGLES ABSOLUES DE MAINTENANCE
+
+### 1. Documentation Toujours à Jour
+
+**❌ JAMAIS** :
+- Laisser une documentation obsolète ou contradictoire
+- Conserver des fichiers de documentation qui ne reflètent plus la réalité
+- Avoir des TODOs ou commentaires "à compléter" dans la documentation finale
+
+**✅ TOUJOURS** :
+- Mettre à jour la documentation **immédiatement** après chaque changement
+- Supprimer les fichiers/documentations obsolètes **dès qu'ils ne sont plus pertinents**
+- Vérifier la cohérence entre tous les fichiers de documentation
+
+### 2. Nettoyage Continu
+
+**Actions Obligatoires** :
+
+#### 2.1 Après Chaque Phase/Étape Complétée
+
+```bash
+# Checklist de nettoyage obligatoire
+- [ ] Supprimer les fichiers temporaires de la phase
+- [ ] Mettre à jour DEVBOOK.md (marquer étape terminée)
+- [ ] Vérifier et supprimer TODOs obsolètes dans todolist.md
+- [ ] Mettre à jour PRDs si fonctionnalités modifiées
+- [ ] Vérifier cohérence entre documentation et code
+- [ ] Supprimer les commentaires "TODO" ou "FIXME" devenus obsolètes
+- [ ] Nettoyer les tests non utilisés ou obsolètes
+```
+
+#### 2.2 Audit Hebdomadaire (Automatisé ou Manuel)
+
+```bash
+# Script de vérification à exécuter chaque semaine
+./scripts/audit-documentation.sh
+
+# Vérifications :
+- Fichiers .md obsolètes ou non référencés
+- PRDs avec statut "Deprecated" non supprimés
+- Sections "À compléter" dans la documentation
+- Liens brisés entre documents
+- Code mort ou commenté inutilement
+```
+
+### 3. Cohérence Documentation ↔ Code
+
+**Règle** : La documentation DOIT toujours refléter l'état actuel du code.
+
+**Vérifications Obligatoires** :
+
+```python
+# Exemple : Vérifier que DEVBOOK.md correspond au code réel
+# Si Phase 1.1 est marquée "✅ Terminée" dans DEVBOOK.md,
+# alors le code correspondant DOIT exister et être fonctionnel.
+
+# Si un PRD décrit une fonctionnalité,
+# alors le code DOIT l'implémenter ou être en cours d'implémentation.
+```
+
+---
+
+## 📋 Processus de Nettoyage par Type de Fichier
+
+### Documentation Markdown
+
+#### DEVBOOK.md
+- ✅ **Mettre à jour** : À chaque étape complétée
+- ❌ **Supprimer** : Étapes non commencées après 3 mois d'inactivité (si abandonnées)
+- ✅ **Vérifier** : Cohérence entre phases déclarées terminées et code réel
+
+#### PRDs (Product Requirement Documents)
+- ✅ **Mettre à jour** : Version incrémentée si modification fonctionnalité
+- ❌ **Supprimer** : PRDs avec statut "Deprecated" après 1 mois
+- ✅ **Archiver** : PRDs remplacés dans `docs/PRDs/archive/`
+
+#### todolist.md
+- ✅ **Mettre à jour** : Marquer tâches complétées immédiatement
+- ❌ **Supprimer** : Tâches "⏳ Non commencée" si dépendances impossibles
+- ✅ **Nettoyer** : Sections de phases complètement terminées (garder seulement résumé)
+
+#### PROJECT_ANALYSIS_QUESTIONS.md
+- ✅ **Mettre à jour** : Marquer questions résolues avec décisions finales
+- ❌ **Supprimer** : Section question après 2 semaines si réponse documentée ailleurs
+- ✅ **Conserver** : Seulement le récapitulatif final des décisions
+
+### Code Source
+
+#### Python
+```python
+# ❌ À SUPPRIMER :
+# - Code commenté (sauf rares exceptions documentées)
+# - Imports non utilisés
+# - Fonctions/méthodes non appelées
+# - TODO/FIXME devenus obsolètes
+# - Code mort (branches non atteignables)
+
+# ✅ TOUJOURS :
+# - Code propre, lisible, documenté
+# - Type hints présents
+# - Docstrings à jour
+```
+
+#### JavaScript/TypeScript
+```typescript
+// ❌ À SUPPRIMER :
+// - Composants non utilisés
+// - Imports non utilisés
+// - Fonctions/composants obsolètes
+// - Console.log de debug laissés
+// - Commentaires TODO non pertinents
+
+// ✅ TOUJOURS :
+// - Code propre avec TypeScript strict
+// - Composants documentés
+// - Pas de code mort
+```
+
+### Tests
+
+#### Fichiers de Test
+- ❌ **Supprimer** : Tests obsolètes (tests de fonctionnalités supprimées)
+- ✅ **Mettre à jour** : Tests après refactoring
+- ✅ **Nettoyer** : Tests flaky ou instables
+
+---
+
+## 🔍 Scripts de Vérification Automatisés
+
+### Script 1 : Audit Documentation
+
+```bash
+#!/bin/bash
+# scripts/audit-documentation.sh
+
+echo "🔍 Audit de la documentation..."
+
+# 1. Vérifier liens brisés
+find docs/ -name "*.md" -exec grep -l "\[.*\](.*)" {} \; | while read file; do
+    # Vérifier chaque lien
+    markdown-link-check "$file"
+done
+
+# 2. Détecter sections "À compléter"
+grep -r "À compléter\|TODO\|FIXME" docs/ --include="*.md" && echo "⚠️  Sections incomplètes trouvées"
+
+# 3. Vérifier PRDs obsolètes
+find docs/PRDs/ -name "*.md" -exec grep -l "Deprecated" {} \; | while read file; do
+    echo "⚠️  PRD deprecated trouvé: $file (à supprimer après 1 mois)"
+done
+
+# 4. Vérifier cohérence DEVBOOK ↔ Code
+# Si phase marquée terminée, code doit exister
+./scripts/verify-devbook-consistency.sh
+```
+
+### Script 2 : Nettoyage Code
+
+```bash
+#!/bin/bash
+# scripts/cleanup-code.sh
+
+echo "🧹 Nettoyage du code..."
+
+# 1. Supprimer imports non utilisés (Python)
+ruff check --select F401 --fix web/ src/
+
+# 2. Supprimer code mort (Python)
+vulture web/ src/ --min-confidence 80
+
+# 3. Supprimer console.log (TypeScript/JS)
+find frontend/ -name "*.{ts,tsx,js,jsx}" -exec sed -i '/console\.log/d' {} \;
+
+# 4. Vérifier TODOs/FIXMEs
+echo "📋 TODOs/FIXMEs restants:"
+grep -r "TODO\|FIXME" web/ src/ frontend/ --include="*.{py,ts,tsx,js,jsx}" | grep -v "node_modules\|venv"
+```
+
+### Script 3 : Vérification Cohérence
+
+```bash
+#!/bin/bash
+# scripts/verify-consistency.sh
+
+echo "✅ Vérification de cohérence..."
+
+# 1. Vérifier que DEVBOOK correspond au code
+# Phase 1.1 terminée → web/app.py doit exister
+if grep -q "✅ Terminée" docs/DEVBOOK.md && [ ! -f "web/app.py" ]; then
+    echo "❌ Incohérence: Phase 1.1 marquée terminée mais web/app.py n'existe pas"
+    exit 1
+fi
+
+# 2. Vérifier que PRDs correspondent aux fonctionnalités
+# PRD-002 Wizard → code wizard doit exister ou être en cours
+# (à adapter selon avancement)
+
+# 3. Vérifier que todolist correspond à DEVBOOK
+# Étapes terminées dans DEVBOOK doivent être marquées dans todolist
+```
+
+---
+
+## 📅 Calendrier de Maintenance
+
+### Quotidien (Automatique)
+- ✅ Vérification cohérence après chaque commit (pre-commit hook)
+
+### Hebdomadaire (Manuel ou CI)
+- ✅ Audit documentation complète
+- ✅ Nettoyage code mort
+- ✅ Vérification liens brisés
+
+### Mensuel
+- ✅ Review complète de la documentation
+- ✅ Suppression fichiers/documentation obsolète
+- ✅ Archivage PRDs deprecated
+- ✅ Mise à jour roadmap si nécessaire
+
+---
+
+## 🚨 Alertes et Actions Correctives
+
+### Alerte 1 : Documentation Obsolète
+
+**Détection** :
+```bash
+# Fichier modifié il y a > 3 mois et référencé comme "actif"
+find docs/ -name "*.md" -mtime +90 -exec grep -l "Statut.*En cours\|⏳" {} \;
+```
+
+**Action** :
+1. Vérifier si fonctionnalité toujours active
+2. Si inactive > 3 mois : Marquer "Deprecated" ou supprimer
+3. Mettre à jour références dans autres documents
+
+### Alerte 2 : Code Mort
+
+**Détection** :
+```bash
+# Fonctions non appelées (Python)
+vulture web/ src/ --min-confidence 80
+
+# Composants non utilisés (React)
+# (à implémenter avec analyse statique)
+```
+
+**Action** :
+1. Vérifier si vraiment non utilisé
+2. Si non utilisé : Supprimer immédiatement
+3. Mettre à jour tests si nécessaire
+
+### Alerte 3 : Liens Brisés
+
+**Détection** :
+```bash
+# Vérifier tous les liens Markdown
+markdown-link-check docs/**/*.md
+```
+
+**Action** :
+1. Corriger lien si fichier déplacé
+2. Supprimer référence si fichier supprimé
+3. Mettre à jour document source
+
+---
+
+## ✅ Checklist Avant Commit
+
+### Documentation
+- [ ] DEVBOOK.md à jour (si étape complétée)
+- [ ] todolist.md à jour (tâches complétées)
+- [ ] PRDs à jour (si fonctionnalité modifiée)
+- [ ] Pas de sections "À compléter" ajoutées
+- [ ] Liens vérifiés (pas de liens brisés)
+
+### Code
+- [ ] Pas de code commenté inutile
+- [ ] Pas d'imports non utilisés
+- [ ] Pas de console.log/print de debug
+- [ ] Pas de TODOs/FIXMEs non documentés
+- [ ] Code mort supprimé
+
+### Tests
+- [ ] Tests obsolètes supprimés
+- [ ] Tests à jour après modification
+
+---
+
+## 🔄 Processus de Suppression Documentaire
+
+### Étape 1 : Identifier Fichier Obsolète
+
+```bash
+# Critères :
+# - Fichier non référencé depuis > 3 mois
+# - Fonctionnalité abandonnée
+# - Documentation remplacée
+# - Phase/étape annulée
+```
+
+### Étape 2 : Vérifier Dépendances
+
+```bash
+# Chercher toutes les références
+grep -r "nom-du-fichier" docs/ --include="*.md"
+
+# Si références existent :
+# - Mettre à jour références
+# - Ou archiver fichier au lieu de supprimer
+```
+
+### Étape 3 : Supprimer ou Archiver
+
+```bash
+# Si références existent encore :
+mv docs/fichier-obsolète.md docs/archive/fichier-obsolète.md
+
+# Si aucune référence :
+rm docs/fichier-obsolète.md
+
+# Mettre à jour index/README si nécessaire
+```
+
+---
+
+## 📊 Métriques de Propreté
+
+### Objectifs
+
+- **0** fichier de documentation obsolète (> 3 mois non mis à jour)
+- **0** lien brisé dans la documentation
+- **< 5** TODOs/FIXMEs non documentés dans le code
+- **0** code mort (fonctions non appelées)
+- **100%** cohérence DEVBOOK ↔ Code
+
+### Vérification
+
+```bash
+# Script de métriques
+./scripts/metrics-cleanliness.sh
+
+# Affiche :
+# - Nombre fichiers obsolètes
+# - Nombre liens brisés
+# - Nombre TODOs restants
+# - Taux de code mort
+# - Score de cohérence
+```
+
+---
+
+## 🎯 Règles Spécifiques par Type de Fichier
+
+### Fichiers Markdown
+
+**Format** :
+- Toujours commencer par un en-tête avec titre
+- Utiliser formatage cohérent (titres, listes, code)
+- Liens relatifs uniquement
+- Pas de sections vides ou "À compléter"
+
+**Nettoyage** :
+- Supprimer sections obsolètes complètes
+- Mettre à jour dates de dernière modification
+- Vérifier formatage Markdown (linter)
+
+### Fichiers Python
+
+**Format** :
+- Type hints obligatoires
+- Docstrings Google style
+- Pas de code commenté (sauf rares exceptions)
+- Imports organisés (stdlib, third-party, local)
+
+**Nettoyage** :
+- `ruff check --fix` pour imports non utilisés
+- `vulture` pour détecter code mort
+- Supprimer fonctions non utilisées
+
+### Fichiers TypeScript/React
+
+**Format** :
+- TypeScript strict mode
+- Composants documentés
+- Pas de `any` (sauf rares exceptions)
+- Imports organisés
+
+**Nettoyage** :
+- `eslint --fix` pour nettoyer automatiquement
+- Supprimer composants non utilisés
+- Pas de console.log en production
+
+---
+
+## 🚫 Anti-Patterns à Éviter
+
+### ❌ Documentation Obsolète
+```markdown
+# ❌ Mauvais : Documentation non mise à jour
+# Phase 1 : Infrastructure Core ⏳ Non commencée
+# (Mais le code existe déjà)
+
+# ✅ Bon : Documentation à jour
+# Phase 1 : Infrastructure Core ✅ Terminée (2025-11-01)
+```
+
+### ❌ Code Commenté "Au Cas Où"
+```python
+# ❌ Mauvais : Code commenté "au cas où"
+# def old_function():
+#     return old_logic()
+
+# ✅ Bon : Code supprimé si non utilisé
+# (Utiliser git history si besoin)
+```
+
+### ❌ TODOs Éternels
+```python
+# ❌ Mauvais : TODO jamais résolu
+# TODO: Implémenter cette fonctionnalité
+
+# ✅ Bon : TODO documenté avec issue/ticket
+# TODO(#123): Implémenter cette fonctionnalité
+# OU : TODO supprimé si non pertinent
+```
+
+---
+
+## 🔗 Liens Utiles
+
+- **DEVBOOK** : `docs/DEVBOOK.md`
+- **TodoList** : `docs/todolist.md`
+- **PRDs** : `docs/PRDs/`
+- **Scripts** : `scripts/audit-documentation.sh`, `scripts/cleanup-code.sh`
+
+---
+
+## 📝 Checklist de Maintenance (À Appliquer Régulièrement)
+
+### Après Chaque Étape Complétée
+- [ ] Mettre à jour DEVBOOK.md immédiatement
+- [ ] Mettre à jour todolist.md (marquer tâches complétées)
+- [ ] Vérifier et supprimer TODOs obsolètes
+- [ ] Nettoyer code mort dans fichiers modifiés
+- [ ] Vérifier cohérence documentation ↔ code
+
+### Hebdomadaire (Exécuter Scripts)
+```bash
+# Audit complet
+./scripts/audit-documentation.sh
+
+# Nettoyage code
+./scripts/cleanup-code.sh
+
+# Vérification cohérence
+./scripts/verify-consistency.sh
+```
+
+### Mensuel
+- [ ] Review complète documentation
+- [ ] Supprimer fichiers obsolètes (> 3 mois)
+- [ ] Archiver PRDs deprecated
+- [ ] Mettre à jour roadmap si nécessaire
+
+---
+
+## 🔄 Processus Automatique Recommandé
+
+### Pre-commit Hook (À Implémenter)
+
+Créer `.git/hooks/pre-commit` :
+```bash
+#!/bin/bash
+# Vérifications avant commit
+
+# 1. Vérifier que documentation mise à jour si code modifié
+if git diff --cached --name-only | grep -q "web/\|src/\|frontend/"; then
+    # Code modifié → vérifier si DEVBOOK à jour
+    ./scripts/verify-consistency.sh || exit 1
+fi
+
+# 2. Linter automatique
+# (ruff, eslint selon type de fichier)
+```
+
+### CI/CD Integration (GitHub Actions)
+
+```yaml
+# .github/workflows/maintenance-check.yml
+name: Maintenance Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Tous les lundis 9h
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit Documentation
+        run: ./scripts/audit-documentation.sh
+      - name: Verify Consistency
+        run: ./scripts/verify-consistency.sh
+      - name: Cleanup Code
+        run: ./scripts/cleanup-code.sh
+```
+
+---
+
+## 🎯 Objectifs de Qualité
+
+### Métriques Cibles
+- **0** fichier documentation obsolète (> 3 mois)
+- **0** lien brisé dans documentation
+- **< 5** TODOs non documentés
+- **0%** code mort (fonctions non appelées)
+- **100%** cohérence DEVBOOK ↔ Code
+
+### Score de Propreté
+
+```bash
+# Calculer score (0-100)
+./scripts/metrics-cleanliness.sh
+
+# Résultat attendu: > 90%
+```
+
+---
+
+## 📚 Documentation de Référence
+
+- **Règle principale** : `.cursor/rules/maintenance-evolutive.mdc` (ce fichier)
+- **Scripts** : `scripts/audit-documentation.sh`, `scripts/cleanup-code.sh`, `scripts/verify-consistency.sh`
+- **DEVBOOK** : `docs/DEVBOOK.md`
+- **Definition of Done** : `.cursor/rules/definition-of-done.mdc`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️
+
+**Rappel** : Cette règle est **toujours active** (`alwaysApply: true`) pour maintenir le projet propre en continu.

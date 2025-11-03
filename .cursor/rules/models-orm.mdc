@@ -1,0 +1,317 @@
+---
+name: models-orm
+description: Règles strictes pour Models ORM SQLAlchemy - Structure et Relations
+globs:
+  - "**/*.py"
+---
+
+# Models ORM - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer structure cohérente et complète des modèles SQLAlchemy avec relations, contraintes et méthodes utilitaires.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Structure Modèle
+
+**Template Standard** :
+```python
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, JSON, Boolean
+from sqlalchemy.orm import relationship
+from web.extensions import db
+
+class ModelName(db.Model):
+    """Description du modèle."""
+    
+    __tablename__ = 'table_name'
+    
+    # Colonnes
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(100), nullable=False, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relations
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user = relationship('User', backref='model_instances')
+    
+    def __repr__(self):
+        return f'<ModelName {self.name}>'
+    
+    def to_dict(self):
+        """Convertit modèle en dictionnaire."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+```
+
+---
+
+### 2. Modèles Obligatoires
+
+**15 modèles** doivent être créés (voir `docs/DATABASE_ERD.md`) :
+
+#### Users & Auth
+- ✅ `User` : Utilisateurs (username UNIQUE, password_hash)
+- ✅ `Role` : Rôles (name, description)
+- ✅ `Permission` : Permissions (resource, action)
+- ✅ `Group` : Groups Scene (name UNIQUE)
+
+#### Relations
+- ✅ `UserGroup` : User ↔ Group (many-to-many)
+- ✅ `UserRole` : User ↔ Role (many-to-many)
+- ✅ `RolePermission` : Role ↔ Permission (many-to-many)
+- ✅ `UserPermission` : User → Permission (direct)
+
+#### Releases & Jobs
+- ✅ `Release` : Releases créées (user_id, group_id, release_type, status, metadata JSON, config JSON)
+- ✅ `Job` : Jobs de packaging (release_id, status, config_json JSON, logs TEXT)
+
+#### Rules & Templates
+- ✅ `Rule` : Rules Scene locales (name, content TEXT, scene, section, year)
+- ✅ `Template` : Templates NFO (name, content TEXT, storage)
+
+#### Configurations
+- ✅ `ApiConfig` : Configurations APIs (user_id, name, api_key_encrypted TEXT)
+- ✅ `Destination` : Destinations FTP/SSH (user_id, name, host, port, user, password_encrypted TEXT, type)
+- ✅ `Preference` : Préférences utilisateur (user_id, key, value TEXT)
+
+---
+
+### 3. Relations
+
+**Many-to-Many** :
+```python
+# User ↔ Group
+user_groups = db.Table('user_groups',
+    db.Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    db.Column('group_id', Integer, ForeignKey('groups.id'), primary_key=True)
+)
+
+class User(db.Model):
+    groups = relationship('Group', secondary=user_groups, backref='users')
+```
+
+**One-to-Many** :
+```python
+class User(db.Model):
+    releases = relationship('Release', backref='user', lazy='dynamic')
+
+class Release(db.Model):
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+```
+
+---
+
+### 4. Contraintes Base de Données
+
+**Obligatoires** :
+- ✅ **PRIMARY KEY** : `id` (INTEGER AUTO_INCREMENT) pour toutes tables
+- ✅ **UNIQUE** : Username, groupe name, etc. selon spécifications
+- ✅ **FOREIGN KEY** : Toutes relations avec `ON DELETE CASCADE` ou `RESTRICT`
+- ✅ **NOT NULL** : Colonnes critiques (username, password_hash, etc.)
+- ✅ **INDEX** : Colonnes fréquemment utilisées (username, user_id, status)
+
+**Exemple** :
+```python
+username = Column(String(100), nullable=False, unique=True, index=True)
+user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
+```
+
+---
+
+### 5. Méthodes Utilitaires
+
+**Méthodes Obligatoires** :
+
+#### `to_dict()`
+```python
+def to_dict(self):
+    """Convertit modèle en dictionnaire."""
+    return {
+        'id': self.id,
+        'name': self.name,
+        'created_at': self.created_at.isoformat() if self.created_at else None,
+    }
+```
+
+#### `from_dict()` (optionnel, selon besoin)
+```python
+@classmethod
+def from_dict(cls, data: dict):
+    """Crée instance depuis dictionnaire."""
+    return cls(**data)
+```
+
+#### `__repr__()`
+```python
+def __repr__(self):
+    return f'<ModelName {self.name}>'
+```
+
+---
+
+### 6. Validation Champs
+
+**Avant Sauvegarde** :
+```python
+from marshmallow import Schema, fields, validate
+
+class UserSchema(Schema):
+    username = fields.Str(required=True, validate=validate.Length(min=3, max=100))
+    password = fields.Str(required=True, validate=validate.Length(min=8))
+```
+
+**Dans Modèle** :
+```python
+from sqlalchemy.orm import validates
+
+class User(db.Model):
+    @validates('username')
+    def validate_username(self, key, value):
+        if not value or len(value) < 3:
+            raise ValueError("Username must be at least 3 characters")
+        return value
+```
+
+---
+
+### 7. Sécurité
+
+**Chiffrement** :
+- ✅ **Credentials** : API keys, passwords → Chiffrement Fernet avant stockage
+- ✅ **Sensitive data** : Dans colonnes `*_encrypted` (TEXT)
+
+**Exemple** :
+```python
+from web.utils.crypto import encrypt_fernet, decrypt_fernet
+
+class ApiConfig(db.Model):
+    api_key_encrypted = Column(Text, nullable=False)
+    
+    @property
+    def api_key(self):
+        """Déchiffre API key."""
+        return decrypt_fernet(self.api_key_encrypted)
+    
+    @api_key.setter
+    def api_key(self, value: str):
+        """Chiffre API key."""
+        self.api_key_encrypted = encrypt_fernet(value)
+```
+
+---
+
+### 8. Performance
+
+**Indexes** :
+```python
+# Colonnes fréquemment utilisées
+username = Column(String(100), index=True)
+user_id = Column(Integer, ForeignKey('users.id'), index=True)
+status = Column(String(50), index=True)
+created_at = Column(DateTime, index=True)
+```
+
+**Queries Optimisées** :
+```python
+# ✅ Bon : Eager loading
+releases = Release.query.options(joinedload(Release.user)).all()
+
+# ❌ Éviter : N+1 queries
+for release in Release.query.all():
+    user = release.user  # Requête supplémentaire
+```
+
+---
+
+### 9. Timestamps
+
+**Obligatoires** :
+- ✅ `created_at` : DateTime, default=datetime.utcnow
+- ✅ `updated_at` : DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+
+---
+
+### 10. JSON Columns
+
+**Format Standard** :
+```python
+metadata = Column(JSON, nullable=True)  # Pour données flexibles
+config_json = Column(JSON, nullable=True)  # Pour configurations
+```
+
+**Utilisation** :
+```python
+release.metadata = {'title': 'Test', 'author': 'Author'}
+# Automatiquement sérialisé/désérialisé par SQLAlchemy
+```
+
+---
+
+## ✅ Checklist Modèle
+
+### Avant Commit
+- [ ] Modèle conforme template standard
+- [ ] Toutes colonnes avec types corrects
+- [ ] Contraintes base de données (PRIMARY KEY, UNIQUE, FOREIGN KEY)
+- [ ] Indexes sur colonnes fréquentes
+- [ ] Relations définies correctement
+- [ ] Méthodes `to_dict()`, `__repr__()` présentes
+- [ ] Validation champs (Marshmallow schema)
+- [ ] Timestamps (`created_at`, `updated_at`)
+- [ ] Tests unitaires modèle
+- [ ] Documentation docstring complète
+
+---
+
+## 🚨 Anti-Patterns
+
+### ❌ Pas de Logique Métier dans Modèle
+```python
+# ❌ Mauvais : Logique métier dans modèle
+class User(db.Model):
+    def process_release(self):
+        # Logique packaging ici
+        pass
+
+# ✅ Bon : Logique dans Service
+class ReleaseService:
+    def process_release(self, user: User, release: Release):
+        # Logique packaging ici
+        pass
+```
+
+### ❌ Pas de Requêtes Complexes dans Modèle
+```python
+# ❌ Mauvais : Requête complexe dans modèle
+class Release(db.Model):
+    @classmethod
+    def find_active_releases(cls):
+        return cls.query.filter_by(status='active').join(User).all()
+
+# ✅ Bon : Dans Service ou Blueprint
+class ReleaseService:
+    @staticmethod
+    def find_active_releases():
+        return Release.query.filter_by(status='active').join(User).all()
+```
+
+---
+
+## 📚 Références
+
+- **ERD** : `docs/DATABASE_ERD.md` (schéma complet)
+- **API** : `docs/API_REFERENCE.md` (endpoints)
+- **PRDs** : `docs/PRDs/` (spécifications fonctionnelles)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

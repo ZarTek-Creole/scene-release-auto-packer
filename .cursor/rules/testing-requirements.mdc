@@ -1,0 +1,435 @@
+---
+alwaysApply: true
+---
+---
+name: testing-requirements
+description: Exigences strictes pour les tests
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Testing Requirements - eBook Scene Packer v2
+
+## 🎯 Exigences Générales
+
+### Obligatoire
+- ✅ **TDD strict** : Tests avant code (cycle Red-Green-Refactor)
+- ✅ **Couverture 100%** : Tous merge refusés si < 100%
+- ✅ **Tests isolés** : Aucune dépendance entre tests
+- ✅ **Tests rapides** : < 1s unitaires, < 5s intégration
+
+---
+
+## 📊 Types de Tests
+
+### 1. Tests Unitaires (70% du total)
+
+**Objectif** : Tester fonctions/méthodes isolées
+
+**Exigences** :
+- Exécution < 1s par test
+- Isolation complète (mocks pour dépendances)
+- Un test = Un comportement
+- Nom clair : `test_<functionality>_<scenario>()`
+
+**Exemples** :
+
+```python
+# ✅ Bon : Test unitaire isolé
+def test_hash_password():
+    """Test password hashing."""
+    password = 'testpassword123'
+    hashed = hash_password(password)
+    
+    assert hashed != password
+    assert verify_password(password, hashed) is True
+    assert verify_password('wrong', hashed) is False
+
+# ✅ Bon : Test avec mock
+@patch('web.services.api_client.requests.get')
+def test_fetch_external_data(mock_get):
+    """Test fetching data from external API."""
+    mock_get.return_value.json.return_value = {'data': 'test'}
+    
+    result = fetch_external_data('test-url')
+    
+    assert result == {'data': 'test'}
+    mock_get.assert_called_once_with('test-url')
+```
+
+```javascript
+// ✅ Bon : Test composant isolé
+describe('ReleaseCard', () => {
+  it('should render release name', () => {
+    const release = { id: 1, name: 'Test Release' };
+    render(<ReleaseCard release={release} />);
+    
+    expect(screen.getByText('Test Release')).toBeInTheDocument();
+  });
+  
+  it('should call onEdit when edit button clicked', () => {
+    const onEdit = jest.fn();
+    const release = { id: 1, name: 'Test Release' };
+    
+    render(<ReleaseCard release={release} onEdit={onEdit} />);
+    fireEvent.click(screen.getByText('Edit'));
+    
+    expect(onEdit).toHaveBeenCalledWith(1);
+  });
+});
+```
+
+---
+
+### 2. Tests d'Intégration (20% du total)
+
+**Objectif** : Tester interactions entre composants
+
+**Exigences** :
+- Exécution < 5s par test
+- Base de données test isolée
+- Nettoyage après chaque test
+- Scénarios réalistes
+
+**Exemples** :
+
+```python
+# ✅ Bon : Test intégration API + DB
+def test_create_user_endpoint(client, clean_db):
+    """Test création utilisateur via API."""
+    user_data = {
+        'username': 'newuser',
+        'email': 'newuser@test.com',
+        'password': 'securepass123'
+    }
+    
+    response = client.post('/api/users', json=user_data)
+    
+    assert response.status_code == 201
+    assert response.json['username'] == 'newuser'
+    
+    # Vérifier en DB
+    user = User.query.filter_by(username='newuser').first()
+    assert user is not None
+    assert user.check_password('securepass123') is True
+```
+
+```javascript
+// ✅ Bon : Test intégration composants
+describe('ReleaseWizard', () => {
+  it('should navigate through all steps', async () => {
+    render(
+      <ReleaseWizardProvider>
+        <ReleaseWizard />
+      </ReleaseWizardProvider>
+    );
+    
+    // Étape 1 : Groupe
+    fireEvent.change(screen.getByLabelText('Group'), {
+      target: { value: 'TestGroup' }
+    });
+    fireEvent.click(screen.getByText('Next'));
+    
+    // Étape 2 : Type
+    fireEvent.click(screen.getByText('EBOOK'));
+    fireEvent.click(screen.getByText('Next'));
+    
+    // Vérifier étape suivante
+    expect(screen.getByText('Select Rule')).toBeInTheDocument();
+  });
+});
+```
+
+---
+
+### 3. Tests E2E (10% du total)
+
+**Objectif** : Tester flux utilisateur complets
+
+**Exigences** :
+- Exécution < 30s par test
+- Navigateur réel (Chrome/Firefox)
+- Scénarios utilisateur complets
+- Tests critiques seulement
+
+**⚠️ OBLIGATOIRE** : Utiliser **Playwright MCP Tools** pour tous les tests E2E.
+
+**Exemples** :
+
+```python
+# ✅ Bon : Test E2E avec Playwright MCP
+def test_create_release_complete():
+    """Test création release complète via UI avec Playwright MCP."""
+    # 1. Naviguer vers nouvelle release
+    mcp_playwright_browser_navigate(url="http://localhost:5000/releases/new")
+    
+    # 2. Capturer état initial
+    mcp_playwright_browser_snapshot()
+    
+    # 3. Étape 1 : Groupe
+    mcp_playwright_browser_type(
+        element="group input",
+        ref="input[name='group']",
+        text="TestGroup"
+    )
+    mcp_playwright_browser_click(
+        element="Next button",
+        ref="button:has-text('Next')"
+    )
+    
+    # 4. Étape 2 : Type
+    mcp_playwright_browser_click(
+        element="EBOOK button",
+        ref="button:has-text('EBOOK')"
+    )
+    mcp_playwright_browser_click(
+        element="Next button",
+        ref="button:has-text('Next')"
+    )
+    
+    # 5. ... autres étapes ...
+    
+    # 6. Valider release créée
+    mcp_playwright_browser_wait_for(text="Release created successfully")
+    mcp_playwright_browser_snapshot()
+    
+    # 7. Screenshot pour documentation
+    mcp_playwright_browser_take_screenshot(filename="release-created.png")
+
+# ❌ Éviter : Playwright standard si MCP disponible
+def test_create_release_complete_old_way(page):
+    """Ancienne méthode - à éviter."""
+    page.goto('/releases/new')
+    # ...
+```
+
+---
+
+## 🛠️ Structure et Organisation
+
+### Structure Fichiers
+
+```
+tests/
+├── unit/
+│   ├── test_models.py
+│   ├── test_services.py
+│   ├── test_utils.py
+│   └── test_validators.py
+├── integration/
+│   ├── test_api.py
+│   ├── test_db.py
+│   └── test_services_integration.py
+├── e2e/
+│   ├── test_wizard.py
+│   ├── test_navigation.py
+│   └── test_user_flows.py
+├── conftest.py           # Fixtures partagées
+└── fixtures/             # Données de test
+    ├── users.json
+    └── releases.json
+```
+
+### Nommage
+
+**Python** :
+- Fichiers : `test_<module>.py`
+- Fonctions : `test_<functionality>_<scenario>()`
+- Classes : `Test<Component>`
+
+**JavaScript** :
+- Fichiers : `*.test.js` ou `*.spec.js`
+- Tests : `it('should <behavior>', () => { ... })`
+- Suites : `describe('<Component>', () => { ... })`
+
+---
+
+## 🔧 Fixtures et Setup
+
+### Backend (pytest)
+
+```python
+# conftest.py
+import pytest
+from web.app import create_app
+from web.models import db
+
+@pytest.fixture(scope='function')
+def app():
+    """Create test application."""
+    app = create_app('testing')
+    app.config['TESTING'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
+
+@pytest.fixture
+def client(app):
+    """Test client."""
+    return app.test_client()
+
+@pytest.fixture
+def auth_headers(client):
+    """Authenticated headers."""
+    response = client.post('/api/auth/login', json={
+        'username': 'admin',
+        'password': 'password'
+    })
+    token = response.json['access_token']
+    return {'Authorization': f'Bearer {token}'}
+
+@pytest.fixture
+def sample_user(app):
+    """Sample user for tests."""
+    user = User(username='testuser', email='test@test.com')
+    user.set_password('password')
+    db.session.add(user)
+    db.session.commit()
+    return user
+```
+
+### Frontend (React Testing Library)
+
+```javascript
+// test-utils.js
+import { render } from '@testing-library/react';
+import { ThemeProvider } from '../contexts/ThemeContext';
+import { AuthProvider } from '../contexts/AuthContext';
+
+const AllTheProviders = ({ children }) => {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        {children}
+      </AuthProvider>
+    </ThemeProvider>
+  );
+};
+
+const customRender = (ui, options) =>
+  render(ui, { wrapper: AllTheProviders, ...options });
+
+export * from '@testing-library/react';
+export { customRender as render };
+
+// Mock API
+export const mockApi = {
+  get: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn(),
+};
+```
+
+---
+
+## ✅ Checklist Tests
+
+### Avant Écrire Code (TDD)
+- [ ] Test écrit (Red)
+- [ ] Test échoue comme attendu
+- [ ] Test nommé clairement
+- [ ] Test isolé
+
+### Après Implémentation
+- [ ] Test passe (Green)
+- [ ] Couverture 100% fonction testée
+- [ ] Pas de régression (autres tests passent)
+- [ ] Code refactoré si nécessaire
+
+### Avant Commit
+- [ ] Tous tests passent (`pytest && npm test`)
+- [ ] Couverture 100% (`pytest --cov`)
+- [ ] Tests rapides (< 5s unitaires)
+- [ ] Pas de tests flaky
+- [ ] Fixtures propres (pas de données résiduelles)
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Tests Dépendants
+```python
+# ❌ Mauvais : Test dépend d'un autre
+def test_create_user():
+    user = create_user()  # Test précédent crée user
+
+def test_delete_user():
+    user = create_user()  # Dépend de test précédent
+    delete_user(user.id)
+```
+
+### ❌ Tests Non Isolés
+```python
+# ❌ Mauvais : Utilise DB globale
+def test_create_user():
+    user = User(username='test')
+    db.session.add(user)  # Modifie DB globale
+    # ...
+```
+
+### ❌ Tests Flaky
+```python
+# ❌ Mauvais : Dépend d'ordre exécution ou timing
+def test_process_file():
+    file = process_file('test.txt')
+    assert file.status == 'completed'  # Timing peut varier
+```
+
+### ❌ Tests Trop Généraux
+```python
+# ❌ Mauvais : Test trop large
+def test_user_crud():
+    # Test create, read, update, delete tout ensemble
+    pass
+
+# ✅ Bon : Tests séparés
+def test_create_user():
+    pass
+
+def test_read_user():
+    pass
+
+def test_update_user():
+    pass
+
+def test_delete_user():
+    pass
+```
+
+---
+
+## 📊 Coverage Requirements
+
+### Seuils Obligatoires
+- **Unitaires** : 100% fonctions/méthodes
+- **Intégration** : 100% endpoints/services
+- **E2E** : 100% flux critiques
+
+### Vérification
+```bash
+# Backend
+pytest --cov=web --cov=src --cov-report=term --cov-report=html
+
+# Frontend
+npm test -- --coverage
+
+# Doit afficher 100% coverage
+```
+
+---
+
+## 🔗 Liens
+
+- **TDD Methodology** : `.cursor/rules/tdd-methodology.mdc`
+- **MCP Tools Guide** : `docs/MCP_TOOLS_GUIDE.md` ⭐
+- **Test Plan** : `docs/TEST_PLAN.md`
+- **DEVBOOK** : `docs/DEVBOOK.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

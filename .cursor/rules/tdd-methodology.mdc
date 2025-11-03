@@ -1,0 +1,484 @@
+---
+alwaysApply: true
+---
+---
+name: tdd-methodology
+description: Règles strictes pour Test Driven Development (TDD)
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# TDD Methodology - Règles Strictes
+
+## 🎯 Principe Fondamental
+
+**TDD est OBLIGATOIRE pour tout développement**. Aucun code de production ne doit être écrit sans test correspondant écrit en premier.
+
+---
+
+## 🔴🟢🔄 Cycle Red-Green-Refactor
+
+### 1. Red : Écrire Test Qui Échoue
+**Objectif** : Définir comportement attendu
+
+```python
+# ✅ Exemple Backend
+def test_create_user_success():
+    """Test création utilisateur réussie."""
+    user_data = {
+        'username': 'testuser',
+        'email': 'test@example.com',
+        'password': 'securepass123'
+    }
+    
+    response = client.post('/api/users', json=user_data)
+    
+    assert response.status_code == 201
+    assert response.json['username'] == 'testuser'
+    assert 'id' in response.json
+```
+
+```javascript
+// ✅ Exemple Frontend
+describe('ReleaseCard', () => {
+  it('should display release information', () => {
+    const release = { id: 1, name: 'Test Release' };
+    render(<ReleaseCard release={release} />);
+    
+    expect(screen.getByText('Test Release')).toBeInTheDocument();
+  });
+});
+```
+
+### 2. Green : Implémenter Code Minimal
+**Objectif** : Faire passer le test avec code minimal
+
+```python
+# Code minimal pour faire passer le test
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    user = User(**data)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(user.to_dict()), 201
+```
+
+### 3. Refactor : Améliorer Code
+**Objectif** : Améliorer code tout en gardant tests verts
+
+```python
+# Code amélioré avec validation, error handling
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    schema = UserSchema()
+    try:
+        data = schema.load(request.get_json())
+    except ValidationError as err:
+        return jsonify({'errors': err.messages}), 400
+    
+    user = User(**data)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(schema.dump(user)), 201
+```
+
+---
+
+## 📋 Règles Strictes
+
+### Règle 1 : Tests Avant Code
+- ❌ **JAMAIS** écrire code production sans test
+- ✅ **TOUJOURS** écrire test d'abord (Red)
+- ✅ Test doit échouer initialement (vérifier)
+
+### Règle 2 : Un Test, Un Comportement
+- ✅ Un test = Un comportement spécifique
+- ✅ Nom clair : `test_<fonctionnalité>_<scénario>()`
+- ❌ Éviter tests multiples comportements dans un test
+
+```python
+# ✅ Bon : Tests séparés
+def test_create_user_success():
+    # Test création réussie
+    pass
+
+def test_create_user_duplicate_username():
+    # Test échec si username dupliqué
+    pass
+
+# ❌ Éviter : Test multiple comportements
+def test_create_user():
+    # Test succès
+    # Test échec
+    # Test validation
+    pass
+```
+
+### Règle 3 : Tests Isolés
+- ✅ Chaque test indépendant
+- ✅ Setup/teardown propre (fixtures)
+- ❌ Pas de dépendance entre tests
+
+```python
+# ✅ Bon : Isolation avec fixtures
+@pytest.fixture
+def clean_db():
+    db.create_all()
+    yield
+    db.drop_all()
+
+def test_create_user(clean_db):
+    # Test isolé
+    pass
+```
+
+### Règle 4 : Couverture 100%
+- ✅ **100% de couverture obligatoire** pour merge
+- ✅ Vérifier avec `pytest --cov`
+- ❌ Merge refusé si couverture < 100%
+
+```bash
+# Vérification couverture
+pytest --cov=web --cov=src --cov-report=term --cov-report=html
+
+# Doit afficher 100% coverage
+```
+
+### Règle 5 : Tests Rapides
+- ✅ Tests unitaires < 1s
+- ✅ Tests intégration < 5s
+- ✅ Tests E2E < 30s (acceptable)
+
+---
+
+## 📁 Structure Tests
+
+```
+tests/
+├── unit/              # Tests unitaires (70%)
+│   ├── test_models.py
+│   ├── test_services.py
+│   └── test_utils.py
+├── integration/       # Tests intégration (20%)
+│   ├── test_api.py
+│   └── test_db.py
+├── e2e/               # Tests E2E (10%)
+│   ├── test_wizard.py
+│   └── test_navigation.py
+├── conftest.py        # Fixtures partagées
+└── fixtures/          # Données de test
+```
+
+---
+
+## 🛠️ Outils et Configuration
+
+### Backend (pytest)
+```python
+# conftest.py
+import pytest
+from web.app import create_app
+from web.models import db
+
+@pytest.fixture
+def app():
+    app = create_app('testing')
+    with app.app_context():
+        db.create_all()
+        yield app
+        db.drop_all()
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+@pytest.fixture
+def auth_headers(client):
+    # Login et retourner headers avec token
+    response = client.post('/api/auth/login', json={
+        'username': 'admin',
+        'password': 'password'
+    })
+    token = response.json['access_token']
+    return {'Authorization': f'Bearer {token}'}
+```
+
+### Tests E2E avec Playwright MCP
+
+**⚠️ OBLIGATOIRE** : Utiliser Playwright MCP Tools pour tous les tests E2E au lieu de Playwright standard.
+
+```python
+# ✅ Bon : Utiliser Playwright MCP pour tests E2E
+def test_login_e2e():
+    """Test login E2E avec Playwright MCP."""
+    # 1. Naviguer vers application
+    mcp_playwright_browser_navigate(url="http://localhost:5000")
+    
+    # 2. Capturer état initial
+    snapshot = mcp_playwright_browser_snapshot()
+    assert "Login" in snapshot
+    
+    # 3. Interagir
+    mcp_playwright_browser_type(
+        element="username input",
+        ref="input[name='username']",
+        text="admin"
+    )
+    mcp_playwright_browser_click(
+        element="login button",
+        ref="button[type='submit']"
+    )
+    
+    # 4. Valider résultat
+    mcp_playwright_browser_wait_for(text="Dashboard")
+    final_snapshot = mcp_playwright_browser_snapshot()
+    assert "Dashboard" in final_snapshot
+
+# ❌ Éviter : Playwright standard si MCP disponible
+# from playwright.sync_api import sync_playwright
+# with sync_playwright() as p:
+#     browser = p.chromium.launch()
+#     # ...
+```
+
+**Voir** : `docs/MCP_TOOLS_GUIDE.md` et `.cursor/rules/mcp-tools-usage.mdc` pour détails.
+
+### Frontend (Jest/React Testing Library)
+```javascript
+// setupTests.js
+import '@testing-library/jest-dom';
+
+// test-utils.js
+import { render } from '@testing-library/react';
+import { ThemeProvider } from '../contexts/ThemeContext';
+
+const AllTheProviders = ({ children }) => {
+  return (
+    <ThemeProvider>
+      {children}
+    </ThemeProvider>
+  );
+};
+
+const customRender = (ui, options) =>
+  render(ui, { wrapper: AllTheProviders, ...options });
+
+export * from '@testing-library/react';
+export { customRender as render };
+```
+
+### Tests E2E avec Playwright MCP
+
+**⚠️ OBLIGATOIRE** : Utiliser Playwright MCP Tools pour tous les tests E2E au lieu de Playwright standard.
+
+```python
+# ✅ Bon : Utiliser Playwright MCP pour tests E2E
+def test_login_e2e():
+    """Test login E2E avec Playwright MCP."""
+    # 1. Naviguer vers application
+    mcp_playwright_browser_navigate(url="http://localhost:5000")
+    
+    # 2. Capturer état initial
+    snapshot = mcp_playwright_browser_snapshot()
+    assert "Login" in snapshot
+    
+    # 3. Interagir
+    mcp_playwright_browser_type(
+        element="username input",
+        ref="input[name='username']",
+        text="admin"
+    )
+    mcp_playwright_browser_type(
+        element="password input",
+        ref="input[name='password']",
+        text="password"
+    )
+    mcp_playwright_browser_click(
+        element="login button",
+        ref="button[type='submit']"
+    )
+    
+    # 4. Valider résultat
+    mcp_playwright_browser_wait_for(text="Dashboard")
+    final_snapshot = mcp_playwright_browser_snapshot()
+    assert "Dashboard" in final_snapshot
+
+# ❌ Éviter : Playwright standard si MCP disponible
+# from playwright.sync_api import sync_playwright
+# with sync_playwright() as p:
+#     browser = p.chromium.launch()
+#     # ...
+```
+
+---
+
+## ✅ Checklist TDD
+
+### Avant Écrire Code
+- [ ] Test écrit et échoue (Red)
+- [ ] Test nommé clairement
+- [ ] Test isolé et indépendant
+
+### Après Implémentation
+- [ ] Test passe (Green)
+- [ ] Code refactoré si nécessaire
+- [ ] Couverture 100% fonction testée
+- [ ] Pas de régression (autres tests passent)
+
+### Avant Commit
+- [ ] Tous tests passent
+- [ ] Couverture 100%
+- [ ] Tests rapides (< 5s unitaires, < 30s E2E)
+- [ ] Pas de tests flaky
+
+---
+
+## 🚫 Anti-Patterns à Éviter
+
+### ❌ Écrire Code Puis Tests
+```python
+# ❌ Mauvais : Code avant tests
+def create_user(data):
+    user = User(**data)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+# Puis essayer d'écrire test après
+```
+
+### ❌ Tests Trop Généraux
+```python
+# ❌ Mauvais : Test vague
+def test_user():
+    # Test tout
+    pass
+
+# ✅ Bon : Test spécifique
+def test_create_user_with_valid_data():
+    pass
+```
+
+### ❌ Tests Dépendants
+```python
+# ❌ Mauvais : Test dépend d'un autre
+def test_create_user():
+    user = create_user()
+
+def test_delete_user():
+    user = create_user()  # Dépend de test précédent
+    delete_user(user.id)
+```
+
+---
+
+## 📚 Exemples Complets
+
+### Exemple Backend : Endpoint API
+```python
+# 1. Red : Test
+def test_get_user_by_id(client, auth_headers):
+    # Créer user
+    user = User(username='test', email='test@test.com')
+    db.session.add(user)
+    db.session.commit()
+    
+    # Tester GET
+    response = client.get(
+        f'/api/users/{user.id}',
+        headers=auth_headers
+    )
+    
+    assert response.status_code == 200
+    assert response.json['username'] == 'test'
+
+# 2. Green : Implémenter
+@app.route('/api/users/<int:user_id>')
+@jwt_required()
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify(user.to_dict())
+
+# 3. Refactor : Améliorer
+@app.route('/api/users/<int:user_id>')
+@jwt_required()
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    schema = UserSchema()
+    return jsonify(schema.dump(user))
+```
+
+### Exemple Frontend : Composant React
+```javascript
+// 1. Red : Test
+describe('ReleaseForm', () => {
+  it('should submit form with valid data', async () => {
+    render(<ReleaseForm onSubmit={mockSubmit} />);
+    
+    fireEvent.change(screen.getByLabelText('Group'), {
+      target: { value: 'TestGroup' }
+    });
+    fireEvent.click(screen.getByText('Submit'));
+    
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalledWith({
+        group: 'TestGroup'
+      });
+    });
+  });
+});
+
+// 2. Green : Implémenter
+const ReleaseForm = ({ onSubmit }) => {
+  const [group, setGroup] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({ group });
+  };
+  
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={group}
+        onChange={(e) => setGroup(e.target.value)}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+
+// 3. Refactor : Améliorer
+// Ajouter validation, error handling, etc.
+```
+
+---
+
+## 🚨 Definition of Done
+
+**⚠️ OBLIGATOIRE** : Avant de passer à l'étape suivante, vérifier :
+
+1. ✅ Tous tests passent (100%)
+2. ✅ Couverture ≥90% (idéal 100%)
+3. ✅ Documentation à jour
+4. ✅ DEVBOOK mis à jour
+
+**JAMAIS continuer si étape non complétée à 100% avec tests.**
+
+**Voir** : `.cursor/rules/definition-of-done.mdc` pour règles complètes
+
+---
+
+## 🔗 Liens
+
+- **Definition of Done** : `.cursor/rules/definition-of-done.mdc` ⚠️
+- **Test Plan** : `docs/TEST_PLAN.md`
+- **MCP Tools Guide** : `docs/MCP_TOOLS_GUIDE.md` ⭐
+- **DEVBOOK** : `docs/DEVBOOK.md`
+- **CDC** : `docs/cdc.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

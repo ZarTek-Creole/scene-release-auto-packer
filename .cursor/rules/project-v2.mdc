@@ -1,0 +1,460 @@
+---
+alwaysApply: true
+---
+---
+name: project-v2-guidelines
+description: Règles générales pour le projet eBook Scene Packer v2
+globs:
+  - "**/*.{py,js,jsx,ts,tsx,html,css,md}"
+---
+
+# Project v2 Guidelines - eBook Scene Packer v2
+
+## 🎯 Vision du Projet
+
+Ce projet est une **refonte complète (v2)** de l'application eBook Scene Packer. La v1 est conservée dans `v1/` comme référence.
+
+**Objectif** : Créer une application moderne avec architecture propre, tests complets (TDD), et documentation exhaustive.
+
+---
+
+## 📁 Structure du Projet
+
+```
+ebook.scene.packer/
+├── v1/              # Version précédente (référence)
+├── web/              # Backend Flask
+│   ├── app.py        # Application factory
+│   ├── blueprints/   # Blueprints modulaires
+│   ├── models/       # SQLAlchemy models
+│   ├── services/     # Services métier
+│   └── utils/        # Utilitaires
+├── src/              # Code source partagé
+├── tests/            # Tests (TDD)
+│   ├── unit/         # Tests unitaires
+│   ├── integration/  # Tests intégration
+│   └── e2e/          # Tests E2E
+├── docs/             # Documentation
+│   ├── cdc.md        # Cahier des charges
+│   ├── DEVBOOK.md    # Suivi phases/étapes
+│   ├── todolist.md   # TodoList détaillée
+│   ├── PRDs/         # Product Requirement Documents
+│   └── ...           # Autres docs
+└── .cursor/rules/    # Règles Cursor
+```
+
+---
+
+## 🏗️ Architecture
+
+### Backend (Flask)
+- **Pattern** : Application Factory (`create_app()`)
+- **Structure** : Blueprints modulaires par fonctionnalité
+- **ORM** : Flask-SQLAlchemy
+- **Validation** : Marshmallow schemas
+- **Auth** : Flask-JWT-Extended
+- **Caching** : Flask-Caching
+
+### Frontend (React)
+- **Composants** : Fonctionnels avec hooks
+- **State** : Context API ou Redux selon besoin
+- **Routing** : React Router v6
+- **Styling** : Bootstrap 5
+- **TypeScript** : Recommandé (à migrer progressivement)
+
+### Database (MySQL)
+- **Engine** : InnoDB (obligatoire)
+- **Migrations** : Flask-Migrate
+- **Naming** : snake_case pour tables/colonnes
+
+---
+
+## 📝 Conventions de Code
+
+### Python
+- **Style** : PEP 8 (avec black/isort)
+- **Type hints** : Obligatoires pour toutes fonctions
+- **Docstrings** : Google style pour fonctions/classes
+- **Imports** : Organisés (stdlib, third-party, local)
+- **Early returns** : Préférer aux if/else imbriqués
+
+```python
+# ✅ Bon
+def process_file(file_path: Path) -> dict[str, Any] | None:
+    """Process a file and return metadata.
+    
+    Args:
+        file_path: Path to the file to process.
+        
+    Returns:
+        Dictionary with metadata or None if error.
+    """
+    if not file_path.exists():
+        return None
+    
+    # ... processing ...
+    return metadata
+
+# ❌ Éviter
+def process_file(file_path):
+    if file_path.exists():
+        # ... nested logic ...
+```
+
+### JavaScript/TypeScript
+- **Style** : ESLint + Prettier
+- **Composants** : Fonctionnels, PascalCase
+- **Hooks** : Utiliser hooks React (useState, useEffect, etc.)
+- **Props** : TypeScript interfaces si TypeScript utilisé
+- **Nommage** : camelCase pour variables/fonctions, PascalCase pour composants
+
+```javascript
+// ✅ Bon
+const ReleaseCard = ({ release, onEdit }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleEdit = () => {
+    setIsLoading(true);
+    onEdit(release.id);
+  };
+  
+  return (
+    <div className="release-card">
+      {/* ... */}
+    </div>
+  );
+};
+
+// ❌ Éviter classes (sauf nécessité)
+class ReleaseCard extends React.Component {
+  // ...
+}
+```
+
+---
+
+## 🧪 Tests (TDD Obligatoire)
+
+### Cycle TDD
+1. **Red** : Écrire test qui échoue
+2. **Green** : Implémenter code minimal pour passer
+3. **Refactor** : Améliorer code
+
+### Structure Tests
+- **Unitaires** : Tests fonctions/méthodes isolées
+- **Intégration** : Tests interactions composants
+- **E2E** : Tests flux utilisateur complets
+
+### Exigences
+- **Couverture** : 100% requis pour merge
+- **Nommage** : `test_<functionality>_<scenario>()`
+- **Isolation** : Chaque test indépendant
+- **Fixtures** : Utiliser fixtures pytest/Playwright
+
+---
+
+## 📚 Documentation
+
+### Code
+- **Docstrings** : Toutes fonctions/classes
+- **Comments** : Expliquer "pourquoi", pas "comment"
+- **Type hints** : Types explicites partout
+
+### Documentation Projet
+- **CDC** : `docs/cdc.md` - Cahier des charges
+- **DEVBOOK** : `docs/DEVBOOK.md` - Suivi phases/étapes
+- **PRDs** : `docs/PRDs/` - Spécifications fonctionnalités
+- **Tests** : `docs/TEST_PLAN.md` - Plan de tests
+
+### Mise à Jour
+- **DEVBOOK** : Mettre à jour à chaque étape complétée
+- **PRDs** : Mettre à jour si modification fonctionnalité
+- **README** : Maintenir à jour avec structure projet
+
+---
+
+## 🔒 Sécurité
+
+### Obligatoire
+- **JWT** : Tokens avec expiration
+- **Chiffrement** : Credentials API/FTP (Fernet/AES-GCM)
+- **Validation** : Input validation stricte
+- **CORS** : Configuration sécurisée
+- **HTTPS** : Production uniquement
+
+### Bonnes Pratiques
+- **Secrets** : Variables d'environnement, jamais en code
+- **SQL Injection** : Utiliser SQLAlchemy ORM (paramétré)
+- **XSS** : Échapper output utilisateur
+- **CSRF** : Protection formulaires
+
+---
+
+## ⚡ Performance
+
+### Backend
+- **Caching** : Endpoints fréquemment accédés
+- **Database** : Indexes sur colonnes fréquentes
+- **Queries** : Eager loading, éviter N+1
+- **Pagination** : Listes longues systématiquement
+
+### Frontend
+- **Lazy Loading** : React.lazy() pour routes
+- **Memoization** : React.memo, useMemo, useCallback
+- **Bundle** : Code splitting automatique
+- **Assets** : Optimisation images, minification
+
+---
+
+## 🛠️ MCP Tools - Utilisation Obligatoire
+
+**Objectif** : Utiliser les MCP (Model Context Protocol) Tools pour améliorer productivité, qualité et documentation.
+
+**Documentation complète** : Voir `docs/MCP_TOOLS_GUIDE.md`
+
+### Règles Générales
+
+1. **Toujours utiliser MCP Tools quand approprié** au lieu de méthodes manuelles
+2. **Préférer MCP Tools pour** :
+   - Tests E2E (Playwright Browser MCP)
+   - Recherche documentation (Docs MCP, Context7 MCP)
+   - Analyse codebase (Repomix MCP)
+   - Résolution problèmes complexes (Sequential Thinking MCP)
+
+### MCP Tools Disponibles
+
+#### 1. Playwright Browser MCP (Tests E2E)
+**Quand utiliser** :
+- ✅ **Toujours** pour tests E2E et validation UI
+- ✅ Validation fonctionnalités complètes
+- ✅ Tests régression
+- ✅ Validation accessibilité
+
+**Outils clés** :
+- `mcp_playwright_browser_navigate` : Navigation
+- `mcp_playwright_browser_snapshot` : Capture état UI
+- `mcp_playwright_browser_click/type` : Interactions
+- `mcp_playwright_browser_take_screenshot` : Documentation
+
+**Exemple** :
+```python
+# ✅ Utiliser Playwright MCP pour tests E2E
+mcp_playwright_browser_navigate(url="http://localhost:5000")
+mcp_playwright_browser_snapshot()  # Valider état
+mcp_playwright_browser_type(element="username", text="admin")
+mcp_playwright_browser_click(element="login-button")
+mcp_playwright_browser_wait_for(text="Dashboard")
+```
+
+#### 2. Docs MCP Server (Documentation)
+**Quand utiliser** :
+- ✅ Recherche exemples de code
+- ✅ Questions techniques sur bibliothèques
+- ✅ Recherche patterns React/Flask/Bootstrap
+- ✅ Indexation documentation (une fois par version)
+
+**Outils clés** :
+- `mcp_docs-mcp-server_search_docs` : Recherche documentation
+- `mcp_docs-mcp-server_scrape_docs` : Indexation (si nouvelle version)
+- `mcp_docs-mcp-server_list_libraries` : Vérifier bibliothèques disponibles
+
+**Exemple** :
+```python
+# ✅ Rechercher documentation avant implémentation
+results = mcp_docs-mcp-server_search_docs(
+    library="react",
+    query="useState hook examples",
+    limit=5
+)
+```
+
+#### 3. Context7 MCP (Documentation Structurée)
+**Quand utiliser** :
+- ✅ Documentation structurée de bibliothèques
+- ✅ Exemples de code détaillés
+- ✅ Quand Docs MCP Server ne suffit pas
+
+**Outils clés** :
+- `mcp_context7_resolve-library-id` : Résoudre ID bibliothèque
+- `mcp_context7_get-library-docs` : Récupérer documentation
+
+#### 4. Repomix MCP (Analyse Codebase)
+**Quand utiliser** :
+- ✅ Analyse complète codebase (refactoring majeur)
+- ✅ Recherche patterns dans tout le code
+- ✅ Génération métriques et statistiques
+- ✅ Audit code complet
+
+**Outils clés** :
+- `mcp_repomix_pack_codebase` : Packager codebase
+- `mcp_repomix_grep_repomix_output` : Rechercher patterns
+
+**⚠️ Important** : Utiliser avec parcimonie (pas à chaque petite modification)
+
+#### 5. Sequential Thinking MCP (Problèmes Complexes)
+**Quand utiliser** :
+- ✅ Problèmes complexes multi-étapes
+- ✅ Décisions architecture importantes
+- ✅ Analyse approfondie de bugs
+- ✅ Planification fonctionnalités complexes
+
+**Outils clés** :
+- `mcp_sequential-thinking_sequentialthinking` : Pensée séquentielle
+
+#### 6. Memory MCP (Knowledge Graph)
+**Quand utiliser** :
+- ✅ Modéliser architecture projet
+- ✅ Documenter décisions techniques
+- ✅ Créer relations entre concepts
+
+**Outils clés** :
+- `mcp_memory_create_entities` : Créer entités
+- `mcp_memory_search_nodes` : Rechercher connaissances
+
+### Workflow TDD avec MCP Tools
+
+1. **Red** (Écrire test) :
+   - Utiliser `mcp_playwright_browser_snapshot` pour valider état initial
+   
+2. **Green** (Implémenter) :
+   - Utiliser `mcp_docs-mcp-server_search_docs` pour recherche documentation
+   - Utiliser `mcp_repomix_grep_repomix_output` pour patterns similaires
+   
+3. **Refactor** (Améliorer) :
+   - Utiliser `mcp_sequential-thinking_sequentialthinking` si complexe
+   - Utiliser `mcp_playwright_browser_*` pour validation
+
+4. **Validation** :
+   - Utiliser `mcp_playwright_browser_take_screenshot` pour documentation
+   - Utiliser `mcp_memory_create_entities` pour documenter décisions
+
+### Checklist Utilisation MCP Tools
+
+**Avant utilisation** :
+- [ ] Objectif clair identifié
+- [ ] Tool approprié sélectionné
+- [ ] Pré-requis vérifiés (serveur démarré, etc.)
+
+**Pendant utilisation** :
+- [ ] Utiliser tool de manière isolée
+- [ ] Capturer résultats pour documentation
+
+**Après utilisation** :
+- [ ] Analyser résultats
+- [ ] Intégrer dans code/documentation
+- [ ] Mettre à jour mémoire si pertinent
+
+### ⚠️ Anti-Patterns MCP Tools
+
+```python
+# ❌ Mauvais : Packager codebase pour petit changement
+mcp_repomix_pack_codebase(...)  # Trop lourd pour changement mineur
+
+# ✅ Bon : Utiliser grep directement pour petits changements
+# Utiliser pack_codebase seulement pour analyses majeures
+
+# ❌ Mauvais : Screenshot à chaque étape E2E
+for step in steps:
+    do_step()
+    mcp_playwright_browser_take_screenshot()  # Trop de screenshots
+
+# ✅ Bon : Screenshot aux points critiques seulement
+mcp_playwright_browser_take_screenshot(filename="final-state.png")
+
+# ❌ Mauvais : Indexer même bibliothèque plusieurs fois
+mcp_docs-mcp-server_scrape_docs(library="react")  # Déjà indexé
+
+# ✅ Bon : Vérifier d'abord avec list_libraries
+libraries = mcp_docs-mcp-server_list_libraries()
+if "react" not in libraries:
+    mcp_docs-mcp-server_scrape_docs(...)
+```
+
+---
+
+## 🛠️ MCP Tools - Utilisation Obligatoire
+
+**Objectif** : Utiliser les MCP (Model Context Protocol) Tools pour améliorer productivité, qualité et documentation.
+
+**Documentation complète** : Voir `docs/MCP_TOOLS_GUIDE.md`
+
+### Règles Générales
+
+1. **Toujours utiliser MCP Tools quand approprié** au lieu de méthodes manuelles
+2. **Préférer MCP Tools pour** :
+   - Tests E2E (Playwright Browser MCP) ⭐ **OBLIGATOIRE**
+   - Recherche documentation (Docs MCP, Context7 MCP)
+   - Analyse codebase (Repomix MCP)
+   - Résolution problèmes complexes (Sequential Thinking MCP)
+
+### MCP Tools Disponibles
+
+- **Repomix MCP** : Analyse et packaging codebase
+- **Docs MCP Server** : Documentation bibliothèques (React, Flask, Bootstrap indexés)
+- **Playwright Browser MCP** : Tests E2E et validation UI ⭐
+- **Context7 MCP** : Documentation structurée
+- **Memory MCP** : Knowledge graph et entités
+- **Sequential Thinking MCP** : Résolution problèmes complexes
+
+**Voir** : `.cursor/rules/mcp-tools-usage.mdc` pour règles détaillées et exemples
+
+---
+
+## 🚨 Definition of Done - Règle Absolue
+
+**⚠️ CRITIQUE** : Voir `.cursor/rules/definition-of-done.mdc` pour règles complètes.
+
+**Règle absolue** : **JAMAIS continuer à l'étape/phase suivante si l'étape/phase en cours n'est pas complétée à 100% avec tests à 100% et couverture minimale 90%.**
+
+### Critères Obligatoires Avant Progression
+
+- ✅ Code implémenté à 100%
+- ✅ Tests à 100% (tous passent)
+- ✅ Couverture ≥90% (idéal 100%)
+- ✅ Documentation à jour
+- ✅ Linters passent
+- ✅ DEVBOOK mis à jour
+
+**Voir** : `.cursor/rules/definition-of-done.mdc` pour détails complets et exemples
+
+---
+
+## 🚫 À Éviter
+
+- ❌ Code mort ou commenté
+- ❌ Magic numbers/strings (utiliser constantes)
+- ❌ Imports inutilisés
+- ❌ Duplication code (DRY)
+- ❌ Nested callbacks profondes (promises/async-await)
+- ❌ Mutations d'état directes (React)
+- ❌ Requêtes DB dans boucles
+- ❌ Ignorer MCP Tools quand approprié (utiliser outils manuels au lieu de MCP)
+
+---
+
+## ✅ Checklist Avant Commit
+
+- [ ] Tests passent (100% couverture)
+- [ ] Code formaté (black/isort pour Python, Prettier pour JS)
+- [ ] Linters passent (pylint, ESLint)
+- [ ] Type hints présents (Python)
+- [ ] Docstrings présents (fonctions/classes)
+- [ ] Pas de secrets en code
+- [ ] Documentation mise à jour si nécessaire
+- [ ] MCP Tools utilisés quand approprié (tests E2E, documentation, analyse)
+
+---
+
+## 🔗 Liens Utiles
+
+- **CDC** : `docs/cdc.md`
+- **DEVBOOK** : `docs/DEVBOOK.md`
+- **TodoList** : `docs/todolist.md`
+- **PRDs** : `docs/PRDs/`
+- **MCP Tools Guide** : `docs/MCP_TOOLS_GUIDE.md` ⭐
+- **v1/** : Version précédente (référence)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 2.0.0

@@ -1,0 +1,292 @@
+---
+name: typography-fonts
+description: Règles strictes pour Typographie et Polices - Stack polices, hiérarchie, tailles, poids
+globs:
+  - "**/*.{ts,tsx,js,jsx,css,scss}"
+---
+
+# Typographie et Polices - eBook Scene Packer v2
+
+## 🎯 Principe Fondamental
+
+**Typographie cohérente et moderne** : Toutes les polices DOIVENT suivre strictement le Design System avec stack polices système, hiérarchie complète et tailles standardisées.
+
+---
+
+## 🚨 RÈGLES ABSOLUES
+
+### 1. Stack Polices Système
+- ✅ **Stack polices** : Système de polices moderne (Apple, Windows, Linux)
+- ✅ **Police monospace** : Pour NFO Viewer, code, console
+- ✅ **JAMAIS** utiliser polices externes (Google Fonts, etc.) sans justification
+
+### 2. Hiérarchie Typographique
+- ✅ **Hiérarchie respectée** : h1 → h6, p, code selon Design System
+- ✅ **Tailles standardisées** : Variables CSS uniquement
+- ✅ **Poids cohérents** : light (300), normal (400), medium (500), semibold (600), bold (700)
+
+### 3. Variables CSS Obligatoires
+- ✅ **TOUJOURS** utiliser variables CSS pour tailles/poids
+- ✅ **JAMAIS** valeurs hardcodées (px, rem direct)
+
+---
+
+## 📝 Stack Polices
+
+### Police Principale (Body)
+
+```css
+/* ✅ Obligatoire : Stack polices système */
+--font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                     "Helvetica Neue", Arial, sans-serif, 
+                     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+```
+
+**Utilisation** :
+- Body text (`p`, `span`, `div`)
+- Boutons, labels, inputs
+- Navigation, menus
+
+### Police Monospace (Code, NFO)
+
+```css
+/* ✅ Obligatoire : Stack monospace pour NFO Viewer */
+--font-family-monospace: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", 
+                          Consolas, "Courier New", monospace;
+```
+
+**Utilisation** :
+- NFO Viewer (fichiers Scene)
+- Code snippets
+- Console logs
+- Terminal output
+
+### Police Headings (Optionnel)
+
+```css
+/* Optionnel : Police distinctive pour titres (si nécessaire) */
+--font-family-headings: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                        "Helvetica Neue", Arial, sans-serif;
+```
+
+**Note** : Par défaut, même stack que body (cohérence).
+
+---
+
+## 📐 Hiérarchie Typographique
+
+### Headings (h1-h6)
+
+```css
+/* ✅ Obligatoire : Hiérarchie selon Design System */
+
+h1 {
+  font-size: var(--font-size-4xl);    /* 2.25rem / 36px */
+  font-weight: var(--font-weight-bold); /* 700 */
+  line-height: var(--line-height-tight); /* 1.25 */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-6);    /* 1.5rem */
+}
+
+h2 {
+  font-size: var(--font-size-3xl);     /* 1.875rem / 30px */
+  font-weight: var(--font-weight-bold); /* 700 */
+  line-height: var(--line-height-tight); /* 1.25 */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-5);    /* 1.25rem */
+}
+
+h3 {
+  font-size: var(--font-size-2xl);     /* 1.5rem / 24px */
+  font-weight: var(--font-weight-semibold); /* 600 */
+  line-height: var(--line-height-normal); /* 1.5 */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);    /* 1rem */
+}
+
+h4 {
+  font-size: var(--font-size-xl);      /* 1.25rem / 20px */
+  font-weight: var(--font-weight-semibold); /* 600 */
+  line-height: var(--line-height-normal); /* 1.5 */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-3);    /* 0.75rem */
+}
+
+h5 {
+  font-size: var(--font-size-lg);      /* 1.125rem / 18px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--line-height-normal); /* 1.5 */
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-2);    /* 0.5rem */
+}
+
+h6 {
+  font-size: var(--font-size-base);    /* 1rem / 16px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--line-height-normal); /* 1.5 */
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-2);    /* 0.5rem */
+}
+```
+
+### Body Text
+
+```css
+/* ✅ Obligatoire : Body text selon Design System */
+p {
+  font-size: var(--font-size-base);    /* 1rem / 16px */
+  line-height: var(--line-height-relaxed); /* 1.75 */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4);    /* 1rem */
+}
+
+.text-muted {
+  font-size: var(--font-size-sm);     /* 0.875rem / 14px */
+  color: var(--text-muted);
+}
+
+.text-small {
+  font-size: var(--font-size-sm);     /* 0.875rem / 14px */
+  line-height: var(--line-height-normal); /* 1.5 */
+}
+```
+
+### Code & Monospace
+
+```css
+/* ✅ Obligatoire : Code et NFO Viewer */
+code, pre, .nfo-viewer {
+  font-family: var(--font-family-monospace);
+  font-size: var(--font-size-sm);     /* 0.875rem / 14px */
+  line-height: var(--line-height-relaxed); /* 1.75 */
+  color: var(--text-primary);
+}
+```
+
+---
+
+## 📏 Variables CSS Typographie
+
+### Tailles
+
+```css
+:root {
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;      /* 16px - DÉFAUT */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+  --font-size-5xl: 3rem;       /* 48px */
+}
+```
+
+### Poids
+
+```css
+:root {
+  --font-weight-light: 300;
+  --font-weight-normal: 400;    /* DÉFAUT */
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+```
+
+### Line Heights
+
+```css
+:root {
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;    /* DÉFAUT */
+  --line-height-relaxed: 1.75;
+}
+```
+
+---
+
+## ✅ Usage Correct
+
+```css
+/* ✅ Bon : Utiliser variables CSS */
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+}
+
+.description {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-secondary);
+}
+
+/* ❌ Éviter : Valeurs hardcodées */
+.title {
+  font-size: 30px;
+  font-weight: bold;
+}
+```
+
+```tsx
+// ✅ Bon : Typographie dans composants React
+<h1 className="page-title">Titre Page</h1>
+<p className="page-description">Description de la page</p>
+
+// Avec styles CSS selon Design System
+```
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Polices Externes Non Justifiées
+```css
+/* ❌ Mauvais : Google Fonts sans justification */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* ✅ Bon : Stack polices système */
+font-family: var(--font-family-base);
+```
+
+### ❌ Valeurs Hardcodées
+```css
+/* ❌ Mauvais */
+h1 {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+/* ✅ Bon */
+h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+}
+```
+
+### ❌ Hiérarchie Non Respectée
+```css
+/* ❌ Mauvais : h2 plus grand que h1 */
+h1 { font-size: 1.5rem; }
+h2 { font-size: 2rem; }
+
+/* ✅ Bon : Hiérarchie décroissante */
+h1 { font-size: var(--font-size-4xl); }  /* 2.25rem */
+h2 { font-size: var(--font-size-3xl); }  /* 1.875rem */
+```
+
+---
+
+## 📚 Références
+
+- **Design System** : `docs/DESIGN_SYSTEM_UI_UX.md` (section Typographie)
+- **Règle Design System** : `.cursor/rules/design-system-ui-ux.mdc`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

@@ -1,0 +1,162 @@
+---
+name: releases-packaging
+description: Règles strictes pour Releases et Packaging - Conformité Scene
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Releases & Packaging - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer conformité absolue des Releases packagées avec standards Scene et règles scenerules.org.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Validation contre Règle
+
+**⚠️ OBLIGATOIRE** : Packaging doit respecter STRICTEMENT la règle Scene sélectionnée.
+
+**Processus** :
+1. Charger règle complète (Étape 3)
+2. Parser règle (formats, template, contraintes)
+3. Valider à chaque étape contre règle
+4. Valider final avant packaging
+5. Appliquer règle strictement lors packaging
+
+**Services** :
+- `RuleParserService` : Parse règle complète
+- `RuleValidationService` : Valide contre règle
+- `PackagingService` : Applique règle lors packaging
+
+### 2. Structure Release
+
+**Conformité règle** :
+- ✅ Fichiers requis présents selon règle
+- ✅ Structure arborescence conforme
+- ✅ Nommage strict selon contraintes règle
+- ✅ NFO conforme template règle
+
+**Exemple structure EBOOK** :
+```
+ReleaseName-GROUP/
+├── ReleaseName-GROUP.epub
+├── ReleaseName-GROUP.nfo
+├── ReleaseName-GROUP.sfv (optionnel)
+└── ReleaseName-GROUP.diz (optionnel)
+```
+
+### 3. Nommage Release
+
+**Format strict** :
+- Conforme contraintes règle (regex)
+- Pattern : `{Title}-{Group}`
+- Caractères conformes règle
+- Longueur selon contraintes
+
+**Validation** :
+- ✅ Format conforme regex règle
+- ✅ Groupe conforme format Scene
+- ✅ Titre conforme contraintes
+
+### 4. NFO Généré
+
+**Source template** :
+- ⭐ Template de règle eBOOK [2022] (priorité)
+- Templates locaux (fallback)
+
+**Génération** :
+- ✅ Placeholders remplis avec métadonnées
+- ✅ Conditionnelles `{% if %}` exécutées
+- ✅ Fonctions `{{format_date()}}` appliquées
+- ✅ Format ASCII ≤ 80 colonnes
+- ✅ Structure conforme règle
+
+### 5. Formats Acceptés
+
+**EBOOK (priorité)** :
+- EPUB, PDF, MOBI, AZW, AZW3, CBZ
+- Formats exacts selon règle eBOOK [2022]
+
+**Autres types** (après EBOOK) :
+- TV : MKV, MP4, AVI, etc.
+- DOCS : DOCX, PDF, TXT, etc.
+- AUDIOBOOK : MP3, FLAC, etc.
+- GAME : ISO, etc.
+
+**Validation** :
+- ✅ Format fichier conforme règle
+- ✅ Extension valide
+- ✅ Taille conforme (si spécifié règle)
+
+---
+
+## 🔍 Validation Stricte
+
+### Avant Packaging
+
+**Checklist** :
+- [ ] Règle chargée et parsée complètement
+- [ ] Format fichier conforme règle
+- [ ] Nommage conforme regex règle
+- [ ] Template NFO conforme règle
+- [ ] Structure conforme spécifications règle
+- [ ] Toutes contraintes vérifiées
+
+### Pendant Packaging
+
+**Validations** :
+- ✅ Structure release conforme
+- ✅ Nommage fichiers conforme
+- ✅ NFO généré conforme template règle
+- ✅ Tous fichiers requis présents
+
+### Après Packaging
+
+**Validation finale** :
+- ✅ Release conforme règle complète
+- ✅ Tous fichiers présents
+- ✅ NFO valide
+- ✅ Structure correcte
+
+---
+
+## 🚨 Points Critiques
+
+### Conformité Absolue
+
+**❌ JAMAIS** :
+- Packager sans règle chargée
+- Ignorer contraintes règle
+- Créer release non conforme
+- Utiliser format non accepté
+
+**✅ TOUJOURS** :
+- Valider contre règle complète
+- Appliquer règle strictement
+- Respecter toutes contraintes
+- Générer NFO selon template règle
+
+### EBOOK Priorité
+
+**Focus** : EBOOK en priorité avec conformité règle [2022] eBOOK.
+
+**Autres types** : TV, DOCS, etc. après confirmation EBOOK.
+
+---
+
+## 📚 Références
+
+- **Scenerules Integration** : `docs/SCENERULES_INTEGRATION.md` ⭐
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Wizard 9 étapes)
+- **PRD-003** : `docs/PRDs/PRD-003-Liste-Releases.md`
+- **Database ERD** : `docs/DATABASE_ERD.md` (tables `releases`, `jobs`)
+- **API Reference** : `docs/API_REFERENCE.md` (endpoints releases)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

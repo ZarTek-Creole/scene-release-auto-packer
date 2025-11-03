@@ -1,0 +1,55 @@
+---
+name: file-upload
+description: Règles strictes pour File Upload - Local, Distant, Validation
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# File Upload - Règles Strictes
+
+## 🎯 Objectif
+
+Upload fichiers (local, distant) avec validation format/taille et barre progression.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Upload Local
+
+**Modes** :
+- Drag & Drop
+- Sélecteur fichier
+- Navigation arborescence serveur
+
+---
+
+### 2. URL Distante
+
+**Formats** : HTTP/HTTPS/FTP
+
+**Téléchargement** : Auto-download avec progression
+
+---
+
+### 3. Validation
+
+**Format** : Selon type release (selon règle eBOOK [2022])
+
+**Taille** : Max 20GB
+
+---
+
+### 4. Progression
+
+**Barre** : Visible pendant upload/téléchargement
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 4)
+
+---
+
+**Dernière mise à jour** : 2025-11-01

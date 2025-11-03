@@ -1,0 +1,246 @@
+---
+name: blueprints-api
+description: Règles strictes pour Blueprints Flask - Endpoints API RESTful
+globs:
+  - "**/*.py"
+---
+
+# Blueprints API - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer structure cohérente des blueprints Flask avec endpoints RESTful, validation inputs, gestion erreurs standardisée.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Structure Blueprint
+
+**Template Standard** :
+```python
+from flask import Blueprint, request, jsonify
+from web.extensions import jwt_required, current_user
+from web.utils.permissions import require_permission
+from web.services.service_name import ServiceName
+from web.schemas.schema_name import SchemaName
+
+blueprint = Blueprint('blueprint_name', __name__)
+
+@blueprint.route('/api/endpoint', methods=['POST'])
+@jwt_required()
+@require_permission('resource', 'WRITE')
+def endpoint_name():
+    """Description endpoint."""
+    try:
+        # Validation input
+        schema = SchemaName()
+        data = schema.load(request.json)
+        
+        # Logique service
+        service = ServiceName()
+        result = service.method_name(data)
+        
+        return jsonify({'success': True, 'data': result}), 200
+    except ValidationError as e:
+        return jsonify({'success': False, 'errors': e.messages}), 400
+    except PermissionError:
+        return jsonify({'success': False, 'error': 'Forbidden'}), 403
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+```
+
+---
+
+### 2. Blueprints Obligatoires
+
+**Blueprints Must Have** :
+- ✅ `auth` : Authentification (login, refresh, logout)
+- ✅ `dashboard` : Dashboard (stats)
+- ✅ `wizard` : Wizard 9 étapes (step validation, save, pack)
+- ✅ `releases` : Releases (CRUD, repack, actions)
+- ✅ `rules` : Rules (locales + scenerules.org)
+- ✅ `users` : Users (CRUD, groups, roles)
+- ✅ `roles` : Roles (CRUD, permissions)
+- ✅ `config` : Configurations (système, APIs, FTP/SSH)
+
+---
+
+### 3. Routes RESTful
+
+**Conventions** :
+- ✅ `GET /api/resource` : Liste (pagination, filtres)
+- ✅ `GET /api/resource/:id` : Détail
+- ✅ `POST /api/resource` : Création
+- ✅ `PUT /api/resource/:id` : Modification
+- ✅ `DELETE /api/resource/:id` : Suppression
+
+**Exemple** :
+```python
+@blueprint.route('/api/releases', methods=['GET'])
+@blueprint.route('/api/releases/<int:release_id>', methods=['GET'])
+@blueprint.route('/api/releases', methods=['POST'])
+@blueprint.route('/api/releases/<int:release_id>', methods=['PUT'])
+@blueprint.route('/api/releases/<int:release_id>', methods=['DELETE'])
+```
+
+---
+
+### 4. Validation Inputs
+
+**Marshmallow Schemas** :
+```python
+from marshmallow import Schema, fields, validate
+
+class ReleaseSchema(Schema):
+    group = fields.Str(required=True, validate=validate.Length(min=2, max=100))
+    release_type = fields.Str(required=True, validate=validate.OneOf(['EBOOK', 'TV', 'DOCS']))
+    metadata = fields.Dict(allow_none=True)
+
+# Utilisation
+schema = ReleaseSchema()
+data = schema.load(request.json)  # Valide et désérialise
+```
+
+---
+
+### 5. Authentification JWT
+
+**Décorateur** :
+```python
+from flask_jwt_extended import jwt_required, current_user
+
+@blueprint.route('/api/protected', methods=['GET'])
+@jwt_required()
+def protected_endpoint():
+    """Endpoint protégé."""
+    user = current_user
+    return jsonify({'user': user.username})
+```
+
+---
+
+### 6. Permissions Granulaires
+
+**Décorateur Custom** :
+```python
+from web.utils.permissions import require_permission
+
+@blueprint.route('/api/releases', methods=['POST'])
+@jwt_required()
+@require_permission('releases', 'WRITE')
+def create_release():
+    """Crée release (permission WRITE requise)."""
+    pass
+```
+
+---
+
+### 7. Gestion Erreurs Standardisée
+
+**Format Erreur** :
+```json
+{
+  "success": false,
+  "error": "Message erreur",
+  "errors": {
+    "field": ["Message validation"]
+  },
+  "code": "ERROR_CODE"
+}
+```
+
+**Codes Erreur** :
+- `400` : Validation error
+- `401` : Unauthorized
+- `403` : Forbidden
+- `404` : Not found
+- `500` : Internal server error
+
+---
+
+### 8. Pagination
+
+**Standard** :
+```python
+@blueprint.route('/api/releases', methods=['GET'])
+def list_releases():
+    """Liste releases avec pagination."""
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+    
+    releases = Release.query.paginate(page=page, per_page=per_page)
+    
+    return jsonify({
+        'data': [r.to_dict() for r in releases.items],
+        'pagination': {
+            'page': page,
+            'per_page': per_page,
+            'total': releases.total,
+            'pages': releases.pages
+        }
+    })
+```
+
+---
+
+### 9. Filtrage et Tri
+
+**Standard** :
+```python
+@blueprint.route('/api/releases', methods=['GET'])
+def list_releases():
+    """Liste releases avec filtres."""
+    # Filtres
+    group = request.args.get('group')
+    release_type = request.args.get('type')
+    status = request.args.get('status')
+    
+    query = Release.query
+    
+    if group:
+        query = query.filter_by(group=group)
+    if release_type:
+        query = query.filter_by(release_type=release_type)
+    if status:
+        query = query.filter_by(status=status)
+    
+    # Tri
+    sort_by = request.args.get('sort_by', 'created_at')
+    order = request.args.get('order', 'desc')
+    if order == 'desc':
+        query = query.order_by(getattr(Release, sort_by).desc())
+    else:
+        query = query.order_by(getattr(Release, sort_by).asc())
+    
+    releases = query.all()
+    return jsonify({'data': [r.to_dict() for r in releases]})
+```
+
+---
+
+## ✅ Checklist Blueprint
+
+- [ ] Blueprint conforme template standard
+- [ ] Routes RESTful
+- [ ] Validation inputs (Marshmallow)
+- [ ] Authentification JWT
+- [ ] Permissions granulaires
+- [ ] Gestion erreurs standardisée
+- [ ] Pagination si liste
+- [ ] Filtrage/tri si liste
+- [ ] Tests endpoints
+- [ ] Documentation docstring
+
+---
+
+## 📚 Références
+
+- **API Reference** : `docs/API_REFERENCE.md`
+- **OpenAPI** : `docs/api/openapi.yaml`
+- **PRDs** : `docs/PRDs/`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0

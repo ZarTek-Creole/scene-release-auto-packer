@@ -1,0 +1,180 @@
+---
+name: rules-scene
+description: Règles strictes pour Rules Scene - Intégration scenerules.org
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Rules Scene - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer intégration complète et validation stricte des règles Scene depuis scenerules.org.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Source Règles
+
+**Priorité** :
+1. ⭐ **scenerules.org** : Téléchargement automatique (PRIORITÉ)
+2. **Rules locales** : Stockées en base de données (téléchargées depuis scenerules.org)
+3. **Upload** : Règles personnalisées uploadées
+
+**Règle eBOOK Prioritaire** :
+- **[2022] eBOOK** (English) ⭐ **OBLIGATOIRE** pour packaging EBOOK
+- Source : [scenerules.org](https://scenerules.org/)
+- Format : NFO (.nfo) avec spécifications complètes
+
+### 2. Téléchargement scenerules.org
+
+**Service** : `ScenerulesDownloadService`
+
+**Processus** :
+1. Déterminer URL règle (ex: `2022_eBOOK.nfo`)
+2. Télécharger depuis scenerules.org
+3. Parser règle complète
+4. Stocker en cache local
+5. Sauvegarder en base de données
+
+**Mise en cache** :
+- Cache local pour performance
+- Vérification mise à jour périodique
+- Synchronisation automatique optionnelle
+
+### 3. Parsing Règle Complète
+
+**Service** : `RuleParserService`
+
+**Extraction obligatoire** :
+- ✅ Formats acceptés (EPUB, PDF, MOBI, etc.)
+- ✅ Template NFO standardisé
+- ✅ Contraintes nommage (regex)
+- ✅ Structure release (fichiers requis)
+- ✅ Contraintes techniques (taille, qualité)
+- ✅ Règles de validation
+
+**Structure** :
+```python
+@dataclass
+class EbookRuleSpec:
+    accepted_formats: list[str]
+    nfo_template: str
+    naming_pattern: re.Pattern
+    release_structure: dict
+    validations: list[Callable]
+    constraints: dict
+```
+
+### 4. Validation contre Règle
+
+**Service** : `RuleValidationService`
+
+**Validations obligatoires** :
+- ✅ Format fichier source conforme
+- ✅ Nommage conforme (regex)
+- ✅ Structure release conforme
+- ✅ NFO conforme template règle
+- ✅ Toutes contraintes respectées
+
+**Processus** :
+```python
+def validate_against_rule(
+    release_data: dict, 
+    rule_spec: EbookRuleSpec
+) -> tuple[bool, list[str]]:
+    """Valide release contre règle complète."""
+    errors = []
+    
+    # Validation format
+    if release_data['file_format'] not in rule_spec.accepted_formats:
+        errors.append(f"Format non accepté")
+    
+    # Validation nommage
+    if not rule_spec.naming_pattern.match(release_data['release_name']):
+        errors.append("Nommage non conforme")
+    
+    # Validation structure
+    if not validate_structure(release_data, rule_spec.release_structure):
+        errors.append("Structure non conforme")
+    
+    # Validation NFO
+    if not validate_nfo(release_data['nfo'], rule_spec.nfo_template):
+        errors.append("NFO non conforme")
+    
+    return len(errors) == 0, errors
+```
+
+### 5. Organisation Rules
+
+**Structure** :
+- **Scène** : English, French, German, Polish, Spanish, etc.
+- **Section** : eBOOK, TV-720p, TV-SD, X264, X265, etc.
+- **Année** : Année de publication/mise à jour
+
+**Filtrage** :
+- Par scène
+- Par section
+- Par année
+- Par type release (EBOOK, TV, etc.)
+
+---
+
+## 🔍 Validation Stricte
+
+### Avant Utilisation Règle
+
+**Checklist** :
+- [ ] Règle chargée complètement depuis scenerules.org
+- [ ] Parsing réussi (formats, template, contraintes extraits)
+- [ ] Règle valide et complète
+- [ ] Spécification `EbookRuleSpec` complète stockée
+
+### Pendant Packaging
+
+**Validations à chaque étape** :
+- **Étape 4** : Format fichier conforme règle
+- **Étape 7** : Template conforme règle
+- **Étape 8** : Structure conforme règle
+- **Packaging** : Nommage conforme règle
+
+---
+
+## 🚨 Points Critiques
+
+### Conformité Absolue
+
+**❌ JAMAIS** :
+- Packager sans règle chargée
+- Ignorer contraintes règle
+- Créer release non conforme
+- Utiliser template non conforme
+
+**✅ TOUJOURS** :
+- Charger règle complète
+- Valider contre règle
+- Appliquer règle strictement
+- Utiliser template de la règle
+
+### Règle eBOOK [2022]
+
+**PRIORITÉ ABSOLUE** : Règle [2022] eBOOK obligatoire pour packaging EBOOK.
+
+**Autres scènes** : German, Polish, etc. selon besoin utilisateur.
+
+---
+
+## 📚 Références
+
+- **Scenerules Integration** : `docs/SCENERULES_INTEGRATION.md` ⭐
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 3)
+- **PRD-004** : `docs/PRDs/PRD-004-Rules.md`
+- **Database ERD** : `docs/DATABASE_ERD.md` (table `rules`)
+- **Site officiel** : [scenerules.org](https://scenerules.org/)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

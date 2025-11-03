@@ -1,0 +1,55 @@
+---
+name: wizard-navigation
+description: Règles strictes pour Wizard Navigation - Navigation, État, Persistance
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Wizard Navigation - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer navigation fluide dans wizard 9 étapes avec validation, persistance et reprise.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Navigation
+
+**Previous/Next** : Boutons navigation
+**Progress** : Indicateur "Étape X/9"
+
+**Validation** : Étape validée avant passage suivante
+
+---
+
+### 2. Persistance
+
+**Hybride** :
+- localStorage : Sauvegarde immédiate (UX)
+- Backend : Job draft (persistance)
+
+**Auto-save** : Après chaque étape validée
+
+---
+
+### 3. Reprise
+
+**Restauration** : Job draft → Restaure étape où arrêté
+
+---
+
+### 4. État Wizard
+
+**WizardContext React** : Gestion état global wizard
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01

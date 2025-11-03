@@ -1,0 +1,78 @@
+---
+name: jobs-management
+description: Règles strictes pour Jobs Management - Statuts, Logs, Progression
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Jobs Management - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer gestion complète des jobs de packaging avec statuts, logs structurés, progression tracking et persistance état.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Statuts Jobs
+
+**Statuts Obligatoires** :
+- `draft` : Wizard en cours, non packagé
+- `running` : Packaging en cours
+- `completed` : Packaging terminé avec succès
+- `failed` : Packaging échoué
+- `cancelled` : Packaging annulé
+
+**Transitions** :
+```
+draft → running → completed
+draft → running → failed
+draft → running → cancelled
+```
+
+---
+
+### 2. Logs Structurés
+
+**Format** :
+```python
+{
+  "timestamp": "2025-11-01T10:00:00Z",
+  "level": "INFO|ERROR|WARNING",
+  "message": "Message log",
+  "step": "packaging|validation|upload",
+  "progress": 50
+}
+```
+
+**Stockage** : TEXT ou JSON en base de données
+
+---
+
+### 3. Progression Tracking
+
+**Progression** :
+- Pourcentage : 0-100
+- Étape : Nom étape courante
+- Temps estimé restant
+
+**Update** : Toutes les 500ms pendant packaging
+
+---
+
+### 4. Jobs Asynchrones
+
+**Option 1** : Threading (simple)
+**Option 2** : Celery (production)
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 8)
+- **ERD** : `docs/DATABASE_ERD.md` (table `jobs`)
+
+---
+
+**Dernière mise à jour** : 2025-11-01

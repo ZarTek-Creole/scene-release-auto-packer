@@ -1,0 +1,154 @@
+---
+name: groups-scene
+description: Règles strictes pour Groups Scene - Validation format
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Groups Scene - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer validation stricte du format Groups Scene selon standards Scene.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Format Groupe Scene
+
+**Format standard** :
+- ✅ Lettres majuscules uniquement (A-Z)
+- ✅ Chiffres autorisés (0-9)
+- ✅ Longueur minimale : 2 caractères
+- ✅ Longueur maximale : 100 caractères
+- ✅ Pas d'espaces, caractères spéciaux, accents
+
+**Regex** :
+```python
+import re
+
+GROUP_PATTERN = re.compile(r'^[A-Z0-9]{2,100}$')
+
+def validate_group(group: str) -> tuple[bool, list[str]]:
+    """Valide format groupe Scene."""
+    errors = []
+    
+    if not group or len(group.strip()) == 0:
+        errors.append("Le nom du groupe est requis")
+    elif len(group) < 2:
+        errors.append("Le nom du groupe doit contenir au moins 2 caractères")
+    elif len(group) > 100:
+        errors.append("Le nom du groupe ne peut pas dépasser 100 caractères")
+    elif not GROUP_PATTERN.match(group):
+        errors.append("Le nom du groupe doit contenir uniquement lettres majuscules et chiffres")
+    
+    return len(errors) == 0, errors
+```
+
+### 2. Validation UI
+
+**Frontend** :
+- ✅ Input texte avec validation temps réel
+- ✅ Autocomplete suggestions groupes existants
+- ✅ Message erreur si format invalide
+- ✅ Bouton "Suivant" disabled si invalide
+
+**Exemples valides** :
+- `TESTGROUP`
+- `TEST123`
+- `ABC`
+- `ABCDEFGHIJK`
+
+**Exemples invalides** :
+- `testgroup` (minuscules)
+- `Test Group` (espaces)
+- `T` (trop court)
+- `Test-Group` (caractères spéciaux)
+- `TéstGroup` (accents)
+
+### 3. Stockage Backend
+
+**Structure** :
+```python
+# Table groups
+groups (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT,
+    created_at DATETIME
+)
+
+# Table user_groups (many-to-many)
+user_groups (
+    user_id INT,
+    group_id INT,
+    PRIMARY KEY (user_id, group_id)
+)
+```
+
+**Validation** :
+- ✅ Format vérifié avant insertion
+- ✅ Unicité `name` garantie (UNIQUE)
+- ✅ Normalisation automatique (uppercase)
+
+### 4. Autocomplete Groupes
+
+**Source données** :
+- Groupes existants en base de données
+- Groupes utilisés dans releases
+- Suggestions triées par fréquence d'utilisation
+
+**UI** :
+- Dropdown suggestions lors saisie
+- Filtrage par préfixe
+- Sélection ou saisie libre
+
+---
+
+## 🔍 Validation Stricte
+
+### Backend
+
+**Avant sauvegarde** :
+- ✅ Validation format regex
+- ✅ Normalisation uppercase
+- ✅ Vérification unicité
+- ✅ Longueur vérifiée
+
+### Frontend
+
+**Validation temps réel** :
+- ✅ Vérification format pendant saisie
+- ✅ Message erreur instantané
+- ✅ Bouton désactivé si invalide
+
+---
+
+## 🚨 Points Critiques
+
+### Format Strict
+
+**Règle absolue** : Format Scene strict (majuscules, chiffres uniquement, 2-100 caractères).
+
+**Pas d'exception** : Conformité absolue requise.
+
+### Normalisation
+
+**Automatique** : Conversion automatique en majuscules si nécessaire.
+
+**Avant validation** : Normalisation puis validation.
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 1)
+- **Database ERD** : `docs/DATABASE_ERD.md` (table `groups`, `user_groups`)
+- **API Reference** : `docs/API_REFERENCE.md` (endpoints groups)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

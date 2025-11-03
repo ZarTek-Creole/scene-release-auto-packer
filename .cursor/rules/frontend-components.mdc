@@ -1,0 +1,65 @@
+---
+name: frontend-components
+description: Règles strictes pour Frontend Components - Structure React TypeScript
+globs:
+  - "**/*.{js,jsx,ts,tsx}"
+---
+
+# Frontend Components - Règles Strictes
+
+## 🎯 Objectif
+
+Structure modulaire composants React avec TypeScript strict et réutilisabilité.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Structure Modulaire
+
+**Répertoires** :
+- `components/common/` : Composants réutilisables
+- `components/wizard/` : Composants wizard
+- `components/releases/` : Composants releases
+- `components/rules/` : Composants rules
+
+---
+
+### 2. TypeScript Strict
+
+**Props Typées** :
+```typescript
+interface ComponentProps {
+  data: string;
+  onAction: (id: number) => void;
+}
+```
+
+---
+
+### 3. Composants Réutilisables
+
+**Exemples** : Button, Input, Card, Modal
+
+---
+
+### 4. Context API
+
+**WizardContext** : État wizard global
+
+---
+
+### 5. Responsive
+
+**Bootstrap 5** : Responsive design
+
+---
+
+## 📚 Références
+
+- **PRD-001** : `docs/PRDs/PRD-001-Interface-Admin.md`
+- **Vite Setup** : `docs/VITE_SETUP.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01

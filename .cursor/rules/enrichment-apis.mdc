@@ -1,0 +1,55 @@
+---
+name: enrichment-apis
+description: Règles strictes pour Enrichissement APIs - APIs externes configurables
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Enrichissement APIs - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer enrichissement métadonnées via APIs externes avec validation manuelle obligatoire et traçabilité sources.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. APIs Configurables
+
+**Par Type Release** :
+- EBOOK : OpenLibrary, Google Books
+- TV : OMDb, TVDB, TMDb
+- DOCS : APIs spécifiques
+
+**Ordre Priorité** : Configurable par utilisateur
+
+---
+
+### 2. Validation Manuelle
+
+**Obligatoire** : Accepter/refuser chaque enrichissement avant application
+
+---
+
+### 3. Traçabilité
+
+**Source** : Chaque métadonnée enrichie doit avoir source API tracée
+
+---
+
+### 4. Gestion Erreurs
+
+**Rate Limiting** : Gérer limites APIs
+
+**Timeout** : 5s max par appel API
+
+---
+
+## 📚 Références
+
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md` (Étape 6)
+
+---
+
+**Dernière mise à jour** : 2025-11-01

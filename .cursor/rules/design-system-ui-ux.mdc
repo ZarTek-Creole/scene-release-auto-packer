@@ -1,0 +1,531 @@
+---
+name: design-system-ui-ux
+description: Règles strictes pour Design System UI/UX - Polices, Onglets, Bordures, Icônes, Espacements, Couleurs, Accessibilité
+globs:
+  - "**/*.{ts,tsx,js,jsx,css,scss}"
+---
+
+# Design System UI/UX - eBook Scene Packer v2
+
+## 🎯 Principe Fondamental
+
+**Design intégralement clair, moderne et cohérent dès le début** : Tous les composants UI DOIVENT suivre strictement le Design System documenté dans `docs/DESIGN_SYSTEM_UI_UX.md`.
+
+---
+
+## 🚨 RÈGLES ABSOLUES
+
+### 1. Cohérence Totale Obligatoire
+- ✅ **TOUJOURS** utiliser les variables CSS du Design System
+- ✅ **TOUJOURS** utiliser Bootstrap Icons (pas d'autres bibliothèques d'icônes)
+- ✅ **TOUJOURS** respecter le système d'espacements (4px base)
+- ✅ **JAMAIS** créer de composants sans suivre le Design System
+- ✅ **JAMAIS** utiliser couleurs hardcodées (toujours variables CSS)
+
+### 2. Polices (Typographie)
+- ✅ **Stack polices système** : `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`
+- ✅ **Police monospace** : `"SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace` (pour NFO Viewer)
+- ✅ **Hiérarchie respectée** :
+  - `h1` : `font-size: 2.25rem` (36px), `font-weight: 700`, `line-height: 1.25`
+  - `h2` : `font-size: 1.875rem` (30px), `font-weight: 700`, `line-height: 1.25`
+  - `h3` : `font-size: 1.5rem` (24px), `font-weight: 600`, `line-height: 1.5`
+  - `h4` : `font-size: 1.25rem` (20px), `font-weight: 600`, `line-height: 1.5`
+  - `h5` : `font-size: 1.125rem` (18px), `font-weight: 500`, `line-height: 1.5`
+  - `h6` : `font-size: 1rem` (16px), `font-weight: 500`, `line-height: 1.5`
+  - `p` : `font-size: 1rem` (16px), `line-height: 1.75`
+
+```css
+/* ✅ Bon : Utiliser variables CSS */
+.title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+/* ❌ Éviter : Valeurs hardcodées */
+.title {
+  font-size: 30px;
+  font-weight: bold;
+}
+```
+
+### 3. Onglets (Navigation)
+
+**Structure** :
+```tsx
+// ✅ Bon : Onglets avec icônes Bootstrap Icons
+<TabsContainer>
+  <TabList>
+    <Tab id="new-release" icon={<PlusIcon />}>
+      Nouvelle Release
+    </Tab>
+    <Tab id="releases" icon={<ListIcon />}>
+      Liste des Releases
+    </Tab>
+    {/* ... */}
+  </TabList>
+</TabsContainer>
+```
+
+**Styles** :
+- ✅ **Bordures** : Bordure inférieure 3px pour onglet actif (couleur primaire)
+- ✅ **Polices** : `font-weight-medium` pour inactif, `font-weight-semibold` pour actif
+- ✅ **Couleurs** : Couleur primaire pour actif, texte secondaire pour inactif
+- ✅ **Espacements** : Padding `0.875rem 1.25rem` (14px 20px)
+- ✅ **Icônes** : Bootstrap Icons, taille `icon-md` (1.25rem)
+
+```css
+/* ✅ Bon : Styles onglets selon Design System */
+.tab {
+  padding: 0.875rem 1.25rem;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  border-bottom-color: var(--color-primary);
+}
+
+/* ❌ Éviter : Styles non conformes */
+.tab {
+  padding: 10px 15px;
+  border: 1px solid #000;
+}
+```
+
+### 4. Bordures
+
+**Système cohérent** :
+- ✅ **Rayons** :
+  - `--border-radius-sm` : `0.25rem` (4px)
+  - `--border-radius` : `0.375rem` (6px) - **DÉFAUT**
+  - `--border-radius-lg` : `0.5rem` (8px) - **Pour Cards**
+  - `--border-radius-xl` : `0.75rem` (12px)
+  - `--border-radius-full` : `9999px` (pour boutons ronds)
+- ✅ **Largeur** : `--border-width` : `1px`
+- ✅ **Style** : `solid`
+- ✅ **Couleur** : Variables CSS selon thème (`--border-color`)
+
+```css
+/* ✅ Bon : Bordures selon Design System */
+.card {
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.button {
+  border-radius: var(--border-radius);
+  border: var(--border-width) var(--border-style) transparent;
+}
+
+/* ❌ Éviter : Bordures hardcodées */
+.card {
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+```
+
+### 5. Icônes
+
+**Bibliothèque** : **Bootstrap Icons** (OBLIGATOIRE)
+- ✅ **Installation** : `npm install bootstrap-icons`
+- ✅ **Import** : `import { IconName } from 'bootstrap-icons-react'` ou équivalent
+- ✅ **Tailles standardisées** :
+  - `icon-xs` : `0.75rem` (12px)
+  - `icon-sm` : `1rem` (16px)
+  - `icon-md` : `1.25rem` (20px) - **DÉFAUT**
+  - `icon-lg` : `1.5rem` (24px)
+  - `icon-xl` : `2rem` (32px)
+
+**Icônes principales par fonctionnalité** :
+```tsx
+// Navigation
+<PlusIcon />          // Nouvelle Release
+<ListIcon />          // Liste Releases
+<FileTextIcon />      // Rules
+<UsersIcon />         // Utilisateurs
+<ShieldIcon />        // Rôles
+<SettingsIcon />      // Configurations
+
+// Actions
+<EditIcon />          // Éditer
+<DeleteIcon />        // Supprimer
+<SaveIcon />          // Sauvegarder
+<SearchIcon />        // Rechercher
+<DownloadIcon />      // Télécharger
+<UploadIcon />        // Uploader
+
+// Thème
+<SunIcon />           // Thème jour
+<MoonIcon />          // Thème nuit
+
+// Wizard
+<ArrowLeftIcon />     // Précédent
+<ArrowRightIcon />    // Suivant
+```
+
+```tsx
+// ✅ Bon : Icône avec taille standardisée
+<Button icon={<PlusIcon className="icon-md" />}>
+  Ajouter
+</Button>
+
+// ❌ Éviter : Autres bibliothèques ou tailles non standardisées
+<Button icon={<FaPlus size={18} />}>
+  Ajouter
+</Button>
+```
+
+### 6. Espacements (Spacing)
+
+**Système basé sur 4px** (0.25rem) :
+- ✅ **Variables CSS** :
+  - `--spacing-1` : `0.25rem` (4px)
+  - `--spacing-2` : `0.5rem` (8px)
+  - `--spacing-4` : `1rem` (16px) - **DÉFAUT**
+  - `--spacing-6` : `1.5rem` (24px)
+  - `--spacing-8` : `2rem` (32px)
+- ✅ **TOUJOURS** utiliser variables CSS ou classes utilitaires
+- ❌ **JAMAIS** utiliser valeurs hardcodées
+
+```css
+/* ✅ Bon : Espacements selon Design System */
+.card {
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-4);
+}
+
+.button-group {
+  gap: var(--spacing-2);
+}
+
+/* ❌ Éviter : Espacements hardcodés */
+.card {
+  padding: 20px;
+  margin-bottom: 15px;
+}
+```
+
+### 7. Couleurs
+
+**Système de couleurs** :
+- ✅ **Variables CSS** : TOUJOURS utiliser variables CSS (jamais hardcodées)
+- ✅ **Thème jour/nuit** : Toutes couleurs adaptatives via variables
+- ✅ **Contraste** : WCAG 2.2 AA (ratio ≥ 4.5:1 texte normal)
+
+**Variables principales** :
+```css
+/* Thème Clair */
+--color-primary: #0d6efd;
+--color-bg: #ffffff;
+--color-text: #212529;
+--text-secondary: #6c757d;
+
+/* Thème Sombre */
+--color-primary-dark: #4dabf7;
+--color-bg-dark: #1a1d20;
+--color-text-dark: #f8f9fa;
+```
+
+```tsx
+// ✅ Bon : Utiliser variables CSS
+<div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
+
+// ❌ Éviter : Couleurs hardcodées
+<div style={{ backgroundColor: '#ffffff', color: '#212529' }}>
+```
+
+### 8. Accessibilité (WCAG 2.2 AA)
+
+**Obligatoire** :
+- ✅ **Contraste couleurs** : Ratio ≥ 4.5:1 (texte normal), ≥ 3:1 (texte large)
+- ✅ **Focus visible** : Outline 2px couleur primaire
+- ✅ **ARIA labels** : Tous éléments interactifs
+- ✅ **Navigation clavier** : Tab order logique, skip links
+
+```tsx
+// ✅ Bon : Accessible
+<Button
+  aria-label="Ajouter une nouvelle release"
+  onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+>
+  <PlusIcon aria-hidden="true" />
+  Ajouter
+</Button>
+
+// ❌ Éviter : Sans ARIA, focus invisible
+<button onClick={handleClick}>
+  <PlusIcon />
+</button>
+```
+
+---
+
+## 📦 Composants UI
+
+### Button
+
+```tsx
+// ✅ Bon : Button selon Design System
+<Button
+  variant="primary"        // primary, secondary, outline, ghost, link
+  size="md"                // sm, md, lg
+  icon={<PlusIcon />}      // Icône Bootstrap Icons
+  iconPosition="left"      // left, right
+  disabled={false}
+  loading={false}
+>
+  Ajouter
+</Button>
+```
+
+**Styles** :
+- Padding : `0.625rem 1.25rem` (variant md)
+- Border radius : `var(--border-radius)`
+- Transition : `var(--transition-fast)`
+- Focus : Outline 2px couleur primaire
+
+### Input
+
+```tsx
+// ✅ Bon : Input selon Design System
+<Input
+  id="username"
+  type="text"
+  placeholder="Nom d'utilisateur"
+  icon={<UserIcon />}      // Icône optionnelle
+  error="Ce champ est requis"
+  required
+/>
+```
+
+**Styles** :
+- Padding : `0.625rem 0.875rem`
+- Border radius : `var(--border-radius)`
+- Focus : Border couleur primaire + box-shadow
+
+### Card
+
+```tsx
+// ✅ Bon : Card selon Design System
+<Card>
+  <CardHeader>
+    <CardTitle>Titre</CardTitle>
+  </CardHeader>
+  <CardBody>
+    Contenu
+  </CardBody>
+  <CardFooter>
+    Actions
+  </CardFooter>
+</Card>
+```
+
+**Styles** :
+- Border : `var(--border-width) var(--border-style) var(--border-color)`
+- Border radius : `var(--border-radius-lg)` (8px)
+- Box shadow : `var(--shadow-sm)`
+- Padding : `var(--spacing-6)` (1.5rem)
+
+### Tabs
+
+```tsx
+// ✅ Bon : Tabs selon Design System
+<TabsContainer>
+  <TabList>
+    <Tab id="tab1" icon={<PlusIcon />}>Onglet 1</Tab>
+    <Tab id="tab2" icon={<ListIcon />}>Onglet 2</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel id="tab1">Contenu 1</TabPanel>
+    <TabPanel id="tab2">Contenu 2</TabPanel>
+  </TabPanels>
+</TabsContainer>
+```
+
+**Styles** :
+- Onglet actif : Bordure inférieure 3px couleur primaire
+- Padding : `0.875rem 1.25rem`
+- Transition : `var(--transition-fast)`
+
+---
+
+## 🎨 Thème Jour/Nuit
+
+**Implémentation** :
+```tsx
+// ✅ Bon : Thème avec variables CSS
+const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+  
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+**Toggle** :
+```tsx
+// ✅ Bon : Toggle thème selon Design System
+<Button variant="ghost" onClick={toggleTheme}>
+  {theme === 'light' ? (
+    <MoonIcon className="icon-md" />
+  ) : (
+    <SunIcon className="icon-md" />
+  )}
+</Button>
+```
+
+**Variables CSS adaptatives** :
+```css
+[data-theme="light"] {
+  --color-bg: var(--bg-primary);
+  --color-text: var(--text-primary);
+}
+
+[data-theme="dark"] {
+  --color-bg: var(--bg-primary-dark);
+  --color-text: var(--text-primary-dark);
+}
+```
+
+---
+
+## 📐 Structure Fichiers CSS
+
+**Organisation obligatoire** :
+```
+frontend/src/styles/
+├── _variables.css        # Variables CSS (couleurs, espacements, bordures)
+├── _typography.css       # Typographie complète
+├── _components.css       # Styles composants UI
+├── _theme.css            # Thème jour/nuit
+└── main.css              # Import tous styles
+```
+
+**Import** :
+```css
+/* main.css */
+@import './variables.css';
+@import './typography.css';
+@import './theme.css';
+@import './components.css';
+```
+
+---
+
+## ✅ Checklist Avant Création Composant
+
+### Obligatoire
+- [ ] Composant utilise variables CSS (pas de valeurs hardcodées)
+- [ ] Icônes : Bootstrap Icons uniquement (tailles standardisées)
+- [ ] Espacements : Variables CSS ou classes utilitaires
+- [ ] Bordures : Rayons selon Design System
+- [ ] Couleurs : Variables CSS avec support thème jour/nuit
+- [ ] Typographie : Hiérarchie respectée (h1-h6, p)
+- [ ] Accessibilité : ARIA labels, focus visible, contraste ≥ 4.5:1
+
+### Recommandé
+- [ ] Transition fluide (150-350ms)
+- [ ] États hover/active/focus définis
+- [ ] Responsive testé (mobile/tablet/desktop)
+- [ ] Documentation composant avec exemples
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Couleurs Hardcodées
+```css
+/* ❌ Mauvais */
+.button {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+/* ✅ Bon */
+.button {
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
+}
+```
+
+### ❌ Espacements Hardcodés
+```css
+/* ❌ Mauvais */
+.card {
+  padding: 20px;
+  margin: 15px;
+}
+
+/* ✅ Bon */
+.card {
+  padding: var(--spacing-8);
+  margin: var(--spacing-6);
+}
+```
+
+### ❌ Autres Bibliothèques Icônes
+```tsx
+// ❌ Mauvais : Font Awesome
+import { FaPlus } from 'react-icons/fa';
+
+// ❌ Mauvais : Heroicons
+import { PlusIcon } from '@heroicons/react/24/outline';
+
+// ✅ Bon : Bootstrap Icons
+import { Plus as PlusIcon } from 'bootstrap-icons-react';
+```
+
+### ❌ Bordures Non Conformes
+```css
+/* ❌ Mauvais */
+.card {
+  border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+/* ✅ Bon */
+.card {
+  border-radius: var(--border-radius-lg);
+  border: var(--border-width) var(--border-style) var(--border-color);
+}
+```
+
+---
+
+## 📚 Références
+
+- **Design System complet** : `docs/DESIGN_SYSTEM_UI_UX.md` ⭐
+- **Plan d'implémentation** : `docs/UI_UX_IMPLEMENTATION_PLAN.md`
+- **Bootstrap Icons** : https://icons.getbootstrap.com/
+- **WCAG 2.2** : https://www.w3.org/WAI/WCAG22/quickref/
+
+---
+
+## 🔗 Liens Utiles
+
+- **PRD-001** : `docs/PRDs/PRD-001-Interface-Admin.md`
+- **PRD-002** : `docs/PRDs/PRD-002-Nouvelle-Release.md`
+- **DEVBOOK** : `docs/DEVBOOK.md`
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️
+
+**Rappel** : Cette règle est **toujours active** (`alwaysApply: true`) pour garantir un Design System cohérent dès le début.

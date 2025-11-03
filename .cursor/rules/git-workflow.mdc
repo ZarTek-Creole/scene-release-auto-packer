@@ -1,0 +1,849 @@
+---
+description: Standards Git/GitHub workflow et Conventional Commits pour eBook Scene Packer v2
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Workflow Git/GitHub - eBook Scene Packer v2
+
+## 🎯 Principes Fondamentaux
+
+**Ce projet suit strictement** :
+- ✅ **Conventional Commits** pour tous les commits
+- ✅ **GitHub Flow** pour la stratégie de branching (simple et rapide)
+- ✅ **Semantic Versioning** (MAJOR.MINOR.PATCH)
+- ✅ **Pull Requests** obligatoires pour merge dans main
+- ✅ **Definition of Done** : Aucun commit sans tests passants et coverage ≥90%
+
+---
+
+## 📝 Conventional Commits
+
+### Format Standard
+
+**Structure** : `<type>[optional scope]: <description>`
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Types de Commits Autorisés
+
+| Type | Description | SemVer | Exemple |
+|------|-------------|--------|---------|
+| `feat` | Nouvelle fonctionnalité | **MINOR** | `feat(wizard): add step 5 file analysis` |
+| `fix` | Correction de bug | **PATCH** | `fix(api): correct validation error` |
+| `docs` | Documentation uniquement | - | `docs: update DEVBOOK Phase 1` |
+| `style` | Formatage, espaces, virgules | - | `style: format code with black` |
+| `refactor` | Refactoring sans changement fonctionnel | - | `refactor(services): simplify packaging logic` |
+| `perf` | Amélioration de performance | **PATCH** | `perf(db): optimize query with index` |
+| `test` | Ajout/modification de tests | - | `test(wizard): add E2E test step 5` |
+| `build` | Système de build | - | `build: update requirements.txt` |
+| `ci` | CI/CD (GitHub Actions) | - | `ci: add maintenance check workflow` |
+| `chore` | Maintenance, dépendances | - | `chore: upgrade Flask to 3.0.1` |
+
+### Breaking Changes
+
+**Deux façons de signaler un breaking change** :
+
+1. **Avec `!` après le type** :
+   ```
+   feat(api)!: change response format to JSON:API spec
+   ```
+
+2. **Avec footer BREAKING CHANGE** :
+   ```
+   feat(api): add new authentication system
+
+   BREAKING CHANGE: Old auth tokens are no longer valid
+   ```
+
+**Impact SemVer** : **MAJOR** version bump (ex: 2.0.0 → 3.0.0)
+
+### Scope (Optionnel)
+
+**Contexte additionnel entre parenthèses** pour préciser la zone concernée :
+
+**Scopes recommandés pour ce projet** :
+- `wizard` : Wizard 9 étapes
+- `api` : Endpoints API Flask
+- `auth` : Authentification JWT
+- `db` : Base de données, migrations
+- `models` : Modèles SQLAlchemy
+- `services` : Services métier
+- `frontend` : Composants React/TypeScript
+- `tests` : Tests (unitaires, intégration, E2E)
+- `docs` : Documentation
+- `ci` : GitHub Actions, CI/CD
+- `deps` : Dépendances
+
+**Exemples avec scope** :
+```
+feat(wizard): add step 3 rule selection
+fix(api): correct validation in release endpoint
+test(wizard): add E2E test for complete flow
+docs(DEVBOOK): mark Phase 1 as completed
+refactor(services): extract packaging logic
+```
+
+### Exemples Concrets pour ce Projet
+
+**✅ Bons exemples** :
+```bash
+feat(wizard): add step 5 file analysis with progress bar
+fix(auth): correct JWT token refresh logic
+test(wizard): add Playwright MCP E2E test step 1-3
+docs(PRD-002): update wizard 9 steps specifications
+refactor(services): simplify PackagingService interface
+perf(db): add index on users.username column
+chore(deps): upgrade Flask-SQLAlchemy to 3.1.1
+ci(maintenance): add weekly audit-documentation workflow
+feat(api)!: change release response format to JSON:API
+```
+
+**❌ Mauvais exemples** :
+```bash
+# ❌ Trop vague
+fix: bug fix
+update: changed code
+work: progress on wizard
+
+# ❌ Pas de format standard
+feat: wizard step 5
+fix wizard step 3
+```
+
+---
+
+## 🌿 Stratégie de Branching : GitHub Flow
+
+### Branches Principales
+
+- **`main`** : Branche de production, toujours déployable
+  - Protection activée (PR obligatoire, tests CI)
+  - Historique linéaire requis (squash merge recommandé)
+- **`develop`** : (Optionnel) Branche d'intégration si besoin
+
+### Branches de Fonctionnalités
+
+**Convention de nommage** :
+- `feature/<nom-fonctionnalité>` : Nouvelles fonctionnalités
+- `fix/<nom-bug>` : Corrections de bugs
+- `refactor/<nom-refactoring>` : Refactorings
+
+**Exemples** :
+```bash
+feature/wizard-step-5-analysis
+fix/auth-token-refresh
+refactor/packaging-service
+feature/frontend-react-setup
+```
+
+### Workflow Complet
+
+**1. Créer branche depuis main** :
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/wizard-step-5-analysis
+```
+
+**2. Commits fréquents** :
+```bash
+# Suivre Conventional Commits
+git commit -m "feat(wizard): add step 5 file analysis UI"
+git commit -m "test(wizard): add unit test for file validation"
+git commit -m "docs(PRD-002): update step 5 specifications"
+```
+
+**3. Push régulier** :
+```bash
+git push origin feature/wizard-step-5-analysis
+# Ou avec tracking la première fois
+git push -u origin feature/wizard-step-5-analysis
+```
+
+**4. Ouvrir Pull Request** :
+```bash
+# Avec GitHub CLI
+gh pr create --title "feat(wizard): add step 5 file analysis" \
+  --body "Fixes #123" \
+  --label "enhancement" \
+  --assignee @me
+
+# Ou via GitHub web interface
+```
+
+**5. Review + Tests CI** :
+- ✅ Tous les tests doivent passer
+- ✅ Coverage ≥90% (vérifié automatiquement)
+- ✅ Linters passent (ruff, eslint)
+- ✅ Minimum 1 approbation requise
+- ✅ Résolution de tous les commentaires
+
+**6. Merge dans main** :
+```bash
+# Squash and merge recommandé pour historique propre
+gh pr merge --squash
+
+# Ou via GitHub web interface : "Squash and merge"
+```
+
+**7. Suppression branche** :
+```bash
+# Automatique après merge si configuré
+# Ou manuellement :
+git branch -d feature/wizard-step-5-analysis
+git push origin --delete feature/wizard-step-5-analysis
+```
+
+### Rebase vs Merge
+
+**✅ Rebase LOCAL uniquement** :
+```bash
+# Sur branche locale avant PR
+git checkout feature/my-feature
+git rebase main  # Nettoyer historique
+
+# Push force (seulement si branche non partagée)
+git push --force-with-lease origin feature/my-feature
+```
+
+**❌ JAMAIS rebase sur branches partagées** :
+- Ne jamais rebase une branche déjà poussée si d'autres personnes y travaillent
+- Utiliser merge pour intégration dans main
+
+**Workflow recommandé** :
+```bash
+# 1. Rebase local pour nettoyer
+git rebase main
+
+# 2. Merge dans main (via PR)
+# GitHub : "Squash and merge" pour historique linéaire
+```
+
+---
+
+## 🔄 Pull Requests
+
+### Avant de Créer une PR
+
+**Checklist obligatoire** :
+```bash
+# 1. Rebase sur main
+git checkout feature/my-feature
+git fetch origin
+git rebase origin/main
+
+# 2. Tous les tests passent localement
+source venv/bin/activate
+pytest tests/ -v --cov=web --cov=src --cov-report=term
+
+# 3. Code lint sans erreurs
+ruff check web/ src/
+# (eslint pour frontend quand créé)
+
+# 4. Documentation à jour
+# - DEVBOOK.md si étape complétée
+# - PRDs si fonctionnalité modifiée
+./scripts/verify-consistency.sh
+```
+
+### Format de PR
+
+**Titre** : Suivre Conventional Commits
+```
+feat(wizard): add step 5 file analysis
+fix(api): correct release validation
+docs(DEVBOOK): mark Phase 1 as completed
+```
+
+**Description** : Utiliser template (si créé)
+```markdown
+## Description
+Ajout de l'étape 5 du wizard : analyse de fichier avec barre de progression.
+
+## Type de changement
+- [x] New feature (MINOR)
+
+## Tests effectués
+- Tests unitaires : ✅ 15/15 passent
+- Tests E2E : ✅ Playwright MCP test passe
+- Coverage : ✅ 95%
+
+## Checklist
+- [x] Code suit les conventions du projet
+- [x] Documentation à jour (DEVBOOK)
+- [x] Tests passent (100%)
+- [x] Coverage ≥90% (95%)
+- [x] Commits suivent Conventional Commits
+
+## Issues liées
+Closes #123
+Relates to PRD-002
+```
+
+### Commandes GH CLI Utiles
+
+```bash
+# Créer PR avec pré-remplissage
+gh pr create --fill
+
+# Lister mes PRs ouvertes
+gh pr list --author @me --state open
+
+# Review automatique
+gh pr review --approve
+gh pr review --comment --body "LGTM! ✅"
+
+# Merge avec squash
+gh pr merge --squash
+
+# Fermer PR
+gh pr close <number>
+```
+
+---
+
+## 🏷️ Semantic Versioning
+
+### Format MAJOR.MINOR.PATCH
+
+Le projet utilise **SemVer** strictement :
+
+- **MAJOR** (2.0.0 → 3.0.0) : Breaking changes
+  - `feat(api)!: change response format`
+  - `BREAKING CHANGE:` dans footer
+
+- **MINOR** (2.0.0 → 2.1.0) : Nouvelles fonctionnalités compatibles
+  - `feat(wizard): add step 5`
+  - `feat(api): add new endpoint`
+
+- **PATCH** (2.0.0 → 2.0.1) : Corrections de bugs compatibles
+  - `fix(auth): correct token refresh`
+  - `perf(db): optimize query`
+
+### Règles de Versioning
+
+1. **Version 0.y.z** pour développement initial (Phase 0)
+2. **1.0.0** définit l'API publique (quand production-ready)
+3. **Incrémenter MAJOR** pour breaking changes
+4. **Incrémenter MINOR** pour ajouts rétrocompatibles
+5. **Incrémenter PATCH** pour corrections rétrocompatibles
+6. **Une fois publié, un numéro ne doit JAMAIS être modifié**
+
+### Versioning Actuel
+
+**Version actuelle** : **2.0.0** (refonte complète v2)
+
+**Historique** :
+- `v1.x.x` : Version précédente (dans `v1/`)
+- `2.0.0` : Début v2 (Phase 0 complétée)
+
+### Automatisation (Futur)
+
+Quand projet sera prêt pour releases automatiques :
+- Utiliser `semantic-release` (adapté pour Python si nécessaire)
+- GitHub Actions workflow pour versioning automatique
+- Génération CHANGELOG.md automatique
+
+---
+
+## 🔧 Configuration Pre-commit (Recommandé)
+
+### Pour Python (Flask)
+
+**Installation** :
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+**Configuration `.pre-commit-config.yaml`** :
+```yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-toml
+      
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+        
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+```
+
+**Validation Conventional Commits** :
+```yaml
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.13.0
+    hooks:
+      - id: commitizen
+```
+
+### Pour Frontend React/TypeScript (Quand créé)
+
+**Installation** :
+```bash
+npm install --save-dev husky @commitlint/cli @commitlint/config-conventional lint-staged
+npx husky init
+```
+
+**Configuration `commitlint.config.js`** :
+```javascript
+module.exports = {
+  extends: ['@commitlint/config-conventional'],
+  rules: {
+    'type-enum': [
+      2,
+      'always',
+      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore']
+    ],
+    'scope-case': [2, 'always', 'kebab-case'],
+    'subject-max-length': [2, 'always', 100],
+  },
+};
+```
+
+**Configuration `lint-staged`** :
+```json
+{
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
+```
+
+---
+
+## 🔐 Protection des Branches
+
+### Configuration Recommandée pour `main`
+
+**GitHub Settings > Branches > Branch protection rules** :
+
+✅ **Require pull request reviews before merging**
+   - Required approving reviews: **1** (minimum)
+   - Dismiss stale pull request approvals when new commits are pushed
+   - Require review from Code Owners (si CODEOWNERS configuré)
+
+✅ **Require status checks to pass before merging**
+   - Require branches to be up to date before merging
+   - Status checks :
+     - ✅ `CI / test` (pytest)
+     - ✅ `CI / coverage` (coverage ≥90%)
+     - ✅ `CI / lint` (ruff, eslint)
+
+✅ **Require conversation resolution before merging**
+
+✅ **Require signed commits** (optionnel, selon politique sécurité)
+
+✅ **Require linear history**
+   - Pas de merge commits directs
+   - Squash merge recommandé
+
+✅ **Include administrators**
+   - Appliquer les règles même aux admins
+
+✅ **Restrict who can push to matching branches**
+   - Restricted to: Maintainers team (si équipe)
+
+❌ **Allow force pushes** : **Never**
+
+❌ **Allow deletions** : **Never**
+
+---
+
+## 🚀 GitHub Actions
+
+### Workflows Actuels (À Créer)
+
+#### 1. CI Workflow (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI - Tests & Lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v --cov=web --cov=src --cov-report=xml --cov-report=term
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+      
+      - name: Check coverage threshold
+        run: |
+          coverage report --fail-under=90
+      
+      - name: Lint with ruff
+        run: |
+          ruff check web/ src/
+          ruff format --check web/ src/
+```
+
+#### 2. Maintenance Check (`.github/workflows/maintenance-check.yml`)
+
+```yaml
+name: Maintenance Check
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Tous les lundis 9h
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Audit Documentation
+        run: ./scripts/audit-documentation.sh
+        continue-on-error: true
+      
+      - name: Verify Consistency
+        run: ./scripts/verify-consistency.sh
+        continue-on-error: true
+      
+      - name: Cleanup Code (Check)
+        run: ./scripts/cleanup-code.sh
+        continue-on-error: true
+```
+
+### Sécurité Workflows
+
+**Règles critiques** :
+1. ✅ **Permissions read-only par défaut** pour `GITHUB_TOKEN`
+2. ✅ **Versions épinglées** avec SHA complet pour actions tierces
+3. ✅ **Ne jamais stocker secrets en clair**
+4. ✅ **Éviter `pull_request_target`** avec code non vérifié
+
+**Exemple permissions minimales** :
+```yaml
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+```
+
+---
+
+## 📋 Templates GitHub
+
+### Pull Request Template (`.github/PULL_REQUEST_TEMPLATE.md`)
+
+```markdown
+## Description
+
+<!-- Description claire des changements -->
+
+## Type de changement
+
+- [ ] Bug fix (PATCH)
+- [ ] New feature (MINOR)
+- [ ] Breaking change (MAJOR)
+- [ ] Documentation update
+- [ ] Refactoring
+- [ ] Performance improvement
+
+## Tests effectués
+
+<!-- Comment les changements ont été testés -->
+- [ ] Tests unitaires : X/X passent
+- [ ] Tests intégration : X/X passent
+- [ ] Tests E2E : X/X passent
+- [ ] Coverage : XX% (≥90% requis)
+
+## Checklist
+
+- [ ] Mon code suit les conventions du projet
+- [ ] J'ai effectué une auto-review
+- [ ] J'ai commenté les parties complexes
+- [ ] La documentation est à jour (DEVBOOK si étape complétée)
+- [ ] Mes changements ne génèrent pas de warnings
+- [ ] J'ai ajouté des tests qui prouvent mon fix/feature
+- [ ] Tous les tests passent localement
+- [ ] Les commits suivent Conventional Commits
+- [ ] Coverage ≥90% vérifié
+- [ ] Linters passent (ruff, eslint)
+
+## Issues liées
+
+Closes #(issue)
+
+Relates to PRD-XXX
+
+## Screenshots (si UI)
+
+<!-- Pour changements frontend -->
+```
+
+### Issue Templates (`.github/ISSUE_TEMPLATE/bug_report.yml`)
+
+```yaml
+name: Bug Report
+description: Signaler un bug
+title: "[BUG]: "
+labels: ["bug", "triage"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de remplir ce formulaire avec le maximum de détails.
+        
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du bug
+      description: Description claire et concise
+      placeholder: Le bug se produit quand...
+    validations:
+      required: true
+      
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes de reproduction
+      description: Comment reproduire le comportement
+      placeholder: |
+        1. Aller à '...'
+        2. Cliquer sur '...'
+        3. Voir l'erreur
+    validations:
+      required: true
+      
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Ce qui devrait se passer
+    validations:
+      required: true
+      
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environnement
+      description: OS, Python version, etc.
+      placeholder: |
+        - OS: Linux Debian 12
+        - Python: 3.11
+        - Browser: Chrome 120
+```
+
+---
+
+## 🔧 GitHub CLI - Aliases Utiles
+
+### Configuration Aliases
+
+```bash
+# Aliases recommandés pour ce projet
+gh alias set prc 'pr create --fill'
+gh alias set mywork 'pr list --author @me --state open'
+gh alias set myissues 'issue list --author @me --state open'
+gh alias set review 'pr review --approve'
+gh alias set wizard 'pr create --title "feat(wizard):" --body "Wizard enhancement"'
+gh alias set fix 'pr create --title "fix:" --body "Bug fix"'
+```
+
+### Commandes Utiles
+
+```bash
+# Créer PR rapidement
+gh prc
+
+# Lister mes PRs en cours
+gh mywork
+
+# Review et merge
+gh pr review <number> --approve
+gh pr merge <number> --squash
+
+# Créer issue
+gh issue create --title "[BUG]: " --body "Description"
+
+# Lister issues
+gh issue list --label "bug" --state open
+```
+
+---
+
+## ✅ Checklist Avant Commit
+
+### Obligatoire
+
+- [ ] **Conventional Commits** : Format `<type>[scope]: <description>`
+- [ ] **Tests passent** : `pytest tests/ -v`
+- [ ] **Coverage ≥90%** : `pytest --cov` (vérifié automatiquement)
+- [ ] **Linters passent** : `ruff check`, `eslint` (si frontend)
+- [ ] **Documentation à jour** : DEVBOOK, PRDs si étape complétée
+- [ ] **Pas de secrets** : Aucun mot de passe/API key en clair
+- [ ] **Code propre** : Pas de code mort, imports non utilisés
+
+### Recommandé
+
+- [ ] **Rebase local** : `git rebase main` (si branche locale)
+- [ ] **Vérification cohérence** : `./scripts/verify-consistency.sh`
+- [ ] **Messages clairs** : Description explicite du changement
+
+---
+
+## 🚨 Anti-Patterns à Éviter
+
+### ❌ Mauvaises Pratiques Git
+
+```bash
+# ❌ Commits vagues
+git commit -m "update"
+git commit -m "fix"
+git commit -m "changes"
+
+# ❌ Commits trop gros (plusieurs fonctionnalités)
+git commit -m "feat: add wizard and fix auth and update docs"
+
+# ❌ Force push sur branches partagées
+git push --force origin main  # JAMAIS!
+
+# ❌ Merge direct dans main sans PR
+git checkout main
+git merge feature/my-feature  # Utiliser PR à la place
+```
+
+### ✅ Bonnes Pratiques
+
+```bash
+# ✅ Commits atomiques et descriptifs
+git commit -m "feat(wizard): add step 5 file analysis UI"
+git commit -m "test(wizard): add unit test for file validation"
+
+# ✅ Rebase local seulement
+git rebase main  # Sur branche locale avant PR
+
+# ✅ Pull Request obligatoire
+gh pr create --fill
+```
+
+---
+
+## 📚 Ressources et Documentation
+
+### Documentation Officielle
+
+- **Conventional Commits** : https://www.conventionalcommits.org
+- **GitHub Flow** : https://docs.github.com/en/get-started/quickstart/github-flow
+- **Semantic Versioning** : https://semver.org
+- **GitHub CLI** : https://cli.github.com/manual/
+- **Pre-commit** : https://pre-commit.com
+
+### Documentation Projet
+
+- **DEVBOOK** : `docs/DEVBOOK.md` - Suivi phases/étapes
+- **Definition of Done** : `.cursor/rules/definition-of-done.mdc`
+- **Maintenance Guide** : `docs/MAINTENANCE_GUIDE.md`
+
+---
+
+## 🎯 Règles Spécifiques Projet
+
+### Commits et Documentation
+
+**Règle stricte** : **JAMAIS committer si documentation non à jour**
+
+**Si étape complétée** :
+```bash
+# 1. Mettre à jour DEVBOOK.md
+# 2. Mettre à jour todolist.md
+# 3. Vérifier cohérence
+./scripts/verify-consistency.sh
+
+# 4. Puis committer
+git commit -m "docs(DEVBOOK): mark Phase 1.1 as completed"
+```
+
+### Tests Obligatoires
+
+**Avant chaque commit de code** :
+```bash
+# Tests doivent passer à 100%
+pytest tests/ -v
+
+# Coverage ≥90% requis
+pytest --cov=web --cov=src --cov-report=term
+```
+
+### Pull Request Workflow
+
+**Workflow obligatoire** :
+1. ✅ Créer branche depuis main
+2. ✅ Développer avec commits Conventional Commits
+3. ✅ Tous les tests passent localement
+4. ✅ Documentation à jour (si étape complétée)
+5. ✅ Ouvrir Pull Request
+6. ✅ CI/CD doit être vert
+7. ✅ Review + approbation
+8. ✅ Merge avec squash
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️
+
+**Rappel** : Cette règle est **toujours active** (`alwaysApply: true`) pour garantir des commits propres et un workflow Git optimal.

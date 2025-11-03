@@ -1,0 +1,196 @@
+---
+name: configurations-api-destinations
+description: Règles strictes pour Configurations, APIs et Destinations FTP/SSH
+globs:
+  - "**/*.{py,js,jsx,ts,tsx}"
+---
+
+# Configurations, APIs & Destinations - Règles Strictes
+
+## 🎯 Objectif
+
+Assurer gestion sécurisée des configurations système, APIs externes et destinations FTP/SSH avec chiffrement Fernet.
+
+---
+
+## 📋 Règles Obligatoires
+
+### 1. Chiffrement Credentials
+
+**Algorithme** : **Fernet** (symmetric encryption)
+
+**Chiffrement obligatoire** :
+- ✅ API keys (APIs externes)
+- ✅ FTP/SSH passwords
+- ✅ FTP/SSH usernames (si sensible)
+- ✅ Tokens secrets
+
+**Service** : `CryptoService`
+
+**Structure** :
+```python
+from cryptography.fernet import Fernet
+
+class CryptoService:
+    def __init__(self, key: bytes):
+        self.cipher = Fernet(key)
+    
+    def encrypt(self, plaintext: str) -> str:
+        """Chiffre texte."""
+        return self.cipher.encrypt(plaintext.encode()).decode()
+    
+    def decrypt(self, ciphertext: str) -> str:
+        """Déchiffre texte."""
+        return self.cipher.decrypt(ciphertext.encode()).decode()
+```
+
+### 2. API Configurations
+
+**Structure** :
+```python
+api_configs (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    api_key_encrypted TEXT NOT NULL,
+    api_url VARCHAR(500),
+    user_id INT,
+    created_at DATETIME
+)
+```
+
+**Validation** :
+- ✅ API key chiffrée avant stockage
+- ✅ URL valide (si fournie)
+- ✅ Nom unique par utilisateur (optionnel)
+
+**Test connexion** :
+- ✅ Endpoint test connexion API
+- ✅ Validation credentials avant sauvegarde
+
+### 3. Destinations FTP/SSH
+
+**Structure** :
+```python
+destinations (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    type ENUM('FTP', 'SFTP', 'SSH') NOT NULL,
+    host VARCHAR(255) NOT NULL,
+    port INT,
+    username VARCHAR(100),
+    password_encrypted TEXT,
+    remote_path VARCHAR(500),
+    user_id INT,
+    created_at DATETIME
+)
+```
+
+**Chiffrement** :
+- ✅ Password chiffré (Fernet)
+- ✅ Username chiffré si sensible (optionnel)
+
+**Test connexion** :
+- ✅ Endpoint test connexion FTP/SSH
+- ✅ Validation connexion avant sauvegarde
+- ✅ Avertissement si connexion échoue
+
+### 4. Paramètres Système
+
+**Structure** :
+```python
+# Fichier config ou base de données
+system_config = {
+    "paths": {
+        "templates_storage": "disk|db",
+        "releases_path": "/path/to/releases",
+        "backup_path": "/path/to/backup"
+    },
+    "limits": {
+        "max_file_size": 20 * 1024 * 1024 * 1024,  # 20GB
+        "max_releases_per_user": 1000
+    },
+    "logs": {
+        "level": "INFO",
+        "path": "/path/to/logs"
+    }
+}
+```
+
+**Configuration** :
+- ✅ Paramètres configurables (PRD-007)
+- ✅ Validation valeurs
+- ✅ Documentation paramètres
+
+### 5. Préférences Utilisateur
+
+**Structure** :
+```python
+preferences (
+    id INT PRIMARY KEY,
+    user_id INT UNIQUE,
+    theme ENUM('light', 'dark') DEFAULT 'light',
+    language VARCHAR(10) DEFAULT 'fr',
+    notifications BOOLEAN DEFAULT TRUE,
+    created_at DATETIME,
+    updated_at DATETIME
+)
+```
+
+**Validation** :
+- ✅ Theme valide ('light', 'dark')
+- ✅ Language valide (codes ISO)
+- ✅ Unicité `user_id`
+
+---
+
+## 🔍 Validation Stricte
+
+### API Configurations
+
+**Avant sauvegarde** :
+- ✅ API key chiffrée
+- ✅ URL valide (si fournie)
+- ✅ Test connexion réussi (optionnel mais recommandé)
+
+### Destinations FTP/SSH
+
+**Avant sauvegarde** :
+- ✅ Password chiffré
+- ✅ Host valide
+- ✅ Port valide (1-65535)
+- ✅ Test connexion réussi (OBLIGATOIRE)
+
+**Test connexion** :
+- Endpoint : `POST /api/destinations/:id/test`
+- Retour : Succès/échec + message
+- Validation avant packaging upload
+
+---
+
+## 🚨 Points Critiques
+
+### Chiffrement Obligatoire
+
+**Règle absolue** : Jamais stocker credentials en clair.
+
+**Fernet** : Utiliser Fernet pour tous credentials sensibles.
+
+### Test Connexion
+
+**OBLIGATOIRE** : Tester connexion FTP/SSH avant sauvegarde destination.
+
+**Avant upload** : Re-tester connexion avant upload release.
+
+---
+
+## 📚 Références
+
+- **PRD-007** : `docs/PRDs/PRD-007-Configurations.md`
+- **Database ERD** : `docs/DATABASE_ERD.md` (tables `api_configs`, `destinations`, `preferences`)
+- **API Reference** : `docs/API_REFERENCE.md` (endpoints configurations)
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0  
+**Priorité** : CRITIQUE ⚠️

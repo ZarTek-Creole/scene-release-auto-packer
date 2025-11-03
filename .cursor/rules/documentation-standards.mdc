@@ -1,0 +1,347 @@
+---
+alwaysApply: true
+---
+---
+name: documentation-standards
+description: Standards de documentation pour le projet v2
+globs:
+  - "**/*.{py,js,jsx,ts,tsx,md}"
+---
+
+# Documentation Standards - eBook Scene Packer v2
+
+## 🎯 Objectif
+
+Assurer documentation complète, cohérente et à jour pour faciliter maintenance et collaboration.
+
+---
+
+## 📝 Documentation Code
+
+### Python Docstrings
+
+**Style** : Google style
+
+```python
+def process_release(
+    file_path: Path,
+    group: str,
+    release_type: str
+) -> dict[str, Any]:
+    """Process a release file and return metadata.
+    
+    This function analyzes a release file, extracts metadata,
+    and prepares it for packaging according to Scene rules.
+    
+    Args:
+        file_path: Path to the release file to process.
+        group: Scene group name for the release.
+        release_type: Type of release (TV, EBOOK, DOCS).
+        
+    Returns:
+        Dictionary containing:
+            - metadata: Extracted metadata
+            - media_info: MediaInfo data (if applicable)
+            - validation: Validation results
+            
+    Raises:
+        FileNotFoundError: If file_path does not exist.
+        ValueError: If release_type is invalid.
+        
+    Example:
+        >>> result = process_release(
+        ...     Path('release.epub'),
+        ...     'TestGroup',
+        ...     'EBOOK'
+        ... )
+        >>> 'metadata' in result
+        True
+    """
+    # Implementation...
+```
+
+### JavaScript/TypeScript JSDoc
+
+```javascript
+/**
+ * Processes a release file and returns metadata.
+ *
+ * @param {File} file - The release file to process.
+ * @param {string} group - Scene group name.
+ * @param {string} releaseType - Type of release (TV, EBOOK, DOCS).
+ * @returns {Promise<ReleaseMetadata>} Promise resolving to metadata object.
+ * @throws {Error} If file cannot be processed.
+ *
+ * @example
+ * const metadata = await processRelease(file, 'TestGroup', 'EBOOK');
+ * console.log(metadata.title);
+ */
+async function processRelease(file, group, releaseType) {
+  // Implementation...
+}
+```
+
+### TypeScript Types/Interfaces
+
+```typescript
+/**
+ * Metadata extracted from a release file.
+ */
+interface ReleaseMetadata {
+  /** Release title. */
+  title: string;
+  
+  /** Release author (if applicable). */
+  author?: string;
+  
+  /** Release year. */
+  year: number;
+  
+  /** Additional metadata. */
+  additional: Record<string, unknown>;
+}
+```
+
+---
+
+## 📚 Documentation Projet
+
+### Structure Documentation
+
+```
+docs/
+├── cdc.md                    # Cahier des charges
+├── DEVBOOK.md                # Suivi phases/étapes
+├── todolist.md               # TodoList détaillée
+├── PRDs/                     # Product Requirement Documents
+│   ├── README.md
+│   ├── PRD-001-Interface-Admin.md
+│   └── ...
+├── BACKLOG_AGILE.md          # Backlog Agile
+├── PROJECT_OVERVIEW.md       # Vue d'ensemble projet
+├── TEST_PLAN.md              # Plan de tests
+├── RISKS_REGISTER.md         # Registre risques
+└── DEPLOYMENT_PLAN.md        # Plan déploiement
+```
+
+---
+
+## 📋 Format PRD (Product Requirement Document)
+
+### Structure Standardisée
+
+```markdown
+# PRD-XXX : Nom Fonctionnalité
+
+**ID** : PRD-XXX
+**Version** : X.Y.Z
+**Date** : YYYY-MM-DD
+**Statut** : Draft | Review | Approved | Deprecated
+**Auteur** : Nom
+
+---
+
+## Vue d'Ensemble
+[Description fonctionnalité, objectifs, utilisateurs cibles]
+
+## User Stories
+[User Stories détaillées avec critères d'acceptation]
+
+## Détails Fonctionnels
+[Scénarios, flux utilisateur, contraintes]
+
+## Contraintes Techniques
+[API, dépendances, limitations]
+
+## Critères de Réussite
+[Fonctionnels, performance, qualité]
+
+## Tests (TDD)
+[Tests unitaires, intégration, E2E nécessaires]
+
+## Priorité MoSCoW
+[Must Have | Should Have | Could Have | Won't Have]
+
+## Dépendances
+[PRDs liés, phases précédentes]
+```
+
+---
+
+## 📖 Format DEVBOOK
+
+### Mise à Jour Obligatoire
+
+**À mettre à jour** :
+- ✅ À chaque étape complétée
+- ✅ À chaque phase complétée
+- ✅ Lors changement priorité
+- ✅ Lors modification OKRs
+
+**Format** :
+
+```markdown
+### Phase X : Nom Phase ⏳
+
+**Statut** : 🟡 En cours  
+**Priorité MoSCoW** : Must Have  
+**Date début** : YYYY-MM-DD  
+**Date fin estimée** : YYYY-MM-DD
+
+#### Étapes
+
+##### Étape X.Y : Nom Étape
+- **Description** : ...
+- **Critères de validation** : ...
+- **Tests nécessaires** : ...
+- **Statut** : ✅ Terminée | 🟡 En cours | ⏳ Non commencée
+```
+
+---
+
+## 📝 Format TodoList
+
+### Structure Détaillée
+
+```markdown
+### Phase X : Nom (estimation)
+
+### Étape X.Y : Nom
+
+**Statut** : ...
+**Priorité** : ...
+**Estimation** : ...
+**Dépendances** : ...
+
+#### Sous-étapes
+
+##### X.Y.Z : Nom Sous-étape
+- ⏳ Tâche 1
+- ⏳ Tâche 2
+- ✅ Tâche 3 (terminée)
+
+**Critères de validation** : ...
+```
+
+---
+
+## 🔄 Règles de Mise à Jour
+
+### Code
+- **Docstrings** : Mettre à jour si signature change
+- **Comments** : Mettre à jour si logique change
+- **Type hints** : Mettre à jour si types changent
+
+### Documentation Projet
+
+#### DEVBOOK
+- **Quand** : À chaque étape complétée
+- **Quoi** : Marquer étape comme terminée, mettre à jour statistiques
+- **Comment** : Changer `⏳ Non commencée` → `✅ Terminée`
+
+#### PRDs
+- **Quand** : Modification fonctionnalité majeure
+- **Quoi** : Mettre à jour section concernée, incrémenter version
+- **Comment** : Version X.Y.Z → X.Y+1.0 si modification, X.Y.Z+1 si correction
+
+#### TodoList
+- **Quand** : À chaque sous-étape complétée
+- **Quoi** : Marquer tâche comme terminée (✅)
+- **Comment** : Changer `- ⏳` → `- ✅`
+
+#### Risks Register
+- **Quand** : Nouveau risque identifié, statut change
+- **Quoi** : Ajouter risque, mettre à jour statut
+- **Comment** : Ajouter entrée, mettre à jour date révision
+
+---
+
+## ✅ Checklist Documentation
+
+### Avant Commit Code
+- [ ] Docstrings présents (fonctions/classes)
+- [ ] Type hints présents (Python)
+- [ ] Comments explicatifs si logique complexe
+- [ ] Pas de code commenté (supprimer ou documenter pourquoi)
+
+### Avant Merge Feature
+- [ ] DEVBOOK mis à jour (si étape complétée)
+- [ ] PRD mis à jour (si fonctionnalité modifiée)
+- [ ] TodoList mise à jour (si tâches complétées)
+- [ ] README mis à jour (si structure change)
+
+### Avant Release
+- [ ] Documentation complète et cohérente
+- [ ] Liens entre documents fonctionnels
+- [ ] Pas de sections "TODO" ou "À compléter"
+- [ ] Exemples à jour
+
+---
+
+## 🚫 Anti-Patterns
+
+### ❌ Documentation Obsolète
+```markdown
+# ❌ Mauvais : Documentation non mise à jour
+def old_function():
+    """This function does X."""  # Mais fait Y maintenant
+    # Implementation Y
+```
+
+### ❌ Documentation Vague
+```python
+# ❌ Mauvais : Pas assez détaillé
+def process(data):
+    """Process data."""
+    # ...
+
+# ✅ Bon : Détails clairs
+def process_release_metadata(
+    file_path: Path,
+    release_type: str
+) -> ReleaseMetadata:
+    """Extract and validate metadata from release file.
+    
+    Args:
+        file_path: Path to release file (EPUB, PDF, etc.)
+        release_type: Type of release (TV, EBOOK, DOCS)
+        
+    Returns:
+        ReleaseMetadata object with extracted data.
+    """
+```
+
+### ❌ Documentation Redondante
+```python
+# ❌ Mauvais : Commentaire redondant avec code
+def add(a, b):
+    # Adds a and b together
+    return a + b
+
+# ✅ Bon : Docstring utile, pas de commentaire redondant
+def calculate_total(items: list[Item]) -> float:
+    """Calculate total price including taxes.
+    
+    Args:
+        items: List of items with price and tax_rate.
+        
+    Returns:
+        Total price including all taxes.
+    """
+    return sum(item.price * (1 + item.tax_rate) for item in items)
+```
+
+---
+
+## 🔗 Liens Utiles
+
+- **CDC** : `docs/cdc.md`
+- **DEVBOOK** : `docs/DEVBOOK.md`
+- **PRDs** : `docs/PRDs/`
+- **Test Plan** : `docs/TEST_PLAN.md`
+- **MCP Tools Guide** : `docs/MCP_TOOLS_GUIDE.md` ⭐
+
+---
+
+**Dernière mise à jour** : 2025-11-01  
+**Version** : 1.0.0
