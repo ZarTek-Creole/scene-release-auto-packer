@@ -9,7 +9,11 @@ import { Rule } from '../services/rules';
  * Rules page component.
  */
 export function Rules() {
-  const [filters, setFilters] = useState<{ scene?: string; section?: string; year?: number }>({});
+  const [filters, setFilters] = useState<{
+    scene?: string;
+    section?: string;
+    year?: number;
+  }>({});
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
 
   return (
@@ -25,7 +29,7 @@ export function Rules() {
               type="text"
               className="form-control"
               value={filters.scene || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFilters({ ...filters, scene: e.target.value || undefined })
               }
               placeholder="Filtrer par scene"
@@ -40,7 +44,7 @@ export function Rules() {
               type="text"
               className="form-control"
               value={filters.section || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFilters({ ...filters, section: e.target.value || undefined })
               }
               placeholder="Filtrer par section"
@@ -55,10 +59,12 @@ export function Rules() {
               type="number"
               className="form-control"
               value={filters.year || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFilters({
                   ...filters,
-                  year: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                  year: e.target.value
+                    ? parseInt(e.target.value, 10)
+                    : undefined,
                 })
               }
               placeholder="Filtrer par année"
@@ -74,12 +80,15 @@ export function Rules() {
 
       <RulesTable
         filters={filters}
-        onEdit={(rule) => setSelectedRule(rule)}
+        onEdit={rule => setSelectedRule(rule)}
         onDelete={() => setSelectedRule(null)}
       />
 
       {selectedRule && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div
+          className="modal show d-block"
+          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+        >
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -91,7 +100,10 @@ export function Rules() {
                 ></button>
               </div>
               <div className="modal-body">
-                <pre className="bg-light p-3 rounded" style={{ maxHeight: '400px', overflow: 'auto' }}>
+                <pre
+                  className="bg-light p-3 rounded"
+                  style={{ maxHeight: '400px', overflow: 'auto' }}
+                >
                   {selectedRule.content}
                 </pre>
               </div>

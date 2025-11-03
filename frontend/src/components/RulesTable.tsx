@@ -16,7 +16,11 @@ interface RulesTableProps {
 /**
  * Rules table component with filters and pagination.
  */
-export function RulesTable({ filters = {}, onEdit, onDelete }: RulesTableProps) {
+export function RulesTable({
+  filters = {},
+  onEdit,
+  onDelete,
+}: RulesTableProps) {
   const [rules, setRules] = useState<Rule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,13 +51,14 @@ export function RulesTable({ filters = {}, onEdit, onDelete }: RulesTableProps) 
     };
 
     fetchRules();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filters]);
 
   const handleDelete = async (ruleId: number) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette règle ?')) {
       try {
         await rulesApi.delete(ruleId);
-        setRules(rules.filter((r) => r.id !== ruleId));
+        setRules(rules.filter(r => r.id !== ruleId));
         if (onDelete) {
           onDelete(ruleId);
         }
@@ -102,7 +107,7 @@ export function RulesTable({ filters = {}, onEdit, onDelete }: RulesTableProps) 
               </td>
             </tr>
           ) : (
-            rules.map((rule) => (
+            rules.map(rule => (
               <tr key={rule.id}>
                 <td>{rule.id}</td>
                 <td>{rule.name}</td>
@@ -142,7 +147,9 @@ export function RulesTable({ filters = {}, onEdit, onDelete }: RulesTableProps) 
                 Page {page} sur {pagination.pages}
               </span>
             </li>
-            <li className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}
+            >
               <button className="page-link" onClick={() => setPage(page + 1)}>
                 Suivant
               </button>

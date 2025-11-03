@@ -47,7 +47,9 @@ export function StepFileSelection({ onNext }: StepFileSelectionProps) {
   return (
     <div className="wizard-step">
       <h3>Étape 4 : Sélection Fichier</h3>
-      <p className="text-muted">Sélectionnez le fichier à packager (local ou distant).</p>
+      <p className="text-muted">
+        Sélectionnez le fichier à packager (local ou distant).
+      </p>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

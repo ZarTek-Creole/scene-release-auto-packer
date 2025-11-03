@@ -46,13 +46,16 @@ export function ReleasesTable({ filters = {} }: ReleasesTableProps) {
         setReleases(response.data?.releases || []);
         setPagination(response.data?.pagination || pagination);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load releases');
+        setError(
+          err instanceof Error ? err.message : 'Failed to load releases'
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchReleases();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, filters]);
 
   if (loading) {
@@ -93,21 +96,29 @@ export function ReleasesTable({ filters = {} }: ReleasesTableProps) {
               </td>
             </tr>
           ) : (
-            releases.map((release) => (
+            releases.map(release => (
               <tr key={release.id}>
                 <td>{release.id}</td>
                 <td>
-                  <span className="badge bg-primary">{release.release_type}</span>
+                  <span className="badge bg-primary">
+                    {release.release_type}
+                  </span>
                 </td>
                 <td>
-                  <span className={`badge bg-${release.status === 'completed' ? 'success' : 'warning'}`}>
+                  <span
+                    className={`badge bg-${release.status === 'completed' ? 'success' : 'warning'}`}
+                  >
                     {release.status}
                   </span>
                 </td>
                 <td>{new Date(release.created_at).toLocaleDateString()}</td>
                 <td>
-                  <button className="btn btn-sm btn-outline-primary me-2">Voir</button>
-                  <button className="btn btn-sm btn-outline-danger">Supprimer</button>
+                  <button className="btn btn-sm btn-outline-primary me-2">
+                    Voir
+                  </button>
+                  <button className="btn btn-sm btn-outline-danger">
+                    Supprimer
+                  </button>
                 </td>
               </tr>
             ))
@@ -128,7 +139,9 @@ export function ReleasesTable({ filters = {} }: ReleasesTableProps) {
                 Page {page} sur {pagination.pages}
               </span>
             </li>
-            <li className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}>
+            <li
+              className={`page-item ${page >= pagination.pages ? 'disabled' : ''}`}
+            >
               <button className="page-link" onClick={() => setPage(page + 1)}>
                 Suivant
               </button>

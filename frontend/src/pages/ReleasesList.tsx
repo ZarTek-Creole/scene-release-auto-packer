@@ -8,10 +8,16 @@ import { ReleasesTable } from '../components/ReleasesTable';
  * Releases list page component.
  */
 export function ReleasesList() {
-  const [filters, setFilters] = useState<{ release_type?: string; status?: string }>({});
+  const [filters, setFilters] = useState<{
+    release_type?: string;
+    status?: string;
+  }>({});
 
   return (
-    <PageLayout title="Liste des Releases" description="Gérer toutes les releases">
+    <PageLayout
+      title="Liste des Releases"
+      description="Gérer toutes les releases"
+    >
       <div className="mb-4">
         <div className="row g-3">
           <div className="col-md-4">
@@ -22,8 +28,11 @@ export function ReleasesList() {
               id="filterType"
               className="form-select"
               value={filters.release_type || ''}
-              onChange={(e) =>
-                setFilters({ ...filters, release_type: e.target.value || undefined })
+              onChange={e =>
+                setFilters({
+                  ...filters,
+                  release_type: e.target.value || undefined,
+                })
               }
             >
               <option value="">Tous</option>
@@ -40,7 +49,9 @@ export function ReleasesList() {
               id="filterStatus"
               className="form-select"
               value={filters.status || ''}
-              onChange={(e) => setFilters({ ...filters, status: e.target.value || undefined })}
+              onChange={e =>
+                setFilters({ ...filters, status: e.target.value || undefined })
+              }
             >
               <option value="">Tous</option>
               <option value="draft">Brouillon</option>

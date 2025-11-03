@@ -21,13 +21,10 @@ export const wizardApi = {
    * Save wizard draft.
    */
   async saveDraft(draft: WizardDraft) {
-    return apiRequest<{ job_id: number; step: number }>(
-      '/wizard/draft',
-      {
-        method: draft.job_id ? 'PUT' : 'POST',
-        body: JSON.stringify(draft),
-      }
-    );
+    return apiRequest<{ job_id: number; step: number }>('/wizard/draft', {
+      method: draft.job_id ? 'PUT' : 'POST',
+      body: JSON.stringify(draft),
+    });
   },
 
   /**

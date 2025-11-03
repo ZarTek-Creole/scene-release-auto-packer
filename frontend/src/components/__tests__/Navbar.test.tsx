@@ -46,7 +46,7 @@ describe('Navbar', () => {
     // Check that Bootstrap Icons classes are present
     const navLinks = screen.getAllByRole('tab');
     expect(navLinks.length).toBeGreaterThan(0);
-    
+
     // Check that icons are rendered (Bootstrap Icons use <i> tags)
     const icons = document.querySelectorAll('.bi');
     expect(icons.length).toBeGreaterThan(0);

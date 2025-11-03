@@ -12,9 +12,15 @@ interface StepRulesProps {
 /**
  * Step 3: Rule selection component.
  */
-export function StepRules({ releaseType, initialValue, onNext }: StepRulesProps) {
+export function StepRules({
+  releaseType,
+  initialValue,
+  onNext,
+}: StepRulesProps) {
   const [rules, setRules] = useState<Array<{ id: number; name: string }>>([]);
-  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(initialValue || null);
+  const [selectedRuleId, setSelectedRuleId] = useState<number | null>(
+    initialValue || null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,16 +61,18 @@ export function StepRules({ releaseType, initialValue, onNext }: StepRulesProps)
   return (
     <div className="wizard-step">
       <h3>Étape 3 : Règle Scene</h3>
-      <p className="text-muted">Sélectionnez la règle Scene à appliquer pour ce type de release.</p>
+      <p className="text-muted">
+        Sélectionnez la règle Scene à appliquer pour ce type de release.
+      </p>
 
       {rules.length === 0 ? (
         <div className="alert alert-info">
-          Aucune règle disponible pour le type {releaseType}. Veuillez charger des règles depuis
-          scenerules.org.
+          Aucune règle disponible pour le type {releaseType}. Veuillez charger
+          des règles depuis scenerules.org.
         </div>
       ) : (
         <div className="list-group">
-          {rules.map((rule) => (
+          {rules.map(rule => (
             <button
               key={rule.id}
               type="button"

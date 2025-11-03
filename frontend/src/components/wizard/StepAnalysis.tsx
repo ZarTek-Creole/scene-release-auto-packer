@@ -13,8 +13,10 @@ interface StepAnalysisProps {
 export function StepAnalysis({ filePath, onNext }: StepAnalysisProps) {
   const [analyzing, setAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [analysis, setAnalysis] = useState<Record<string, unknown> | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<Record<string, unknown> | null>(
+    null
+  );
+  const [_error, _setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (filePath) {
@@ -23,7 +25,7 @@ export function StepAnalysis({ filePath, onNext }: StepAnalysisProps) {
       setProgress(0);
 
       const interval = setInterval(() => {
-        setProgress((prev) => {
+        setProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval);
             setAnalyzing(false);
@@ -42,7 +44,7 @@ export function StepAnalysis({ filePath, onNext }: StepAnalysisProps) {
     }
   }, [filePath]);
 
-  const handleNext = () => {
+  const _handleNext = () => {
     if (analysis) {
       onNext({ analysis });
     }
@@ -86,8 +88,8 @@ export function StepAnalysis({ filePath, onNext }: StepAnalysisProps) {
             </div>
           </div>
         </div>
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
+      ) : _error ? (
+        <div className="alert alert-danger">{_error}</div>
       ) : null}
     </div>
   );

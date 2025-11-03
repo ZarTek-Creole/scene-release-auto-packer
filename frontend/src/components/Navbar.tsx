@@ -52,7 +52,7 @@ export function Navbar() {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto" role="tablist">
-            {navItems.map((item) => {
+            {navItems.map(item => {
               const isActive = location.pathname === item.path;
               return (
                 <li key={item.path} className="nav-item" role="presentation">
@@ -68,7 +68,11 @@ export function Navbar() {
                   >
                     <i
                       className={`bi bi-${getIconName(item.path)}`}
-                      style={{ fontSize: '1.25rem', width: '1.25rem', height: '1.25rem' }}
+                      style={{
+                        fontSize: '1.25rem',
+                        width: '1.25rem',
+                        height: '1.25rem',
+                      }}
                       aria-hidden="true"
                     />
                     <span>{item.label}</span>

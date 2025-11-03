@@ -41,7 +41,9 @@ export function StepGroup({ initialValue = '', onNext }: StepGroupProps) {
   return (
     <div className="wizard-step">
       <h3>Étape 1 : Groupe Scene</h3>
-      <p className="text-muted">Saisissez le nom du groupe Scene pour cette release.</p>
+      <p className="text-muted">
+        Saisissez le nom du groupe Scene pour cette release.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -53,7 +55,7 @@ export function StepGroup({ initialValue = '', onNext }: StepGroupProps) {
             className={`form-control ${error ? 'is-invalid' : ''}`}
             id="group"
             value={group}
-            onChange={(e) => {
+            onChange={e => {
               setGroup(e.target.value);
               if (error) validate(e.target.value);
             }}

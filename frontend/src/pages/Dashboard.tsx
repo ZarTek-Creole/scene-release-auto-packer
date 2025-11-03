@@ -33,7 +33,9 @@ export function Dashboard() {
         const response = await dashboardApi.getStats();
         setStats(response.data || null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard stats');
+        setError(
+          err instanceof Error ? err.message : 'Failed to load dashboard stats'
+        );
       } finally {
         setLoading(false);
       }

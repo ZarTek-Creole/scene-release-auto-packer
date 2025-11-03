@@ -26,10 +26,13 @@ export const releasesApi = {
   async list(params: ListReleasesParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
-    if (params.release_type) queryParams.append('release_type', params.release_type);
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
+    if (params.release_type)
+      queryParams.append('release_type', params.release_type);
     if (params.status) queryParams.append('status', params.status);
-    if (params.user_id) queryParams.append('user_id', params.user_id.toString());
+    if (params.user_id)
+      queryParams.append('user_id', params.user_id.toString());
 
     const queryString = queryParams.toString();
     return apiRequest<{

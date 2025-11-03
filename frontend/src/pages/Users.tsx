@@ -27,8 +27,11 @@ export function Users() {
               type="text"
               className="form-control"
               value={filters.username || ''}
-              onChange={(e) =>
-                setFilters({ ...filters, username: e.target.value || undefined })
+              onChange={e =>
+                setFilters({
+                  ...filters,
+                  username: e.target.value || undefined,
+                })
               }
               placeholder="Filtrer par username"
             />
@@ -42,14 +45,17 @@ export function Users() {
               type="text"
               className="form-control"
               value={filters.email || ''}
-              onChange={(e) =>
+              onChange={e =>
                 setFilters({ ...filters, email: e.target.value || undefined })
               }
               placeholder="Filtrer par email"
             />
           </div>
           <div className="col-md-4 d-flex align-items-end">
-            <button className="btn btn-secondary" onClick={() => setFilters({})}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setFilters({})}
+            >
               Réinitialiser
             </button>
           </div>

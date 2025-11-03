@@ -373,7 +373,7 @@ Ce DEVBOOK centralise le suivi de toutes les phases et étapes du projet v2, ave
 - ✅ **Tests Frontend Phase 2** : 15 tests, tous passent (100%)
 - ✅ **Couverture Backend** : Dashboard API 95% ✅
 - ✅ **Couverture Frontend** : Composants Phase 2 testés ✅
-- ✅ **Linting** : 0 erreurs (ruff, black, isort, eslint, prettier)
+- ✅ **Linting** : 0 erreurs, 0 warnings (ruff, black, isort, eslint, prettier)
 - ✅ **Tests E2E** : Structure préparée (Playwright Browser MCP requis)
 - ✅ **Design System** : Bootstrap Icons intégrés, styles conformes Design System 2025
 - ✅ **Documentation** : Complète et à jour

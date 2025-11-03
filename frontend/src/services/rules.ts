@@ -44,7 +44,8 @@ export const rulesApi = {
   async list(params: ListRulesParams = {}) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
-    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.per_page)
+      queryParams.append('per_page', params.per_page.toString());
     if (params.scene) queryParams.append('scene', params.scene);
     if (params.section) queryParams.append('section', params.section);
     if (params.year) queryParams.append('year', params.year.toString());
