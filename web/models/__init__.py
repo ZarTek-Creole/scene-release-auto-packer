@@ -5,6 +5,7 @@ from web.models.job import Job
 from web.models.permission import Permission
 from web.models.release import Release
 from web.models.role import Role
+from web.models.rule import Rule
 from web.models.token_blocklist import TokenBlocklist
 from web.models.user import User
 
@@ -16,4 +17,5 @@ __all__ = [
     "TokenBlocklist",
     "Release",
     "Job",
+    "Rule",
 ]

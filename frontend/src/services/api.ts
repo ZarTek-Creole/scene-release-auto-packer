@@ -17,7 +17,7 @@ function getAuthToken(): string | null {
 /**
  * API request with authentication.
  */
-async function apiRequest<T>(
+export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {

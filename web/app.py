@@ -38,6 +38,7 @@ def create_app(config_name: str | None = None) -> Flask:
         Permission,
         Release,
         Role,
+        Rule,
         TokenBlocklist,
         User,
     )
@@ -46,9 +47,11 @@ def create_app(config_name: str | None = None) -> Flask:
     from web.blueprints.auth import auth_bp
     from web.blueprints.dashboard import dashboard_bp
     from web.blueprints.health import health_bp
+    from web.blueprints.wizard import wizard_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(dashboard_bp, url_prefix="/api")
+    app.register_blueprint(wizard_bp, url_prefix="/api")
 
     return app
