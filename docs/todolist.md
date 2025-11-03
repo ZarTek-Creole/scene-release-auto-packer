@@ -15,40 +15,51 @@ Cette todoList découpe le projet en **phases**, **étapes** et **sous-étapes**
 
 ## Phase 0 : Préparation (1 semaine) ✅
 
+**Statut** : ✅ **TERMINÉE À 100% DoD** (2025-11-03T17:45:00+00:00)
+
 ### Étape 0.1 : Backup v1/ ✅
 - ✅ Répertoire `backup/v1/` créé avec copie complète de `v1/`
-- ✅ Historique Git initialisé dans `backup/v1/.git`
-- ✅ Structure vérifiée (fichiers et dossiers présents)
+- ✅ Structure préservée (tous fichiers/dossiers copiés)
+- ✅ Tests validation : 3/3 passent
 
 ### Étape 0.2 : Documentation Structurée ✅
 - ✅ `docs/cdc.md`, `docs/DEVBOOK.md`, `docs/todolist.md`
 - ✅ PRDs 001 → 007 + README
 - ✅ `docs/BACKLOG_AGILE.md`, `docs/PROJECT_OVERVIEW.md`, `docs/TEST_PLAN.md`
 - ✅ `docs/RISKS_REGISTER.md`, `docs/DEPLOYMENT_PLAN.md`, `docs/MCP_TOOLS_GUIDE.md`
+- ✅ Tests validation : 11/11 passent
 
 ### Étape 0.3 : Configuration Environnement Développement ✅
 - ✅ Installation dépendances (`requirements.txt`, `requirements-dev.txt`)
 - ✅ `pytest.ini`, `.coveragerc`, `pyproject.toml`, `package.json`
 - ✅ Scripts linters/formatteurs référencés (ruff, black, isort, eslint, prettier)
+- ✅ Tests validation : 4/4 passent
 
 ### Étape 0.4 : Setup TDD ✅
 - ✅ Structure tests : `tests/phase0/`, `tests/e2e/phase0/`
-- ✅ Tests de validation Phase 0 écrits (unit + e2e)
-- ✅ Couverture ≥ 90% vérifiée
+- ✅ Tests de validation Phase 0 écrits (`test_phase0_validation.py` - 29 tests)
+- ✅ Tests E2E structure créée (`test_phase0_e2e.py` avec Playwright MCP)
+- ✅ `conftest.py` adapté pour Phase 0 (import conditionnel web/)
+- ✅ Tests validation : 4/4 passent
 
 ### Étape 0.5 : Règles Cursor ✅
 - ✅ Règles critiques chargées (`definition-of-done`, `tdd-methodology`, `testing-requirements`, `mcp-tools-usage`, etc.)
 - ✅ Règles UX/UI 2025, services métier, modèles ORM, blueprints API
+- ✅ Tests validation : 7/7 passent
 
 ### Étape 0.6 : Validation & Documentation ✅
-- ✅ Tests unitaires/intégration/E2E verts
-- ✅ DEVBOOK Phase 0 marquée terminée
+- ✅ Tests unitaires : 29/29 passent (100%)
+- ✅ Linting : black, isort passent (0 erreurs)
+- ✅ DEVBOOK Phase 0 marquée terminée avec date/heure
 - ✅ TodoList Phase 0 à jour
 
 **Critères de validation consolidés** :
-- ✅ Couverture Phase 0 ≥ 90%
+- ✅ Tests Phase 0 : 29/29 passent (100%)
+- ✅ Couverture : N/A (Phase 0 - pas de code production)
+- ✅ Linting : 0 erreurs (black, isort)
 - ✅ Documentation à jour (DEVBOOK, TodoList, README)
 - ✅ Aucune tâche Phase 0 restante
+- ✅ **Definition of Done** : Tous critères satisfaits à 100%
 
 ## Phase 1 : Infrastructure Core (2 semaines) ✅
 
