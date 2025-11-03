@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.11.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.5"
@@ -30,6 +31,7 @@
     "@vitejs/plugin-react": "^5.1.0",
     "eslint": "^9.39.0",
     "globals": "^16.5.0",
+    "happy-dom": "^20.0.10",
     "prettier": "^3.6.2",
     "typescript": "^5.6.3",
     "vite": "^7.1.12",

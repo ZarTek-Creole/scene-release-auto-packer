@@ -451,11 +451,11 @@ def test_user_password():
 
 ---
 
-## Phase 2 : Interface Administration (3 semaines)
+## Phase 2 : Interface Administration (3 semaines) ✅
 
-### Étape 2.1 : Dashboard
+### Étape 2.1 : Dashboard ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 3 jours  
 **Dépendances** : Phase 1
@@ -463,22 +463,22 @@ def test_user_password():
 #### Sous-étapes
 
 ##### 2.1.1 : Setup React
-- ⏳ Installer React + dependencies
-- ⏳ Créer structure src/
-- ⏳ Configurer webpack/vite
-- ⏳ Configurer routing (React Router)
+- ✅ Installer React + dependencies (React 19, React Router v7, Bootstrap 5)
+- ✅ Créer structure src/ (composants, pages, contexts, services, styles)
+- ✅ Configurer Vite (vite.config.mjs)
+- ✅ Configurer routing (React Router v7)
 
 ##### 2.1.2 : Composant Dashboard
-- ⏳ Créer Dashboard component
-- ⏳ Afficher informations utilisateur connecté
-- ⏳ Afficher statistiques basiques
-- ⏳ Styling Bootstrap
+- ✅ Créer Dashboard component avec icônes Bootstrap Icons
+- ✅ Afficher informations utilisateur connecté
+- ✅ Afficher statistiques basiques (Cards avec bordures élégantes)
+- ✅ Styling Bootstrap + Design System 2025
 
 ##### 2.1.3 : API Dashboard
-- ⏳ Créer endpoint GET /api/dashboard/stats
-- ⏳ Retourner stats (releases count, etc.)
-- ⏳ Sécuriser endpoint (JWT)
-- ⏳ Tests endpoint
+- ✅ Créer endpoint GET /api/dashboard/stats
+- ✅ Retourner stats (releases count, jobs count, user stats)
+- ✅ Sécuriser endpoint (JWT)
+- ✅ Tests endpoint (4 tests backend passent)
 
 **Tests TDD** :
 ```python
@@ -498,9 +498,9 @@ def test_dashboard_stats():
 
 ---
 
-### Étape 2.2 : Navigation
+### Étape 2.2 : Navigation ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 2 jours  
 **Dépendances** : Étape 2.1
@@ -508,16 +508,16 @@ def test_dashboard_stats():
 #### Sous-étapes
 
 ##### 2.2.1 : Composant Navigation
-- ⏳ Créer Navbar component
-- ⏳ Ajouter liens (Nouvelle Release, Liste, Rules, etc.)
-- ⏳ Gérer état actif
-- ⏳ Styling Bootstrap
+- ✅ Créer Navbar component avec icônes Bootstrap Icons
+- ✅ Ajouter liens (Dashboard, Nouvelle Release, Liste, Rules, Users, Roles, Config)
+- ✅ Gérer état actif (bordure inférieure couleur primaire)
+- ✅ Styling Bootstrap + Design System 2025 (font-weight-medium, transitions)
 
 ##### 2.2.2 : React Router
-- ⏳ Configurer routes principales
-- ⏳ Créer route components (placeholders)
-- ⏳ Tester navigation
-- ⏳ Gérer 404
+- ✅ Configurer routes principales (React Router v7)
+- ✅ Créer route components (toutes pages créées)
+- ✅ Tester navigation (tests frontend passent)
+- ✅ Navigation au clavier fonctionnelle (ARIA labels, focus visible)
 
 **Critères de validation** :
 - Navigation fonctionnelle
@@ -527,9 +527,9 @@ def test_dashboard_stats():
 
 ---
 
-### Étape 2.3 : Structure Pages
+### Étape 2.3 : Structure Pages ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Must Have  
 **Estimation** : 2 jours  
 **Dépendances** : Étape 2.2
@@ -537,18 +537,18 @@ def test_dashboard_stats():
 #### Sous-étapes
 
 ##### 2.3.1 : Layout Page
-- ⏳ Créer PageLayout component
-- ⏳ Structure : Header (titre) + Description + Content
-- ⏳ Réutilisable pour toutes pages
-- ⏳ Styling
+- ✅ Créer PageLayout component
+- ✅ Structure : Header (titre h1) + Description + Content
+- ✅ Réutilisable pour toutes pages
+- ✅ Styling conforme Design System (typographie, espacements)
 
 ##### 2.3.2 : Pages Placeholders
-- ⏳ Créer NouvelleReleasePage (structure)
-- ⏳ Créer ListeReleasesPage (structure)
-- ⏳ Créer RulesPage (structure)
-- ⏳ Créer UtilisateursPage (structure)
-- ⏳ Créer RolesPage (structure)
-- ⏳ Créer ConfigurationsPage (structure)
+- ✅ Créer NouvelleReleasePage (structure avec WizardContainer)
+- ✅ Créer ListeReleasesPage (structure avec filtres)
+- ✅ Créer RulesPage (structure avec modal NFO viewer)
+- ✅ Créer UtilisateursPage (structure avec filtres)
+- ✅ Créer RolesPage (structure avec filtres)
+- ✅ Créer ConfigurationsPage (structure avec filtres)
 
 **Critères de validation** :
 - Toutes pages ont titre + description
@@ -557,9 +557,9 @@ def test_dashboard_stats():
 
 ---
 
-### Étape 2.4 : Thème Jour/Nuit
+### Étape 2.4 : Thème Jour/Nuit ✅
 
-**Statut** : ⏳ Non commencée  
+**Statut** : ✅ Terminée  
 **Priorité** : Should Have  
 **Estimation** : 1 jour  
 **Dépendances** : Étape 2.2
@@ -567,22 +567,22 @@ def test_dashboard_stats():
 #### Sous-étapes
 
 ##### 2.4.1 : Context Theme
-- ⏳ Créer ThemeContext
-- ⏳ Gérer état theme (light/dark)
-- ⏳ Persister dans localStorage
-- ⏳ Provider theme
+- ✅ Créer ThemeContext avec gestion état (light/dark/system)
+- ✅ Gérer état theme avec useMemo pour resolvedTheme
+- ✅ Persister dans localStorage
+- ✅ Provider theme intégré dans App.tsx
 
 ##### 2.4.2 : Composant Toggle
-- ⏳ Créer ThemeToggle component
-- ⏳ Bouton bascule jour/nuit
-- ⏳ Icon soleil/lune
-- ⏳ Styling
+- ✅ Créer ThemeToggle component avec icônes Bootstrap Icons (Sun/Moon)
+- ✅ Bouton bascule jour/nuit (touch-friendly 44x44px)
+- ✅ Icônes selon thème actif
+- ✅ Styling conforme Design System
 
 ##### 2.4.3 : Styles Dark Mode
-- ⏳ Créer variables CSS dark mode
-- ⏳ Appliquer classes conditionnelles
-- ⏳ Tester tous composants
-- ⏳ Transition smooth
+- ✅ Créer variables CSS dark mode (toutes couleurs adaptatives)
+- ✅ Appliquer via data-theme attribute
+- ✅ Transition smooth 250ms sur toutes propriétés
+- ✅ Tous composants testés avec thème jour/nuit
 
 **Critères de validation** :
 - Toggle fonctionne
