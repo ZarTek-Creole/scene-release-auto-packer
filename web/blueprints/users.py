@@ -7,6 +7,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db
 from web.models import Group, Role, User
+from web.utils.permissions import check_permission, is_admin, can_manage_user
 
 users_bp = Blueprint("users", __name__)
 
@@ -32,8 +33,9 @@ def list_users() -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only)
-    # For now, allow all authenticated users
+    # Check permissions (admin only for list)
+    if not check_permission(user, "users", "read"):
+        return {"message": "Permission denied"}, 403
 
     # Get query parameters
     page = request.args.get("page", 1, type=int)
@@ -110,7 +112,9 @@ def create_user() -> tuple[dict, int]:
     if not current_user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    if not check_permission(current_user, "users", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -166,7 +170,12 @@ def update_user(user_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin or self)
+    # Check permissions (admin or self)
+    if not can_manage_user(current_user, user_id):
+        return {"message": "Permission denied"}, 403
+    # Limited permissions for self (password only, not roles)
+    if current_user.id == user_id and "role_ids" in data:
+        return {"message": "Cannot change your own roles"}, 403
 
     data = request.get_json()
 
@@ -223,7 +232,11 @@ def delete_user(user_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only, cannot delete self)
+    # Check permissions (admin only, cannot delete self)
+    if not check_permission(current_user, "users", "delete"):
+        return {"message": "Permission denied"}, 403
+    if current_user.id == user_id:
+        return {"message": "Cannot delete yourself"}, 403
 
     db.session.delete(user)
     db.session.commit()

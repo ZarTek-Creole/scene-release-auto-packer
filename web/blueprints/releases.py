@@ -9,6 +9,7 @@ from sqlalchemy.orm import Query
 
 from web.extensions import db
 from web.models import Release, User
+from web.utils.permissions import check_permission
 
 releases_bp = Blueprint("releases", __name__)
 
@@ -132,15 +133,20 @@ def get_release(release_id: int) -> tuple[dict, int]:
         JSON response with release data.
     """
     current_user_id = get_jwt_identity()
+    user = db.session.get(User, current_user_id)
+
+    if not user:
+        return {"message": "User not found"}, 404
+
     release = db.session.get(Release, release_id)
 
     if not release:
         return {"message": "Release not found"}, 404
 
-    # Check permissions (user can only view their own releases unless admin)
+    # Check permissions (user can only view their own releases unless has READ permission)
     if release.user_id != current_user_id:
-        # TODO: Check admin permissions
-        return {"message": "Permission denied"}, 403
+        if not check_permission(user, "releases", "read", release.user_id):
+            return {"message": "Permission denied"}, 403
 
     return {"release": release.to_dict()}, 200
 
@@ -167,10 +173,14 @@ def update_release(release_id: int) -> tuple[dict, int]:
     if not release:
         return {"message": "Release not found"}, 404
 
-    # Check permissions
+    # Check permissions (user can update their own releases or if has MOD permission)
+    user = db.session.get(User, current_user_id)
+    if not user:
+        return {"message": "User not found"}, 404
+
     if release.user_id != current_user_id:
-        # TODO: Check WRITE permission
-        return {"message": "Permission denied"}, 403
+        if not check_permission(user, "releases", "mod", release.user_id):
+            return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -207,10 +217,14 @@ def delete_release(release_id: int) -> tuple[dict, int]:
     if not release:
         return {"message": "Release not found"}, 404
 
-    # Check permissions
+    # Check permissions (user can delete their own releases or if has DELETE permission)
+    user = db.session.get(User, current_user_id)
+    if not user:
+        return {"message": "User not found"}, 404
+
     if release.user_id != current_user_id:
-        # TODO: Check DELETE permission (admin only)
-        return {"message": "Permission denied"}, 403
+        if not check_permission(user, "releases", "delete", release.user_id):
+            return {"message": "Permission denied"}, 403
 
     db.session.delete(release)
     db.session.commit()

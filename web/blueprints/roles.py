@@ -7,6 +7,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db
 from web.models import Permission, Role, User
+from web.utils.permissions import check_permission
 
 roles_bp = Blueprint("roles", __name__)
 
@@ -97,7 +98,9 @@ def create_role() -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    if not check_permission(user, "roles", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -146,7 +149,9 @@ def update_role(role_id: int) -> tuple[dict, int]:
     if not role:
         return {"message": "Role not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    if not check_permission(user, "roles", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -191,7 +196,11 @@ def delete_role(role_id: int) -> tuple[dict, int]:
     if not role:
         return {"message": "Role not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    current_user_id = get_jwt_identity()
+    current_user = db.session.get(User, current_user_id)
+    if not current_user or not check_permission(current_user, "roles", "delete"):
+        return {"message": "Permission denied"}, 403
 
     db.session.delete(role)
     db.session.commit()

@@ -7,6 +7,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db
 from web.models import Configuration, User
+from web.utils.permissions import check_permission
 
 config_bp = Blueprint("config", __name__)
 
@@ -31,7 +32,9 @@ def list_configurations() -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only for list)
+    if not check_permission(user, "config", "read"):
+        return {"message": "Permission denied"}, 403
 
     # Get query parameters
     page = request.args.get("page", 1, type=int)
@@ -124,7 +127,9 @@ def create_configuration() -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    if not check_permission(user, "config", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -175,7 +180,9 @@ def update_configuration(config_id: int) -> tuple[dict, int]:
     if not config:
         return {"message": "Configuration not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    if not check_permission(user, "config", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -220,7 +227,11 @@ def delete_configuration(config_id: int) -> tuple[dict, int]:
     if not config:
         return {"message": "Configuration not found"}, 404
 
-    # TODO: Check permissions (admin only)
+    # Check permissions (admin only)
+    current_user_id = get_jwt_identity()
+    current_user = db.session.get(User, current_user_id)
+    if not current_user or not check_permission(current_user, "config", "delete"):
+        return {"message": "Permission denied"}, 403
 
     db.session.delete(config)
     db.session.commit()

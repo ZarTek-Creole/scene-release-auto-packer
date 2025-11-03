@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 from web.extensions import db
 from web.models import Rule, User
 from web.services.scenerules_download import ScenerulesDownloadService
+from web.utils.permissions import check_permission
 
 rules_bp = Blueprint("rules", __name__)
 
@@ -294,7 +295,9 @@ def download_scenerules_rule() -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    # TODO: Check WRITE permission
+    # Check WRITE permission
+    if not check_permission(user, "rules", "write"):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 

@@ -7,28 +7,30 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db
 from web.models import Job, Release, User
+from web.utils.permissions import check_permission
 
 releases_actions_bp = Blueprint("releases_actions", __name__)
 
 
-def _check_permission(release: Release, current_user_id: int, action: str) -> bool:
+def _check_permission(
+    release: Release, current_user: User, action: str
+) -> bool:
     """Check if user has permission for action.
 
     Args:
         release: Release object.
-        current_user_id: Current user ID.
+        current_user: Current user object.
         action: Action name (nfofix, readnfo, repack, dirfix).
 
     Returns:
         True if user has permission, False otherwise.
     """
     # User can perform actions on their own releases
-    if release.user_id == current_user_id:
+    if release.user_id == current_user.id:
         return True
 
-    # TODO: Check MOD permission for other users' releases
-    # For now, only allow on own releases
-    return False
+    # Check MOD permission for other users' releases
+    return check_permission(current_user, "releases", "mod", release.user_id)
 
 
 @releases_actions_bp.route(
@@ -55,7 +57,7 @@ def nfofix_release(release_id: int) -> tuple[dict, int]:
     if not release:
         return {"message": "Release not found"}, 404
 
-    if not _check_permission(release, current_user_id, "nfofix"):
+    if not _check_permission(release, user, "nfofix"):
         return {"message": "Permission denied"}, 403
 
     # Create job for NFOFIX action
