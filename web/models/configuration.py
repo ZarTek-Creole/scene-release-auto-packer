@@ -15,13 +15,9 @@ class Configuration(TimestampMixin, db.Model):
     __tablename__ = "configurations"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    key: Mapped[str] = mapped_column(
-        db.String(100), unique=True, nullable=False, index=True
-    )
+    key: Mapped[str] = mapped_column(db.String(100), unique=True, nullable=False, index=True)
     value: Mapped[str] = mapped_column(Text, nullable=False)
-    category: Mapped[str | None] = mapped_column(
-        db.String(50), nullable=True, index=True
-    )
+    category: Mapped[str | None] = mapped_column(db.String(50), nullable=True, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     # created_at et updated_at hérités de TimestampMixin
 

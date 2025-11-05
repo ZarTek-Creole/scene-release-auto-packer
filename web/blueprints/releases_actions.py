@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -12,9 +14,7 @@ from web.utils.permissions import check_permission
 releases_actions_bp = Blueprint("releases_actions", __name__)
 
 
-def _check_permission(
-    release: Release, current_user: User, _action: str
-) -> bool:
+def _check_permission(release: Release, current_user: User, _action: str) -> bool:
     """Check if user has permission for action.
 
     Args:
@@ -33,11 +33,9 @@ def _check_permission(
     return check_permission(current_user, "releases", "mod", release.user_id)
 
 
-@releases_actions_bp.route(
-    "/releases/<int:release_id>/actions/nfofix", methods=["POST"]
-)
-@jwt_required()
-def nfofix_release(release_id: int) -> tuple[dict, int]:
+@releases_actions_bp.route("/releases/<int:release_id>/actions/nfofix", methods=["POST"])
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def nfofix_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Fix NFO file for a release.
 
     Args:
@@ -80,11 +78,9 @@ def nfofix_release(release_id: int) -> tuple[dict, int]:
     )
 
 
-@releases_actions_bp.route(
-    "/releases/<int:release_id>/actions/readnfo", methods=["POST"]
-)
-@jwt_required()
-def readnfo_release(release_id: int) -> tuple[dict, int]:
+@releases_actions_bp.route("/releases/<int:release_id>/actions/readnfo", methods=["POST"])
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def readnfo_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Read NFO file and regenerate release structure.
 
     Args:
@@ -130,11 +126,9 @@ def readnfo_release(release_id: int) -> tuple[dict, int]:
     )
 
 
-@releases_actions_bp.route(
-    "/releases/<int:release_id>/actions/repack", methods=["POST"]
-)
-@jwt_required()
-def repack_release(release_id: int) -> tuple[dict, int]:
+@releases_actions_bp.route("/releases/<int:release_id>/actions/repack", methods=["POST"])
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def repack_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Repack a release with new options.
 
     Args:
@@ -185,11 +179,9 @@ def repack_release(release_id: int) -> tuple[dict, int]:
     )
 
 
-@releases_actions_bp.route(
-    "/releases/<int:release_id>/actions/dirfix", methods=["POST"]
-)
-@jwt_required()
-def dirfix_release(release_id: int) -> tuple[dict, int]:
+@releases_actions_bp.route("/releases/<int:release_id>/actions/dirfix", methods=["POST"])
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def dirfix_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Fix directory structure for a release.
 
     Args:

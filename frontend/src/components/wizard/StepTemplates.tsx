@@ -1,6 +1,6 @@
 /** Wizard Step 7: NFO templates selection with preview. */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { wizardApi, Template } from '../../services/wizard';
 import { NFOViewer } from '../NFOViewer';
 
@@ -19,13 +19,7 @@ export function StepTemplates({ releaseId, onNext }: StepTemplatesProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (releaseId) {
-      loadTemplates();
-    }
-  }, [releaseId]);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     if (!releaseId) return;
 
     setLoading(true);
@@ -38,7 +32,13 @@ export function StepTemplates({ releaseId, onNext }: StepTemplatesProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [releaseId]);
+
+  useEffect(() => {
+    if (releaseId) {
+      loadTemplates();
+    }
+  }, [releaseId, loadTemplates]);
 
   const handleTemplateSelect = async (templateId: number) => {
     setSelectedTemplateId(templateId);

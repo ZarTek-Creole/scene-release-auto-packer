@@ -18,9 +18,7 @@ class Rule(TimestampMixin, db.Model):
     name: Mapped[str] = mapped_column(db.String(200), nullable=False, index=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     scene: Mapped[str | None] = mapped_column(db.String(50), nullable=True, index=True)
-    section: Mapped[str | None] = mapped_column(
-        db.String(100), nullable=True, index=True
-    )
+    section: Mapped[str | None] = mapped_column(db.String(100), nullable=True, index=True)
     year: Mapped[int | None] = mapped_column(db.Integer, nullable=True, index=True)
     # created_at et updated_at hérités de TimestampMixin
 

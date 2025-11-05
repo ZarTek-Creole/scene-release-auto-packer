@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -13,8 +15,8 @@ config_bp = Blueprint("config", __name__)
 
 
 @config_bp.route("/config", methods=["GET"])
-@jwt_required()
-def list_configurations() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_configurations() -> tuple[dict[str, Any], int]:
     """List configurations with filters and pagination.
 
     Query parameters:
@@ -70,8 +72,8 @@ def list_configurations() -> tuple[dict, int]:
 
 
 @config_bp.route("/config/<int:config_id>", methods=["GET"])
-@jwt_required()
-def get_configuration(config_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_configuration(config_id: int) -> tuple[dict[str, Any], int]:
     """Get configuration by ID.
 
     Args:
@@ -89,8 +91,8 @@ def get_configuration(config_id: int) -> tuple[dict, int]:
 
 
 @config_bp.route("/config/key/<key>", methods=["GET"])
-@jwt_required()
-def get_configuration_by_key(key: str) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_configuration_by_key(key: str) -> tuple[dict[str, Any], int]:
     """Get configuration by key.
 
     Args:
@@ -108,8 +110,8 @@ def get_configuration_by_key(key: str) -> tuple[dict, int]:
 
 
 @config_bp.route("/config", methods=["POST"])
-@jwt_required()
-def create_configuration() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def create_configuration() -> tuple[dict[str, Any], int]:
     """Create a new configuration.
 
     Expected JSON:
@@ -159,8 +161,8 @@ def create_configuration() -> tuple[dict, int]:
 
 
 @config_bp.route("/config/<int:config_id>", methods=["PUT"])
-@jwt_required()
-def update_configuration(config_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_configuration(config_id: int) -> tuple[dict[str, Any], int]:
     """Update configuration.
 
     Args:
@@ -218,8 +220,8 @@ def update_configuration(config_id: int) -> tuple[dict, int]:
 
 
 @config_bp.route("/config/<int:config_id>", methods=["DELETE"])
-@jwt_required()
-def delete_configuration(config_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def delete_configuration(config_id: int) -> tuple[dict[str, Any], int]:
     """Delete configuration.
 
     Args:

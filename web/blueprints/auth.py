@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+from typing import Any
 
 from flask import Blueprint, request
 from flask_jwt_extended import (
@@ -20,14 +21,14 @@ auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/auth/login", methods=["OPTIONS"])
-def login_options():
+def login_options() -> tuple[str, int]:
     """Handle OPTIONS preflight request for login."""
     return "", 200
 
 
 @auth_bp.route("/auth/login", methods=["POST"])
 @limiter.limit("5 per 15 minutes")
-def login() -> tuple[dict, int]:
+def login() -> tuple[dict[str, Any], int]:
     """Login endpoint.
 
     Returns:
@@ -67,9 +68,9 @@ def login() -> tuple[dict, int]:
 
 
 @auth_bp.route("/auth/refresh", methods=["POST"])
-@jwt_required(refresh=True)
+@jwt_required(refresh=True)  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
 @limiter.limit("10 per minute")
-def refresh() -> tuple[dict, int]:
+def refresh() -> tuple[dict[str, Any], int]:
     """Refresh access token.
 
     Returns:
@@ -88,8 +89,8 @@ def refresh() -> tuple[dict, int]:
 
 
 @auth_bp.route("/auth/logout", methods=["POST"])
-@jwt_required()
-def logout() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def logout() -> tuple[dict[str, Any], int]:
     """Logout endpoint - revoke token.
 
     Returns:
@@ -97,12 +98,10 @@ def logout() -> tuple[dict, int]:
     """
     jti = get_jwt()["jti"]
     token_type = get_jwt()["type"]
-    expires_at = datetime.fromtimestamp(get_jwt()["exp"], tz=timezone.utc)
+    expires_at = datetime.fromtimestamp(get_jwt()["exp"], tz=UTC)
 
     # Add token to blocklist
-    revoked_token = TokenBlocklist(
-        jti=jti, token_type=token_type, expires_at=expires_at
-    )
+    revoked_token = TokenBlocklist(jti=jti, token_type=token_type, expires_at=expires_at)
     db.session.add(revoked_token)
     db.session.commit()
 
@@ -110,8 +109,8 @@ def logout() -> tuple[dict, int]:
 
 
 @auth_bp.route("/auth/me", methods=["GET"])
-@jwt_required()
-def get_current_user() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_current_user() -> tuple[dict[str, Any], int]:
     """Get current user information.
 
     Returns:

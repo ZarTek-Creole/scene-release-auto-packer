@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,7 +20,7 @@ class Permission(db.Model):
     resource: Mapped[str] = mapped_column(db.String(100), nullable=False, index=True)
     action: Mapped[str] = mapped_column(db.String(50), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+        db.DateTime, default=lambda: datetime.now(UTC), nullable=False
     )
 
     # Relationships

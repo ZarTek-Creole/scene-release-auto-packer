@@ -370,7 +370,6 @@ class JobService:
         # Ajout du log si fourni
         if logs:
             # Génération d'un timestamp ISO 8601 avec timezone UTC
-            # Format : "2025-01-XXT12:34:56.789123+00:00"
             timestamp = datetime.now(UTC).isoformat()
 
             # Concaténation avec les logs existants si présents
@@ -440,7 +439,6 @@ class JobService:
         timestamp = datetime.now(UTC).isoformat()
 
         # Formatage du log avec timestamp et niveau
-        # Format : "[timestamp] [LEVEL] message"
         log_line = f"[{timestamp}] [{level}] {log_message}"
 
         # Concaténation avec les logs existants
@@ -505,9 +503,7 @@ class JobService:
         # Vérification que le statut permet l'annulation avec validation machine à états
         # Seuls les jobs "pending" ou "running" peuvent être annulés
         if not self.state_machine.can_transition(job.status, "cancelled"):
-            logger.warning(
-                f"Job {job_id} cannot be cancelled (status: {job.status})"
-            )
+            logger.warning(f"Job {job_id} cannot be cancelled (status: {job.status})")
             return False
 
         # Transition vers statut "cancelled" avec log explicite
@@ -570,11 +566,11 @@ class JobService:
         # Estimation basée sur le statut si progression explicite non disponible
         # Mapping statut → pourcentage de progression
         status_to_progress = {
-            "pending": 0,      # Pas encore commencé
-            "running": 50,     # En cours (estimation moyenne)
-            "completed": 100, # Terminé avec succès
-            "failed": 0,       # Échec (considéré comme non progressé)
-            "cancelled": 0,    # Annulé (considéré comme non progressé)
+            "pending": 0,  # Pas encore commencé
+            "running": 50,  # En cours (estimation moyenne)
+            "completed": 100,  # Terminé avec succès
+            "failed": 0,  # Échec (considéré comme non progressé)
+            "cancelled": 0,  # Annulé (considéré comme non progressé)
         }
 
         # Retour du pourcentage correspondant au statut, ou 0 par défaut

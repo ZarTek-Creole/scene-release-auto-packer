@@ -68,9 +68,7 @@ class NfoGeneratorService:
         Complexité : O(1) - Initialisation simple sans dépendances.
         """
 
-    def generate_nfo(
-        self, metadata: dict[str, Any], template: str | None = None
-    ) -> str:
+    def generate_nfo(self, metadata: dict[str, Any], template: str | None = None) -> str:
         """Génère un fichier NFO complet depuis les métadonnées.
 
         Cette méthode orchestratrice génère un fichier NFO complet en combinant
@@ -384,4 +382,3 @@ class NfoGeneratorService:
                 formatted_lines.extend(wrapped_lines)
 
         return formatted_lines
-

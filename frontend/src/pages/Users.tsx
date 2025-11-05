@@ -44,7 +44,7 @@ export function Users() {
     setShowForm(true);
   };
 
-  const handleSave = (user: User) => {
+  const handleSave = (_user: User) => {
     setShowForm(false);
     setSelectedUser(null);
     // Table will refresh automatically via useEffect

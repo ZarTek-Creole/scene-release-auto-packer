@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import JSON
@@ -15,9 +15,7 @@ class Release(db.Model):
     __tablename__ = "releases"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        db.Integer, db.ForeignKey("users.id"), nullable=False
-    )
+    user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     group_id: Mapped[int | None] = mapped_column(
         db.Integer, db.ForeignKey("groups.id"), nullable=True
     )
@@ -27,7 +25,7 @@ class Release(db.Model):
     config: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=True)
     file_path: Mapped[str | None] = mapped_column(db.String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+        db.DateTime, default=lambda: datetime.now(UTC), nullable=False
     )
 
     # Relationships

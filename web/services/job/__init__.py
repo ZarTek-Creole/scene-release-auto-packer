@@ -7,5 +7,3 @@ from web.services.job.job_state_machine import (
 )
 
 __all__ = ["JobService", "JobStateMachine", "InvalidTransitionError"]
-
-

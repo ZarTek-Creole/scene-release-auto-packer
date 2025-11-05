@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -14,19 +14,15 @@ class TokenBlocklist(db.Model):
     __tablename__ = "token_blocklist"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    jti: Mapped[str] = mapped_column(
-        db.String(36), unique=True, nullable=False, index=True
-    )
+    jti: Mapped[str] = mapped_column(db.String(36), unique=True, nullable=False, index=True)
     token_type: Mapped[str] = mapped_column(db.String(10), nullable=False)
     user_id: Mapped[int | None] = mapped_column(
         db.Integer, db.ForeignKey("users.id"), nullable=True
     )
     revoked_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True
+        db.DateTime, default=lambda: datetime.now(UTC), nullable=False, index=True
     )
-    expires_at: Mapped[datetime] = mapped_column(
-        db.DateTime, nullable=False, index=True
-    )
+    expires_at: Mapped[datetime] = mapped_column(db.DateTime, nullable=False, index=True)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.

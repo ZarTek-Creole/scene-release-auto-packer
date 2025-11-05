@@ -28,7 +28,7 @@ export function RoleForm({ role, onSave, onCancel }: RoleFormProps) {
       try {
         const response = await permissionsApi.list();
         setPermissions(response.permissions || []);
-      } catch (err) {
+      } catch {
         // Silently fail - permissions list might not be available yet
         // Error handling is done silently to avoid UI noise
         setPermissions([]);

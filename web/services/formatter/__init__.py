@@ -3,4 +3,3 @@
 from web.services.formatter.release_formatter import ReleaseFormatterService
 
 __all__ = ["ReleaseFormatterService"]
-

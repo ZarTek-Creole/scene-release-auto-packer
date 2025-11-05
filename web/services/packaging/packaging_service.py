@@ -17,6 +17,7 @@ Les opérations de copie et création ZIP sont dépendantes de la taille des fic
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import logging
 import shutil
@@ -77,9 +78,7 @@ class PackagingService:
         """
         self.nfo_generator = NfoGeneratorService()
 
-    def package_release(
-        self, release_data: dict[str, Any], output_path: Path
-    ) -> dict[str, Any]:
+    def package_release(self, release_data: dict[str, Any], output_path: Path) -> dict[str, Any]:
         """Package une release complète selon format Scene.
 
         Cette méthode orchestratrice effectue tout le processus de packaging :
@@ -196,15 +195,11 @@ class PackagingService:
             # En cas d'erreur, nettoyer structure temporaire si possible
             logger.error(f"Erreur lors du packaging: {e}")
             if structure_path.exists():
-                try:
+                with contextlib.suppress(Exception):
                     shutil.rmtree(structure_path)
-                except Exception:
-                    pass  # Ignorer erreurs de nettoyage
             raise
 
-    def _create_directory_structure(
-        self, release_name: str, output_path: Path
-    ) -> Path:
+    def _create_directory_structure(self, release_name: str, output_path: Path) -> Path:
         """Crée la structure de dossiers conforme Scene.
 
         Cette méthode crée le dossier principal de la release avec le nom formaté
@@ -393,4 +388,3 @@ class PackagingService:
         logger.info(f"Package validé: {zip_path}")
 
         return True
-

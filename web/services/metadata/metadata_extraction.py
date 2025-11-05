@@ -35,6 +35,13 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+# Constants
+ISBN_10_LENGTH = 10
+ISBN_13_LENGTH = 13
+DATE_MIN_LENGTH = 8  # Minimum date length for YYYYMMDD format
+ISO_DATE_MIN_LENGTH = 10  # Minimum length for YYYY-MM-DD format
+DATE_PARTS_MIN_COUNT = 3  # Minimum parts count for date parsing (year, month, day)
+
 
 class MetadataExtractionService:
     """Service d'extraction de métadonnées depuis fichiers eBook.
@@ -263,7 +270,7 @@ class MetadataExtractionService:
 
         raise ValueError(f"Format non reconnu pour: {file_path}")
 
-    def _extract_epub_metadata(self, file_path: Path) -> dict[str, Any]:
+    def _extract_epub_metadata(self, file_path: Path) -> dict[str, Any]:  # noqa: PLR0912
         """Extrait les métadonnées d'un fichier EPUB.
 
         Un fichier EPUB est essentiellement une archive ZIP contenant :
@@ -392,7 +399,7 @@ class MetadataExtractionService:
             logger.error(f"Erreur extraction EPUB {file_path}: {e}", exc_info=True)
             raise Exception(f"Extraction métadonnées EPUB échouée: {e}") from e
 
-    def _extract_pdf_metadata(self, file_path: Path) -> dict[str, Any]:
+    def _extract_pdf_metadata(self, file_path: Path) -> dict[str, Any]:  # noqa: PLR0912
         """Extrait les métadonnées d'un fichier PDF.
 
         Un fichier PDF contient des métadonnées dans deux emplacements :
@@ -463,7 +470,7 @@ class MetadataExtractionService:
                     else:
                         metadata["author"] = [author_str]
 
-                # Description (Subject)
+                # Extract description from Subject metadata
                 if info_meta.subject:
                     metadata["description"] = str(info_meta.subject)
 
@@ -640,7 +647,7 @@ class MetadataExtractionService:
         # Validation format
         # ISBN-10 : 10 caractères (9 chiffres + 1 chiffre ou X)
         if (
-            len(cleaned) == 10
+            len(cleaned) == ISBN_10_LENGTH
             and cleaned[:-1].isdigit()
             and cleaned[-1].isdigit()
             or cleaned[-1] == "X"
@@ -648,7 +655,7 @@ class MetadataExtractionService:
             return cleaned
 
         # ISBN-13 : 13 chiffres commençant par 978 ou 979
-        if len(cleaned) == 13 and cleaned.isdigit() and cleaned.startswith(("978", "979")):
+        if len(cleaned) == ISBN_13_LENGTH and cleaned.isdigit() and cleaned.startswith(("978", "979")):
             return cleaned
 
         # Si ne correspond à aucun format, retourner None
@@ -730,7 +737,7 @@ class MetadataExtractionService:
             if date_str.startswith("D:"):
                 date_str = date_str[2:]  # Supprimer "D:"
                 # Format : YYYYMMDDHHmmSS+HH'MM'
-                if len(date_str) >= 8:
+                if len(date_str) >= DATE_MIN_LENGTH:
                     year = date_str[0:4]
                     month = date_str[4:6]
                     day = date_str[6:8]
@@ -741,10 +748,10 @@ class MetadataExtractionService:
                 return date_str.split("T")[0]
 
             # Format ISO 8601 simple : YYYY-MM-DD
-            if "-" in date_str and len(date_str) >= 10:
+            if "-" in date_str and len(date_str) >= ISO_DATE_MIN_LENGTH:
                 parts = date_str.split("-")
-                if len(parts) >= 3 and all(len(p) in (2, 4) for p in parts[:3]):
-                    return date_str[:10]  # Prendre YYYY-MM-DD seulement
+                if len(parts) >= DATE_PARTS_MIN_COUNT and all(len(p) in (2, 4) for p in parts[:DATE_PARTS_MIN_COUNT]):
+                    return date_str[:ISO_DATE_MIN_LENGTH]  # Prendre YYYY-MM-DD seulement
 
             # Tentative parsing avec datetime
             from dateutil import parser

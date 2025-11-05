@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from typing import Any
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -15,11 +16,16 @@ from web.utils.permissions import check_permission
 
 rules_bp = Blueprint("rules", __name__)
 
+# Constants
+EXPECTED_GROUPS_COUNT = 2
+MIN_YEAR = 1900
+MAX_YEAR = 2100
+
 
 @rules_bp.route("/rules", methods=["GET"])
-@jwt_required()
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
 @cache.cached(timeout=600, query_string=True)  # Cache for 10 minutes
-def list_rules() -> tuple[dict, int]:
+def list_rules() -> tuple[dict[str, Any], int]:
     """List rules with filters and pagination.
 
     Query parameters:
@@ -61,9 +67,7 @@ def list_rules() -> tuple[dict, int]:
     # Text search in name and content
     if search:
         search_pattern = f"%{search}%"
-        query = query.filter(
-            (Rule.name.like(search_pattern)) | (Rule.content.like(search_pattern))
-        )
+        query = query.filter((Rule.name.like(search_pattern)) | (Rule.content.like(search_pattern)))
 
     # Pagination
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -84,8 +88,8 @@ def list_rules() -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules/<int:rule_id>", methods=["GET"])
-@jwt_required()
-def get_rule(rule_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_rule(rule_id: int) -> tuple[dict[str, Any], int]:
     """Get rule by ID.
 
     Args:
@@ -103,8 +107,8 @@ def get_rule(rule_id: int) -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules", methods=["POST"])
-@jwt_required()
-def create_rule() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def create_rule() -> tuple[dict[str, Any], int]:
     """Create a new rule.
 
     Expected JSON:
@@ -143,8 +147,8 @@ def create_rule() -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules/<int:rule_id>", methods=["PUT"])
-@jwt_required()
-def update_rule(rule_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_rule(rule_id: int) -> tuple[dict[str, Any], int]:
     """Update rule.
 
     Args:
@@ -188,8 +192,8 @@ def update_rule(rule_id: int) -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules/<int:rule_id>", methods=["DELETE"])
-@jwt_required()
-def delete_rule(rule_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def delete_rule(rule_id: int) -> tuple[dict[str, Any], int]:
     """Delete rule.
 
     Args:
@@ -210,8 +214,8 @@ def delete_rule(rule_id: int) -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules/scenerules", methods=["GET"])
-@jwt_required()
-def list_scenerules_rules() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_scenerules_rules() -> tuple[dict[str, Any], int]:
     """List available rules on scenerules.org.
 
     Query parameters:
@@ -241,24 +245,18 @@ def list_scenerules_rules() -> tuple[dict, int]:
     filtered_rules = available_rules
     if scene_filter:
         filtered_rules = [
-            r
-            for r in filtered_rules
-            if r.get("scene", "").lower() == scene_filter.lower()
+            r for r in filtered_rules if r.get("scene", "").lower() == scene_filter.lower()
         ]
     if section_filter:
         filtered_rules = [
-            r
-            for r in filtered_rules
-            if r.get("section", "").lower() == section_filter.lower()
+            r for r in filtered_rules if r.get("section", "").lower() == section_filter.lower()
         ]
     if year_filter:
         filtered_rules = [r for r in filtered_rules if r.get("year") == year_filter]
 
     # Check which rules are already downloaded locally
     local_rules = Rule.query.all()
-    local_rule_keys = {
-        (r.section, r.year): r.id for r in local_rules if r.section and r.year
-    }
+    local_rule_keys = {(r.section, r.year): r.id for r in local_rules if r.section and r.year}
 
     # Add indicator if rule is already downloaded
     for rule in filtered_rules:
@@ -277,8 +275,8 @@ def list_scenerules_rules() -> tuple[dict, int]:
 
 
 @rules_bp.route("/rules/scenerules/download", methods=["POST"])
-@jwt_required()
-def download_scenerules_rule() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def download_scenerules_rule() -> tuple[dict[str, Any], int]:  # noqa: PLR0911
     """Download a rule from scenerules.org.
 
     Expected JSON:
@@ -403,7 +401,7 @@ def _extract_metadata_from_content(content: str) -> dict[str, str | int | None]:
     for pattern in section_patterns:
         match = re.search(pattern, content, re.IGNORECASE)
         if match:
-            if len(match.groups()) == 2:
+            if len(match.groups()) == EXPECTED_GROUPS_COUNT:
                 metadata["section"] = match.group(1) or match.group(2)
             else:
                 metadata["section"] = match.group(1)
@@ -419,7 +417,7 @@ def _extract_metadata_from_content(content: str) -> dict[str, str | int | None]:
         matches = re.findall(pattern, content)
         if matches:
             # Take the most recent year found
-            years = [int(m) for m in matches if 1900 <= int(m) <= 2100]
+            years = [int(m) for m in matches if MIN_YEAR <= int(m) <= MAX_YEAR]
             if years:
                 metadata["year"] = max(years)
                 break
@@ -428,8 +426,8 @@ def _extract_metadata_from_content(content: str) -> dict[str, str | int | None]:
 
 
 @rules_bp.route("/rules/upload", methods=["POST"])
-@jwt_required()
-def upload_rule() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def upload_rule() -> tuple[dict[str, Any], int]:
     """Upload a rule file.
 
     Expected form data:
@@ -454,16 +452,14 @@ def upload_rule() -> tuple[dict, int]:
 
     file = request.files["file"]
 
-    if file.filename == "":
+    if file.filename == "" or file.filename is None:
         return {"message": "No file selected"}, 400
 
     # Validate file extension
     allowed_extensions = {".nfo", ".txt", ".txt.nfo"}
-    filename = secure_filename(file.filename)
-    if not any(filename.lower().endswith(ext) for ext in allowed_extensions):
-        return {
-            "message": f"Invalid file type. Allowed: {', '.join(allowed_extensions)}"
-        }, 400
+    filename = secure_filename(file.filename) if file.filename else ""
+    if not filename or not any(filename.lower().endswith(ext) for ext in allowed_extensions):
+        return {"message": f"Invalid file type. Allowed: {', '.join(allowed_extensions)}"}, 400
 
     # Read file content
     try:
@@ -480,16 +476,22 @@ def upload_rule() -> tuple[dict, int]:
 
     # Get metadata from form or extract from content
     name = request.form.get("name") or filename.rsplit(".", 1)[0]
-    scene = request.form.get("scene")
-    section = request.form.get("section")
-    year = request.form.get("year", type=int)
+    scene: str | None = request.form.get("scene")
+    section: str | None = request.form.get("section")
+    year: int | None = request.form.get("year", type=int)
 
     # Extract metadata from content if not provided
     if not scene or not section or not year:
         extracted = _extract_metadata_from_content(content)
-        scene = scene or extracted.get("scene")
-        section = section or extracted.get("section")
-        year = year or extracted.get("year")
+        if not scene:
+            extracted_scene = extracted.get("scene")
+            scene = extracted_scene if isinstance(extracted_scene, str) else None
+        if not section:
+            extracted_section = extracted.get("section")
+            section = extracted_section if isinstance(extracted_section, str) else None
+        if not year:
+            extracted_year = extracted.get("year")
+            year = extracted_year if isinstance(extracted_year, int) else None
 
     # Create rule
     rule = Rule(

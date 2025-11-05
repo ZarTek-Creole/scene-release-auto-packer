@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from flask import Flask
+from typing import Any
+
+from flask import Flask, Response
 from flask_jwt_extended import JWTManager
 
 from web.config import get_config
@@ -16,15 +18,16 @@ def add_security_headers(app: Flask) -> None:
     Args:
         app: Flask application instance.
     """
+
     @app.after_request
-    def set_security_headers(response):
+    def set_security_headers(response: Response) -> Response:
         """Set security headers on response."""
-        response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY'
-        response.headers['X-XSS-Protection'] = '1; mode=block'
-        
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+
         # Content Security Policy (CSP) - Protection XSS
-        response.headers['Content-Security-Policy'] = (
+        response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
             "style-src 'self' 'unsafe-inline'; "
@@ -32,13 +35,13 @@ def add_security_headers(app: Flask) -> None:
             "font-src 'self' data:; "
             "connect-src 'self' http://localhost:5000 http://127.0.0.1:5000;"
         )
-        
+
         # Referrer Policy - Contrôle information référent
-        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
 
         # Only add HSTS in production
-        if not app.config.get('DEBUG', False):
-            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        if not app.config.get("DEBUG", False):
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
 
         return response
 
@@ -65,7 +68,7 @@ def create_app(config_name: str | None = None) -> Flask:
     cors_origins = app.config.get("CORS_ORIGINS", ["http://localhost:5173"])
     if isinstance(cors_origins, str):
         cors_origins = [origin.strip() for origin in cors_origins.split(",")]
-    
+
     cors.init_app(
         app,
         resources={
@@ -134,7 +137,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
     # Register error handlers
     @app.errorhandler(404)
-    def not_found(_error) -> tuple[dict[str, str], int]:
+    def not_found(_error: Exception) -> tuple[dict[str, Any], int]:
         """Handle 404 errors.
 
         Args:
@@ -146,7 +149,7 @@ def create_app(config_name: str | None = None) -> Flask:
         return {
             "error": "Ressource introuvable",
             "error_type": "NotFound",
-            "success": False,
+            "success": "false",
         }, 404
 
     return app

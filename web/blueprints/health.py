@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
 health_bp = Blueprint("health", __name__)
 
@@ -14,4 +14,4 @@ def health_check() -> tuple[dict[str, str], int]:
     Returns:
         JSON response with status.
     """
-    return jsonify({"status": "ok", "message": "Service is healthy"}), 200
+    return ({"status": "ok", "message": "Service is healthy"}, 200)

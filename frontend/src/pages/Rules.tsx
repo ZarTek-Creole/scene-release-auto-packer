@@ -61,7 +61,7 @@ export function Rules() {
       {showUpload && (
         <div className="mb-4">
           <RuleUpload
-            onUploadSuccess={rule => {
+            onUploadSuccess={_rule => {
               setShowUpload(false);
               setSelectedRule(null);
               // Refresh table by resetting filters

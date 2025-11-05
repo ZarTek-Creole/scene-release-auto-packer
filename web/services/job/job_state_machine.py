@@ -303,4 +303,3 @@ class JobStateMachine:
         """
         normalized_status = self._normalize_status(status)
         return normalized_status in self.FINAL_STATES
-

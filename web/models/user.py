@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -18,21 +18,22 @@ class User(db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(
-        db.String(80), unique=True, nullable=False, index=True
-    )
+    username: Mapped[str] = mapped_column(db.String(80), unique=True, nullable=False, index=True)
     email: Mapped[str] = mapped_column(db.String(120), nullable=False)
     password_hash: Mapped[str] = mapped_column(db.String(255), nullable=False)
     active: Mapped[bool] = mapped_column(db.Boolean, default=True, nullable=False)
     note: Mapped[str | None] = mapped_column(db.Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+        db.DateTime, default=lambda: datetime.now(UTC), nullable=False
     )
     created_by: Mapped[int | None] = mapped_column(
         db.Integer, db.ForeignKey("users.id"), nullable=True
     )
     modify_at: Mapped[datetime | None] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=True
+        db.DateTime,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+        nullable=True,
     )
 
     # Relationships

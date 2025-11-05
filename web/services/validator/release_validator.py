@@ -115,9 +115,7 @@ class ReleaseValidatorService:
 
         # Validation nommage
         if "naming" in rule_spec:
-            naming_errors = self.validate_naming(
-                release_data.get("name", ""), rule_spec["naming"]
-            )
+            naming_errors = self.validate_naming(release_data.get("name", ""), rule_spec["naming"])
             errors.extend(naming_errors)
 
         # Validation métadonnées
@@ -138,9 +136,7 @@ class ReleaseValidatorService:
             recommended_fields = rule_spec["recommended_fields"]
             for field in recommended_fields:
                 if field not in metadata or not metadata.get(field):
-                    warnings.append(
-                        f"Champ recommandé manquant: {field}"
-                    )
+                    warnings.append(f"Champ recommandé manquant: {field}")
 
         return {
             "valid": len(errors) == 0,
@@ -148,9 +144,7 @@ class ReleaseValidatorService:
             "warnings": warnings,
         }
 
-    def validate_naming(
-        self, release_name: str, naming_spec: dict[str, Any]
-    ) -> list[str]:
+    def validate_naming(self, release_name: str, naming_spec: dict[str, Any]) -> list[str]:
         """Valide le nommage d'une release selon les règles Scene.
 
         Cette méthode valide le nom d'une release selon le pattern regex et
@@ -188,9 +182,7 @@ class ReleaseValidatorService:
                         f"Le nom '{release_name}' ne correspond pas au pattern requis: {pattern}"
                     )
             except re.error as e:
-                errors.append(
-                    f"Pattern regex invalide dans la règle: {e}"
-                )
+                errors.append(f"Pattern regex invalide dans la règle: {e}")
 
         # Validation longueur max
         if "max_length" in naming_spec:
@@ -204,15 +196,11 @@ class ReleaseValidatorService:
         if "allowed_chars" in naming_spec:
             allowed_chars_pattern = naming_spec["allowed_chars"]
             if not re.match(allowed_chars_pattern, release_name):
-                errors.append(
-                    f"Le nom '{release_name}' contient des caractères non autorisés"
-                )
+                errors.append(f"Le nom '{release_name}' contient des caractères non autorisés")
 
         return errors
 
-    def validate_metadata(
-        self, metadata: dict[str, Any], rule_spec: dict[str, Any]
-    ) -> list[str]:
+    def validate_metadata(self, metadata: dict[str, Any], rule_spec: dict[str, Any]) -> list[str]:
         """Valide les métadonnées d'une release selon les règles Scene.
 
         Cette méthode valide les métadonnées en vérifiant :
@@ -258,9 +246,7 @@ class ReleaseValidatorService:
 
         return errors
 
-    def validate_structure(
-        self, files: list[str | Path], rule_spec: dict[str, Any]
-    ) -> list[str]:
+    def validate_structure(self, files: list[str | Path], rule_spec: dict[str, Any]) -> list[str]:
         """Valide la structure d'une release (fichiers présents et formats).
 
         Cette méthode valide la structure en vérifiant :
@@ -289,7 +275,9 @@ class ReleaseValidatorService:
         # Convertir fichiers en chemins Path et extraire extensions
         file_paths = [Path(f) if isinstance(f, str) else f for f in files]
         file_extensions = [path.suffix.lower() for path in file_paths]
-        file_types = [path.stem.split(".")[-1].lower() for path in file_paths]  # Pour fichiers comme "file.nfo"
+        file_types = [
+            path.stem.split(".")[-1].lower() for path in file_paths
+        ]  # Pour fichiers comme "file.nfo"
 
         # Validation fichiers requis
         if "required_files" in rule_spec:
@@ -312,17 +300,14 @@ class ReleaseValidatorService:
                     found = True
 
                 if not found:
-                    errors.append(
-                        f"Fichier requis manquant: {required_file}"
-                    )
+                    errors.append(f"Fichier requis manquant: {required_file}")
 
         # Validation formats acceptés
         if "file_formats" in rule_spec:
             accepted_formats = rule_spec["file_formats"]
             # Normaliser formats (avec point)
             normalized_formats = [
-                f.lower() if f.startswith(".") else f".{f.lower()}"
-                for f in accepted_formats
+                f.lower() if f.startswith(".") else f".{f.lower()}" for f in accepted_formats
             ]
 
             for file_path in file_paths:
@@ -333,4 +318,3 @@ class ReleaseValidatorService:
                     )
 
         return errors
-

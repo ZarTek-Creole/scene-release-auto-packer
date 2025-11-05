@@ -17,9 +17,7 @@ class ProductionConfigEnhanced(ProductionConfig):
     PERMANENT_SESSION_LIFETIME = 3600  # 1 hour
 
     # CORS configuration
-    CORS_ORIGINS = (
-        os.getenv("CORS_ORIGINS", "").split(",") if os.getenv("CORS_ORIGINS") else []
-    )
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "").split(",") if os.getenv("CORS_ORIGINS") else []
 
     # Rate limiting
     RATELIMIT_ENABLED = True

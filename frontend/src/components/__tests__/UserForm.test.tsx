@@ -60,7 +60,7 @@ describe('UserForm', () => {
   });
 
   it('should require password for new user', async () => {
-    const user = userEvent.setup();
+    userEvent.setup();
     render(<UserForm onSave={vi.fn()} />);
 
     await waitFor(() => {

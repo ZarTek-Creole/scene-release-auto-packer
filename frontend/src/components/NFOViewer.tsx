@@ -16,7 +16,7 @@ interface NFOViewerProps {
  */
 export function NFOViewer({
   content,
-  lineNumbers = false,
+  lineNumbers: _lineNumbers = false,
   maxWidth = 80,
   className = '',
   'aria-label': ariaLabel = 'NFO Viewer',

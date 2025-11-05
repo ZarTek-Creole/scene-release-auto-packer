@@ -4,6 +4,7 @@ Endpoints de test pour valider l'extraction de métadonnées depuis fichiers eBo
 """
 
 from pathlib import Path
+from typing import Any
 
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
@@ -14,8 +15,8 @@ test_metadata_bp = Blueprint("test_metadata", __name__)
 
 
 @test_metadata_bp.route("/test/metadata-extraction", methods=["POST"])
-@jwt_required(optional=True)  # Optionnel pour faciliter les tests
-def test_metadata_extraction() -> tuple[dict, int]:
+@jwt_required(optional=True)  # type: ignore[misc]  # MyPy: Flask decorators not fully typed  # Optionnel pour faciliter les tests
+def test_metadata_extraction() -> tuple[dict[str, Any], int]:
     """Test extraction métadonnées depuis fichier uploadé.
 
     Args:
@@ -35,7 +36,12 @@ def test_metadata_extraction() -> tuple[dict, int]:
         # Sauvegarder temporairement le fichier
         import tempfile
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=Path(file.filename).suffix) as tmp_file:
+        if file.filename is None:
+            return {"error": "No filename provided", "success": False}, 400
+
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=Path(file.filename).suffix
+        ) as tmp_file:
             file.save(tmp_file.name)
             tmp_path = Path(tmp_file.name)
 
@@ -60,8 +66,8 @@ def test_metadata_extraction() -> tuple[dict, int]:
 
 
 @test_metadata_bp.route("/test/metadata-extraction/normalize", methods=["POST"])
-@jwt_required(optional=True)
-def test_normalize_metadata() -> tuple[dict, int]:
+@jwt_required(optional=True)  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def test_normalize_metadata() -> tuple[dict[str, Any], int]:
     """Test normalisation métadonnées.
 
     Args:
@@ -90,8 +96,8 @@ def test_normalize_metadata() -> tuple[dict, int]:
 
 
 @test_metadata_bp.route("/test/metadata-extraction/checksums", methods=["POST"])
-@jwt_required(optional=True)
-def test_calculate_checksums() -> tuple[dict, int]:
+@jwt_required(optional=True)  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def test_calculate_checksums() -> tuple[dict[str, Any], int]:
     """Test calcul checksums depuis fichier uploadé.
 
     Args:
@@ -134,4 +140,3 @@ def test_calculate_checksums() -> tuple[dict, int]:
             "error": str(e),
             "success": False,
         }, 500
-

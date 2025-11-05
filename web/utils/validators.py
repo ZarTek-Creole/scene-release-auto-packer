@@ -4,6 +4,10 @@ from __future__ import annotations
 
 import re
 
+# Constants
+MIN_GROUP_LENGTH = 2
+MAX_GROUP_LENGTH = 30
+
 
 def validate_scene_group(group: str) -> bool:
     """Validate Scene group name format.
@@ -14,7 +18,7 @@ def validate_scene_group(group: str) -> bool:
     Returns:
         True if valid Scene group format.
     """
-    if not group or len(group) < 2 or len(group) > 30:
+    if not group or len(group) < MIN_GROUP_LENGTH or len(group) > MAX_GROUP_LENGTH:
         return False
 
     # Scene group format: alphanumeric and hyphen, no spaces

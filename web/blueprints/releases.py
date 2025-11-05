@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import String, cast
@@ -14,7 +16,7 @@ from web.utils.permissions import check_permission
 releases_bp = Blueprint("releases", __name__)
 
 
-def _apply_sorting(query: Query, sort_by: str, sort_order: str) -> Query:
+def _apply_sorting(query: Query[Release], sort_by: str, sort_order: str) -> Query[Release]:
     """Apply sorting to query.
 
     Args:
@@ -38,8 +40,8 @@ def _apply_sorting(query: Query, sort_by: str, sort_order: str) -> Query:
 
 
 @releases_bp.route("/releases", methods=["GET"])
-@jwt_required()
-def list_releases() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_releases() -> tuple[dict[str, Any], int]:
     """List releases with filters, search, sorting and pagination.
 
     Query parameters:
@@ -103,15 +105,13 @@ def list_releases() -> tuple[dict, int]:
     if search:
         # MySQL JSON search: convert JSON to text and use LIKE
         search_pattern = f"%{search}%"
-        query = query.filter(
-            cast(Release.release_metadata, String).like(search_pattern)
-        )
+        query = query.filter(cast(Release.release_metadata, String).like(search_pattern))
 
     # Sorting
     query = _apply_sorting(query, sort_by, sort_order)
 
     # Pagination
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)  # type: ignore[attr-defined]  # MyPy: Flask-SQLAlchemy extends Query with paginate()
     releases = pagination.items
 
     return (
@@ -129,8 +129,8 @@ def list_releases() -> tuple[dict, int]:
 
 
 @releases_bp.route("/releases/<int:release_id>", methods=["GET"])
-@jwt_required()
-def get_release(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Get release by ID.
 
     Args:
@@ -151,15 +151,17 @@ def get_release(release_id: int) -> tuple[dict, int]:
         return {"message": "Release not found"}, 404
 
     # Check permissions (user can only view their own releases unless has READ permission)
-    if release.user_id != current_user_id and not check_permission(user, "releases", "read", release.user_id):
+    if release.user_id != current_user_id and not check_permission(
+        user, "releases", "read", release.user_id
+    ):
         return {"message": "Permission denied"}, 403
 
     return {"release": release.to_dict()}, 200
 
 
 @releases_bp.route("/releases/<int:release_id>", methods=["PUT"])
-@jwt_required()
-def update_release(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Update release.
 
     Args:
@@ -184,7 +186,9 @@ def update_release(release_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    if release.user_id != current_user_id and not check_permission(user, "releases", "mod", release.user_id):
+    if release.user_id != current_user_id and not check_permission(
+        user, "releases", "mod", release.user_id
+    ):
         return {"message": "Permission denied"}, 403
 
     data = request.get_json()
@@ -206,8 +210,8 @@ def update_release(release_id: int) -> tuple[dict, int]:
 
 
 @releases_bp.route("/releases/<int:release_id>", methods=["DELETE"])
-@jwt_required()
-def delete_release(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def delete_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Delete release.
 
     Args:
@@ -227,7 +231,9 @@ def delete_release(release_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    if release.user_id != current_user_id and not check_permission(user, "releases", "delete", release.user_id):
+    if release.user_id != current_user_id and not check_permission(
+        user, "releases", "delete", release.user_id
+    ):
         return {"message": "Permission denied"}, 403
 
     db.session.delete(release)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import func
@@ -13,9 +15,9 @@ dashboard_bp = Blueprint("dashboard", __name__)
 
 
 @dashboard_bp.route("/dashboard/stats", methods=["GET"])
-@jwt_required()
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
 @cache.cached(timeout=300)  # Cache for 5 minutes
-def get_stats() -> tuple[dict, int]:
+def get_stats() -> tuple[dict[str, Any], int]:
     """Get dashboard statistics.
 
     Returns:
@@ -31,16 +33,11 @@ def get_stats() -> tuple[dict, int]:
     total_releases = db.session.query(func.count(Release.id)).scalar() or 0
     total_jobs = db.session.query(func.count(Job.id)).scalar() or 0
     user_releases = (
-        db.session.query(func.count(Release.id))
-        .filter(Release.user_id == current_user_id)
-        .scalar()
+        db.session.query(func.count(Release.id)).filter(Release.user_id == current_user_id).scalar()
         or 0
     )
     user_jobs = (
-        db.session.query(func.count(Job.id))
-        .filter(Job.created_by == current_user_id)
-        .scalar()
-        or 0
+        db.session.query(func.count(Job.id)).filter(Job.created_by == current_user_id).scalar() or 0
     )
 
     return (

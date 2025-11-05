@@ -20,7 +20,7 @@ UPLOAD_DIR = Path("uploads/wizard")
 try:
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     # Set permissions if needed (Linux)
-    if hasattr(UPLOAD_DIR, 'chmod'):
+    if hasattr(UPLOAD_DIR, "chmod"):
         UPLOAD_DIR.chmod(0o755)
 except (PermissionError, OSError):
     # If permission denied, use /tmp as fallback
@@ -29,9 +29,9 @@ except (PermissionError, OSError):
 
 
 @wizard_bp.route("/wizard/draft", methods=["POST"])
-@jwt_required()
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
 @limiter.limit("20 per minute")
-def create_draft() -> tuple[dict, int]:
+def create_draft() -> tuple[dict[str, Any], int]:  # noqa: PLR0911
     """Create draft release via wizard (steps 1-3).
 
     Request body:
@@ -114,8 +114,8 @@ def create_draft() -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/rules", methods=["GET"])
-@jwt_required()
-def list_rules() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_rules() -> tuple[dict[str, Any], int]:
     """List rules filtered by release type.
 
     Query parameters:
@@ -147,8 +147,8 @@ def list_rules() -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/upload", methods=["POST"])
-@jwt_required()
-def upload_file(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def upload_file(release_id: int) -> tuple[dict[str, Any], int]:  # noqa: PLR0911
     """Upload file for wizard step 4.
 
     Args:
@@ -235,8 +235,8 @@ def upload_file(release_id: int) -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/analyze", methods=["POST"])
-@jwt_required()
-def analyze_file(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def analyze_file(release_id: int) -> tuple[dict[str, Any], int]:
     """Analyze file for wizard step 5.
 
     Args:
@@ -265,7 +265,9 @@ def analyze_file(release_id: int) -> tuple[dict, int]:
     # Basic analysis (can be enhanced with MediaInfo for specific formats)
     analysis: dict[str, Any] = {
         "file_path": release.file_path,
-        "file_size": release.release_metadata.get("file_size", 0) if release.release_metadata else 0,
+        "file_size": (
+            release.release_metadata.get("file_size", 0) if release.release_metadata else 0
+        ),
     }
 
     # Extract metadata from filename if possible
@@ -273,17 +275,17 @@ def analyze_file(release_id: int) -> tuple[dict, int]:
     analysis["filename"] = filename
 
     # Try to extract basic info from filename
-    # Format: GroupName-Author-Title-Format-Language-Year-ISBN-eBook
+    # Expected format: GroupName-Author-Title-Format-Language-Year-ISBN-eBook
     # Or: release_X_GroupName-Author-Title-Format...
     min_filename_parts = 3
-    parts = filename.replace(".epub", "").replace(
-        ".pdf", "").replace(".cbz", "").split("-")
+    parts = filename.replace(".epub", "").replace(".pdf", "").replace(".cbz", "").split("-")
 
     # Remove release_X_ prefix if present (for uploaded files)
     if len(parts) > 0 and parts[0].startswith("release_") and "_" in parts[0]:
         # Extract group name after release_X_ prefix
         prefix_parts = parts[0].split("_", 2)
-        if len(prefix_parts) >= 3:
+        min_prefix_parts = 3
+        if len(prefix_parts) >= min_prefix_parts:
             parts[0] = prefix_parts[2]  # Group name after release_X_
 
     if len(parts) >= min_filename_parts:
@@ -311,8 +313,8 @@ def analyze_file(release_id: int) -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/metadata", methods=["POST"])
-@jwt_required()
-def update_metadata(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_metadata(release_id: int) -> tuple[dict[str, Any], int]:
     """Update metadata for wizard step 6.
 
     Args:
@@ -363,8 +365,8 @@ def update_metadata(release_id: int) -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/templates", methods=["GET", "POST"])
-@jwt_required()
-def handle_templates(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def handle_templates(release_id: int) -> tuple[dict[str, Any], int]:
     """Handle templates for wizard step 7.
 
     GET: List available templates
@@ -431,8 +433,8 @@ def handle_templates(release_id: int) -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/options", methods=["POST"])
-@jwt_required()
-def update_options(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_options(release_id: int) -> tuple[dict[str, Any], int]:
     """Update packaging options for wizard step 8.
 
     Args:
@@ -486,8 +488,8 @@ def update_options(release_id: int) -> tuple[dict, int]:
 
 
 @wizard_bp.route("/wizard/<int:release_id>/finalize", methods=["POST"])
-@jwt_required()
-def finalize_release(release_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def finalize_release(release_id: int) -> tuple[dict[str, Any], int]:
     """Finalize release for wizard step 9.
 
     Args:

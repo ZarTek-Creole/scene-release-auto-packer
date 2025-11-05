@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -17,18 +17,14 @@ class Role(db.Model):
     __tablename__ = "roles"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(
-        db.String(80), unique=True, nullable=False, index=True
-    )
+    name: Mapped[str] = mapped_column(db.String(80), unique=True, nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(db.Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+        db.DateTime, default=lambda: datetime.now(UTC), nullable=False
     )
 
     # Relationships
-    users = db.relationship(
-        "User", secondary="user_roles", back_populates="roles", lazy="dynamic"
-    )
+    users = db.relationship("User", secondary="user_roles", back_populates="roles", lazy="dynamic")
     permissions = db.relationship(
         "Permission",
         secondary="role_permissions",

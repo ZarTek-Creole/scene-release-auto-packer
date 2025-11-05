@@ -2,7 +2,7 @@
 
 import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
-import { expect, describe, it, afterEach } from 'vitest';
+import { expect, describe, it } from 'vitest';
 import { StepFileSelection } from '../StepFileSelection';
 
 expect.extend(toHaveNoViolations);

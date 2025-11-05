@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { NFOViewer } from './NFOViewer';
-import { rulesApi, Rule } from '../services/rules';
+import { Rule } from '../services/rules';
 
 interface RuleUploadProps {
   onUploadSuccess?: (rule: Rule) => void;

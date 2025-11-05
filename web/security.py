@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from web.models import TokenBlocklist, User
 
@@ -18,7 +18,7 @@ def init_jwt(jwt: JWTManager) -> None:
     """
 
     @jwt.token_in_blocklist_loader
-    def check_if_token_revoked(_jwt_header: dict, jwt_payload: dict) -> bool:
+    def check_if_token_revoked(_jwt_header: dict[str, Any], jwt_payload: dict[str, Any]) -> bool:
         """Check if token is revoked.
 
         Args:
@@ -61,7 +61,9 @@ def init_jwt(jwt: JWTManager) -> None:
         return str(identity)
 
     @jwt.user_lookup_loader
-    def user_lookup_callback(_jwt_header: dict, jwt_payload: dict) -> User | None:
+    def user_lookup_callback(
+        _jwt_header: dict[str, Any], jwt_payload: dict[str, Any]
+    ) -> User | None:
         """User lookup callback.
 
         This callback is called when using @jwt_required() to load
@@ -84,10 +86,13 @@ def init_jwt(jwt: JWTManager) -> None:
         except (ValueError, TypeError):
             return None
 
-        return User.query.filter_by(id=user_id, active=True).first()
+        user: User | None = User.query.filter_by(id=user_id, active=True).first()
+        return user
 
     @jwt.expired_token_loader
-    def expired_token_callback(_jwt_header: dict, _jwt_payload: dict) -> tuple[dict, int]:
+    def expired_token_callback(
+        _jwt_header: dict[str, Any], _jwt_payload: dict[str, Any]
+    ) -> tuple[dict[str, Any], int]:
         """Expired token callback.
 
         Args:
@@ -100,7 +105,7 @@ def init_jwt(jwt: JWTManager) -> None:
         return {"message": "Token has expired"}, 401
 
     @jwt.invalid_token_loader
-    def invalid_token_callback(error: str) -> tuple[dict, int]:
+    def invalid_token_callback(error: str) -> tuple[dict[str, Any], int]:
         """Invalid token callback.
 
         Args:
@@ -112,7 +117,7 @@ def init_jwt(jwt: JWTManager) -> None:
         return {"message": f"Invalid token: {error}"}, 401
 
     @jwt.unauthorized_loader
-    def missing_token_callback(error: str) -> tuple[dict, int]:
+    def missing_token_callback(error: str) -> tuple[dict[str, Any], int]:
         """Missing token callback.
 
         Args:

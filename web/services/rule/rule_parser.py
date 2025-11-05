@@ -107,9 +107,7 @@ class RuleParserService:
         # - `(?=\n\n|\n[A-Z]{2,}|$)` : Lookahead positif : arrête avant double saut de ligne,
         #   avant une section en majuscules (2+ lettres), ou fin de chaîne
         other_pattern = r"(?:^|\n)\s*OTHER\s*[:;]?\s*(.*?)(?=\n\n|\n[A-Z]{2,}|$)"
-        match = re.search(
-            other_pattern, rule_content, re.IGNORECASE | re.DOTALL | re.MULTILINE
-        )
+        match = re.search(other_pattern, rule_content, re.IGNORECASE | re.DOTALL | re.MULTILINE)
 
         if match:
             formats_text = match.group(1)
@@ -206,8 +204,7 @@ class RuleParserService:
                     "format": format_str,
                     "separators": ["-"],
                     "components": {
-                        comp: {"required": True, "format": "string"}
-                        for comp in components
+                        comp: {"required": True, "format": "string"} for comp in components
                     },
                     "max_length": 243,  # Contrainte Scene : dirname max 243 caractères
                 }
@@ -353,13 +350,13 @@ class RuleParserService:
                 # Tailles ZIP autorisées en bytes (multiples de 5MB généralement)
                 # Ces tailles correspondent aux limites standard des archives Scene
                 "allowed_sizes": [
-                    5000000,      # 5 MB
-                    10000000,     # 10 MB
-                    50000000,     # 50 MB
-                    100000000,    # 100 MB
-                    150000000,    # 150 MB
-                    200000000,    # 200 MB
-                    250000000,    # 250 MB
+                    5000000,  # 5 MB
+                    10000000,  # 10 MB
+                    50000000,  # 50 MB
+                    100000000,  # 100 MB
+                    150000000,  # 150 MB
+                    200000000,  # 200 MB
+                    250000000,  # 250 MB
                 ],
                 "max_files": 99,  # Maximum 99 fichiers par ZIP (limite Scene)
             },

@@ -28,6 +28,10 @@ from urllib.parse import urljoin
 
 import requests
 
+# Constants
+HTTP_STATUS_NOT_FOUND = 404
+HTTP_STATUS_OK = 200
+
 
 class ScenerulesDownloadService:
     """Service de téléchargement et gestion des règles Scene depuis scenerules.org.
@@ -83,7 +87,6 @@ class ScenerulesDownloadService:
         # Avantage : réutilisation des connexions TCP, amélioration des performances
         self.session = requests.Session()
         # Configuration du User-Agent pour identification dans les logs serveur
-        # Format : "ApplicationName/Version"
         self.session.headers.update(
             {
                 "User-Agent": "eBook-Scene-Packer-v2/1.0",
@@ -248,9 +251,7 @@ class ScenerulesDownloadService:
         section_clean = section.replace(" ", "_")
 
         # Construction de l'URL selon le template
-        url = self.NFO_URL_TEMPLATE.format(
-            base_url=self.BASE_URL, year=year, section=section_clean
-        )
+        url = self.NFO_URL_TEMPLATE.format(base_url=self.BASE_URL, year=year, section=section_clean)
 
         try:
             # Requête HTTP GET avec timeout configuré
@@ -291,16 +292,14 @@ class ScenerulesDownloadService:
 
         except requests.exceptions.HTTPError as e:
             # Gestion spécifique des erreurs HTTP
-            if e.response.status_code == 404:
+            if e.response.status_code == HTTP_STATUS_NOT_FOUND:
                 # Règle non trouvée : ValueError avec message explicite
                 raise ValueError(f"Rule not found: {section} [{year}]") from e
             # Autres erreurs HTTP : RequestException avec détails
             raise requests.RequestException(f"Failed to download rule: {e}") from e
         except requests.exceptions.RequestException as e:
             # Gestion des erreurs réseau (timeout, connexion, etc.)
-            raise requests.RequestException(
-                f"Network error downloading rule: {e}"
-            ) from e
+            raise requests.RequestException(f"Network error downloading rule: {e}") from e
 
     def download_rule_by_url(self, url: str) -> dict[str, Any]:
         """Télécharge une règle depuis une URL spécifique.
@@ -362,8 +361,6 @@ class ScenerulesDownloadService:
 
             # Extraction des métadonnées depuis l'URL via regex
             # Pattern : /{year}_{section}.nfo à la fin de l'URL
-            # Exemple : "https://scenerules.org/nfo/2022_eBOOK.nfo"
-            # Capture : year=2022, section="eBOOK"
             match = re.search(r"/(\d{4})_([A-Za-z0-9-]+)\.nfo$", url)
             if match:
                 year = int(match.group(1))  # Année extraite (4 chiffres)
@@ -388,9 +385,7 @@ class ScenerulesDownloadService:
 
         except requests.exceptions.RequestException as e:
             # Gestion des erreurs réseau et HTTP
-            raise requests.RequestException(
-                f"Failed to download rule from URL: {e}"
-            ) from e
+            raise requests.RequestException(f"Failed to download rule from URL: {e}") from e
 
     def check_rule_exists(self, section: str, year: int = 2022) -> bool:
         """Vérifie si une règle existe sur scenerules.org.
@@ -444,7 +439,7 @@ class ScenerulesDownloadService:
             response = self.session.head(url, timeout=self.timeout)
 
             # HTTP 200 = règle existe, autre statut = n'existe pas ou erreur
-            return response.status_code == 200
+            return response.status_code == HTTP_STATUS_OK
         except requests.exceptions.RequestException:
             # En cas d'erreur réseau, retourner False (safe default)
             # Cela évite de lever une exception, mais peut créer un faux négatif

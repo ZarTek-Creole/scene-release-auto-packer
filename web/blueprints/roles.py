@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -13,8 +15,8 @@ roles_bp = Blueprint("roles", __name__)
 
 
 @roles_bp.route("/roles", methods=["GET"])
-@jwt_required()
-def list_roles() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_roles() -> tuple[dict[str, Any], int]:
     """List roles with filters and pagination.
 
     Query parameters:
@@ -61,8 +63,8 @@ def list_roles() -> tuple[dict, int]:
 
 
 @roles_bp.route("/roles/<int:role_id>", methods=["GET"])
-@jwt_required()
-def get_role(role_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_role(role_id: int) -> tuple[dict[str, Any], int]:
     """Get role by ID.
 
     Args:
@@ -80,8 +82,8 @@ def get_role(role_id: int) -> tuple[dict, int]:
 
 
 @roles_bp.route("/roles", methods=["POST"])
-@jwt_required()
-def create_role() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def create_role() -> tuple[dict[str, Any], int]:
     """Create a new role.
 
     Expected JSON:
@@ -117,9 +119,7 @@ def create_role() -> tuple[dict, int]:
     role = Role(name=data["name"], description=data.get("description"))
 
     if "permission_ids" in data:
-        permissions = Permission.query.filter(
-            Permission.id.in_(data["permission_ids"])
-        ).all()
+        permissions = Permission.query.filter(Permission.id.in_(data["permission_ids"])).all()
         role.permissions = permissions
 
     db.session.add(role)
@@ -129,8 +129,8 @@ def create_role() -> tuple[dict, int]:
 
 
 @roles_bp.route("/roles/<int:role_id>", methods=["PUT"])
-@jwt_required()
-def update_role(role_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def update_role(role_id: int) -> tuple[dict[str, Any], int]:
     """Update role.
 
     Args:
@@ -176,9 +176,7 @@ def update_role(role_id: int) -> tuple[dict, int]:
         role.description = data["description"]
 
     if "permission_ids" in data:
-        permissions = Permission.query.filter(
-            Permission.id.in_(data["permission_ids"])
-        ).all()
+        permissions = Permission.query.filter(Permission.id.in_(data["permission_ids"])).all()
         role.permissions = permissions
 
     db.session.commit()
@@ -187,8 +185,8 @@ def update_role(role_id: int) -> tuple[dict, int]:
 
 
 @roles_bp.route("/roles/<int:role_id>", methods=["DELETE"])
-@jwt_required()
-def delete_role(role_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def delete_role(role_id: int) -> tuple[dict[str, Any], int]:
     """Delete role.
 
     Args:

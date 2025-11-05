@@ -1,5 +1,9 @@
 /** Debug utilities for HTTP requests and responses. */
 
+/* eslint-disable no-console */
+// Console statements are intentional for debug logging in development mode.
+// This file is specifically for debugging utilities and console output is its purpose.
+
 // Mode debug activé par défaut en développement, ou si explicitement activé
 const DEBUG_MODE =
   import.meta.env.DEV ||

@@ -32,17 +32,14 @@ class BaseConfig:
         # Use pool_pre_ping and pool_recycle for connection management
     }
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "mysql+pymysql://appuser:changeme_db_password@localhost:3306/ebook_scene_packer"
+        "DATABASE_URL",
+        "mysql+pymysql://appuser:changeme_db_password@localhost:3306/ebook_scene_packer",
     )
 
     # JWT
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-this-secret-key-in-production")
-    JWT_ACCESS_TOKEN_EXPIRES = int(
-        os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "86400")
-    )  # 24h
-    JWT_REFRESH_TOKEN_EXPIRES = int(
-        os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "604800")
-    )  # 7 days
+    JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "86400"))  # 24h
+    JWT_REFRESH_TOKEN_EXPIRES = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "604800"))  # 7 days
     JWT_ALGORITHM = "HS256"
 
     # Caching
@@ -50,7 +47,9 @@ class BaseConfig:
     CACHE_DEFAULT_TIMEOUT = 300
 
     # CORS
-    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173").split(",")
+    CORS_ORIGINS = os.getenv(
+        "CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
+    ).split(",")
 
     # Rate Limiting
     RATELIMIT_ENABLED = os.getenv("RATELIMIT_ENABLED", "true").lower() == "true"

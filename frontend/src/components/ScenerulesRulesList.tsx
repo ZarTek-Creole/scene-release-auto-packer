@@ -54,7 +54,6 @@ export function ScenerulesRulesList({
     };
 
     fetchRules();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const handleDownload = async (rule: ScenerulesRule) => {

@@ -14,11 +14,15 @@ Les opérations de formatage sont généralement rapides.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import re
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Constants
+DATE_FORMAT_LENGTH = 8  # YYYYMMDD format length
 
 
 class ReleaseFormatterService:
@@ -67,7 +71,7 @@ class ReleaseFormatterService:
         title: str,
         group: str,
         date: str,
-        release_type: str = "EBOOK",
+        release_type: str = "EBOOK",  # noqa: ARG002
     ) -> str:
         """Formate le nom d'une release selon les règles Scene.
 
@@ -106,14 +110,16 @@ class ReleaseFormatterService:
         if not group:
             raise ValueError("Le nom du groupe ne peut pas être vide")
 
-        if not date or len(date) != 8 or not date.isdigit():
+        if not date or len(date) != DATE_FORMAT_LENGTH or not date.isdigit():
             raise ValueError(f"Date invalide: '{date}'. Format attendu: YYYYMMDD")
 
         # Normaliser titre : trim, remplacer espaces par tirets, supprimer caractères spéciaux
         normalized_title = title.strip()
         normalized_title = normalized_title.replace(" ", "-")
         normalized_title = self.ALLOWED_CHARS_PATTERN.sub("", normalized_title)
-        normalized_title = re.sub(r"-+", "-", normalized_title)  # Remplacer tirets multiples par un seul
+        normalized_title = re.sub(
+            r"-+", "-", normalized_title
+        )  # Remplacer tirets multiples par un seul
         normalized_title = normalized_title.strip("-")  # Supprimer tirets début/fin
 
         # Normaliser groupe : uppercase, supprimer caractères spéciaux
@@ -153,9 +159,7 @@ class ReleaseFormatterService:
         """
         return release_name.strip()
 
-    def format_filename(
-        self, base_name: str, extension: str = ""
-    ) -> str:
+    def format_filename(self, base_name: str, extension: str = "") -> str:
         """Formate le nom d'un fichier pour une release.
 
         Génère un nom de fichier en combinant le nom de base avec l'extension.
@@ -213,35 +217,33 @@ class ReleaseFormatterService:
                 continue
 
             # Normaliser chaînes de caractères
-            if isinstance(value, str):
-                value = value.strip()
-                if not value:
+            normalized_value = value
+            if isinstance(normalized_value, str):
+                normalized_value = normalized_value.strip()
+                if not normalized_value:
                     continue
 
                 # Tentative conversion en int pour certaines clés
                 if key in ["year", "pages", "size"]:
-                    try:
-                        value = int(value)
-                    except ValueError:
-                        pass  # Garder comme chaîne si conversion échoue
+                    with contextlib.suppress(ValueError):
+                        normalized_value = int(normalized_value)
 
             # Normaliser autres types
-            elif isinstance(value, int | float):
+            elif isinstance(normalized_value, int | float):
                 # Garder tel quel
                 pass
-            elif isinstance(value, list):
+            elif isinstance(normalized_value, list):
                 # Normaliser chaque élément de la liste
                 normalized_list = [
                     item.strip() if isinstance(item, str) else item
-                    for item in value
+                    for item in normalized_value
                     if item is not None
                 ]
                 if normalized_list:
-                    value = normalized_list
+                    normalized_value = normalized_list
                 else:
                     continue
 
-            normalized[key] = value
+            normalized[key] = normalized_value
 
         return normalized
-

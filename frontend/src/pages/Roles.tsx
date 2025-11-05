@@ -1,6 +1,6 @@
 /** Roles page component. */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PageLayout } from '../components/PageLayout';
 import { RolesTable } from '../components/RolesTable';
 import { RoleForm } from '../components/RoleForm';
@@ -26,7 +26,7 @@ export function Roles() {
     setShowForm(true);
   };
 
-  const handleSave = (role: Role) => {
+  const handleSave = (_role: Role) => {
     setShowForm(false);
     setSelectedRole(null);
     // Table will refresh automatically via useEffect

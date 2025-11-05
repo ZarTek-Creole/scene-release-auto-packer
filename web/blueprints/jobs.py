@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
@@ -13,8 +15,8 @@ jobs_bp = Blueprint("jobs", __name__)
 
 
 @jobs_bp.route("/jobs", methods=["GET"])
-@jwt_required()
-def list_jobs() -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def list_jobs() -> tuple[dict[str, Any], int]:
     """List jobs with filters and pagination.
 
     Query parameters:
@@ -79,8 +81,8 @@ def list_jobs() -> tuple[dict, int]:
 
 
 @jobs_bp.route("/jobs/<int:job_id>", methods=["GET"])
-@jwt_required()
-def get_job(job_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_job(job_id: int) -> tuple[dict[str, Any], int]:
     """Get job details.
 
     Args:
@@ -112,8 +114,8 @@ def get_job(job_id: int) -> tuple[dict, int]:
 
 
 @jobs_bp.route("/jobs/<int:job_id>/logs", methods=["GET"])
-@jwt_required()
-def get_job_logs(job_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_job_logs(job_id: int) -> tuple[dict[str, Any], int]:
     """Get job logs.
 
     Args:
@@ -151,8 +153,8 @@ def get_job_logs(job_id: int) -> tuple[dict, int]:
 
 
 @jobs_bp.route("/jobs/<int:job_id>/status", methods=["GET"])
-@jwt_required()
-def get_job_status(job_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def get_job_status(job_id: int) -> tuple[dict[str, Any], int]:
     """Get job status.
 
     Args:
@@ -198,8 +200,8 @@ def get_job_status(job_id: int) -> tuple[dict, int]:
 
 
 @jobs_bp.route("/jobs/<int:job_id>/cancel", methods=["PUT"])
-@jwt_required()
-def cancel_job(job_id: int) -> tuple[dict, int]:
+@jwt_required()  # type: ignore[misc]  # MyPy: Flask decorators not fully typed
+def cancel_job(job_id: int) -> tuple[dict[str, Any], int]:
     """Cancel a running job.
 
     Args:

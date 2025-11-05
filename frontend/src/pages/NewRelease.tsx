@@ -227,7 +227,9 @@ export function NewRelease() {
     }
   };
 
-  const handlePrevious = () => {
+  // handlePrevious is currently unused but kept for future navigation feature
+  // Will be used when backward navigation is implemented
+  const _handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }

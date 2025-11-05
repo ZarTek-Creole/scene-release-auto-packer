@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api';
 import { PageLayout } from '../components/PageLayout';
-import { showToast } from '../components/Toast';
 
 /**
  * Login page component.
