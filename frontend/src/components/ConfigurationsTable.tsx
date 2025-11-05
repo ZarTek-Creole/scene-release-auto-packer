@@ -40,8 +40,8 @@ export function ConfigurationsTable({
           per_page: 100,
           ...filters,
         });
-        setConfigurations(response.data?.configurations || []);
-        setPagination(response.data?.pagination || pagination);
+        setConfigurations(response.configurations || []);
+        setPagination(response.pagination || pagination);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load configurations'

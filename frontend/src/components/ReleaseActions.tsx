@@ -29,7 +29,7 @@ export function ReleaseActions({
       setError(null);
       setSuccess(null);
 
-      let response: { data?: ActionResponse };
+      let response: ActionResponse;
       switch (action) {
         case 'nfofix':
           response = await releasesApi.nfofix(releaseId);
@@ -45,7 +45,7 @@ export function ReleaseActions({
           break;
       }
 
-      setSuccess(response.data?.message || 'Action réussie');
+      setSuccess(response.message || 'Action réussie');
       if (onActionComplete) {
         onActionComplete();
       }

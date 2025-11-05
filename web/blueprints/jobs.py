@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db
@@ -105,9 +105,8 @@ def get_job(job_id: int) -> tuple[dict, int]:
     if not check_permission(user, "jobs", "read"):
         return {"message": "Permission denied"}, 403
 
-    if not check_permission(user, "jobs", "mod"):  # mod allows seeing all jobs (admin)
-        if job.created_by != current_user_id:
-            return {"message": "Permission denied"}, 403
+    if not check_permission(user, "jobs", "mod") and job.created_by != current_user_id:
+        return {"message": "Permission denied"}, 403
 
     return (job.to_dict(), 200)
 
@@ -139,9 +138,8 @@ def get_job_logs(job_id: int) -> tuple[dict, int]:
     if not check_permission(user, "jobs", "read"):
         return {"message": "Permission denied"}, 403
 
-    if not check_permission(user, "jobs", "mod"):  # mod allows seeing all jobs (admin)
-        if job.created_by != current_user_id:
-            return {"message": "Permission denied"}, 403
+    if not check_permission(user, "jobs", "mod") and job.created_by != current_user_id:
+        return {"message": "Permission denied"}, 403
 
     return (
         {
@@ -179,12 +177,11 @@ def get_job_status(job_id: int) -> tuple[dict, int]:
     if not check_permission(user, "jobs", "read"):
         return {"message": "Permission denied"}, 403
 
-    if not check_permission(user, "jobs", "mod"):  # mod allows seeing all jobs (admin)
-        if job.created_by != current_user_id:
-            return {"message": "Permission denied"}, 403
+    if not check_permission(user, "jobs", "mod") and job.created_by != current_user_id:
+        return {"message": "Permission denied"}, 403
 
     # Calculate progress
-    from web.services.job_service import JobService
+    from web.services.job import JobService
 
     service = JobService()
     progress = service.get_job_progress(job_id)
@@ -227,12 +224,8 @@ def cancel_job(job_id: int) -> tuple[dict, int]:
     if not check_permission(user, "jobs", "mod"):
         return {"message": "Permission denied"}, 403
 
-    if not check_permission(user, "jobs", "mod"):  # mod allows canceling all jobs (admin)
-        if job.created_by != current_user_id:
-            return {"message": "Permission denied"}, 403
-
     # Cancel job
-    from web.services.job_service import JobService
+    from web.services.job import JobService
 
     service = JobService()
     success = service.cancel_job(job_id)

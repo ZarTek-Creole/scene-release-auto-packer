@@ -1,0 +1,199 @@
+# Installation
+
+Guide complet d'installation et de configuration d'eBook Scene Packer v2.
+
+## Prérequis
+
+### Système
+
+- **OS** : Linux (Debian/Ubuntu recommandé), macOS, ou Windows avec WSL2
+- **Python** : 3.11 ou supérieur
+- **Node.js** : 18.x ou supérieur
+- **MySQL** : 8.0 ou supérieur
+- **Docker** : 20.10+ (optionnel, pour déploiement Docker)
+- **Git** : Pour cloner le repository
+
+### Outils
+
+- **npm** ou **yarn** : Pour installer les dépendances frontend
+- **pip** : Pour installer les dépendances Python
+
+## Installation locale
+
+### 1. Cloner le repository
+
+\`\`\`bash
+git clone https://github.com/yourusername/ebook-scene-packer.git
+cd ebook-scene-packer
+\`\`\`
+
+### 2. Backend (Flask)
+
+\`\`\`bash
+# Créer environnement virtuel
+python3 -m venv venv
+source venv/bin/activate  # Sur Windows: venv\\Scripts\\activate
+
+# Installer dépendances
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+
+# Variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos configurations
+\`\`\`
+
+### 3. Frontend (React)
+
+\`\`\`bash
+cd frontend
+npm install
+# ou
+yarn install
+\`\`\`
+
+### 4. Base de données
+
+\`\`\`bash
+# Créer base de données
+mysql -u root -p
+CREATE DATABASE ebook_scene_packer CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'secure_password';
+GRANT ALL PRIVILEGES ON ebook_scene_packer.* TO 'appuser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+# Migrations
+flask db upgrade
+\`\`\`
+
+### 5. Lancer l'application
+
+\`\`\`bash
+# Backend (terminal 1)
+source venv/bin/activate
+flask run
+
+# Frontend (terminal 2)
+cd frontend
+npm run dev
+\`\`\`
+
+L'application sera accessible sur :
+- **Frontend** : http://localhost:5173
+- **Backend API** : http://localhost:5000
+
+## Installation Docker
+
+### 1. Prérequis Docker
+
+- Docker 20.10+
+- Docker Compose 2.0+
+
+### 2. Configuration
+
+\`\`\`bash
+# Cloner le repository
+git clone https://github.com/yourusername/ebook-scene-packer.git
+cd ebook-scene-packer
+
+# Variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos configurations
+\`\`\`
+
+### 3. Démarrage
+
+\`\`\`bash
+# Build et démarrage
+docker-compose up -d --build
+
+# Vérifier logs
+docker-compose logs -f
+
+# Migrations
+docker-compose exec backend flask db upgrade
+\`\`\`
+
+L'application sera accessible sur :
+- **Frontend** : http://localhost:8081
+- **Backend API** : http://localhost:5000
+- **Nginx** : http://localhost:8082
+
+## Configuration
+
+### Variables d'environnement (.env)
+
+\`\`\`bash
+# Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=ebook_scene_packer
+DB_USER=appuser
+DB_PASSWORD=secure_password
+
+# Flask
+FLASK_ENV=development
+SECRET_KEY=your-secret-key-here
+
+# JWT
+JWT_SECRET_KEY=your-jwt-secret-key-here
+JWT_ACCESS_TOKEN_EXPIRES=3600
+
+# CORS
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+\`\`\`
+
+### Configuration Flask
+
+Les configurations sont définies dans \`web/config.py\` :
+
+- **Development** : Mode développement avec debug activé
+- **Production** : Mode production avec optimisations
+- **Testing** : Mode test avec base de données en mémoire
+
+## Troubleshooting
+
+### Erreur de connexion à la base de données
+
+Vérifier :
+- MySQL est démarré : \`sudo systemctl status mysql\`
+- Credentials corrects dans \`.env\`
+- Base de données créée : \`mysql -u root -p -e "SHOW DATABASES;"\`
+
+### Erreur de port déjà utilisé
+
+\`\`\`bash
+# Trouver processus utilisant le port
+lsof -i :5000  # Backend
+lsof -i :5173  # Frontend
+
+# Tuer processus
+kill -9 <PID>
+\`\`\`
+
+### Erreur de dépendances Python
+
+\`\`\`bash
+# Réinstaller dans environnement virtuel
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+\`\`\`
+
+### Erreur de dépendances Node.js
+
+\`\`\`bash
+# Nettoyer et réinstaller
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+\`\`\`
+
+## Prochaines étapes
+
+Une fois l'installation terminée :
+
+1. **Créer un utilisateur admin** : Voir [Démarrage rapide](/docs/quick-start)
+2. **Explorer l'interface** : Accéder à http://localhost:5173
+3. **Consulter la documentation** : Voir [Architecture](/docs/architecture) et [API Reference](/docs/api)

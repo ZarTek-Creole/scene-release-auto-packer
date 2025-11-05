@@ -8,15 +8,24 @@ from typing import Any
 
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy.orm.attributes import flag_modified
 
 from web.extensions import db, limiter
-from web.models import Configuration, Group, Job, Release, Rule, User
+from web.models import Group, Job, Release, Rule, User
 
 wizard_bp = Blueprint("wizard", __name__)
 
 # Upload directory for wizard files
 UPLOAD_DIR = Path("uploads/wizard")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    # Set permissions if needed (Linux)
+    if hasattr(UPLOAD_DIR, 'chmod'):
+        UPLOAD_DIR.chmod(0o755)
+except (PermissionError, OSError):
+    # If permission denied, use /tmp as fallback
+    UPLOAD_DIR = Path("/tmp/uploads/wizard")
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @wizard_bp.route("/wizard/draft", methods=["POST"])
@@ -174,6 +183,7 @@ def upload_file(release_id: int) -> tuple[dict, int]:
             release.release_metadata["file_url"] = file_url
             release.release_metadata["wizard_step"] = 4
             release.file_path = file_url
+            flag_modified(release, "release_metadata")
             db.session.commit()
 
             return (
@@ -210,7 +220,7 @@ def upload_file(release_id: int) -> tuple[dict, int]:
     release.release_metadata["wizard_step"] = 4
     release.release_metadata["file_size"] = file_size
     release.file_path = str(file_path)
-
+    flag_modified(release, "release_metadata")
     db.session.commit()
 
     return (
@@ -264,8 +274,19 @@ def analyze_file(release_id: int) -> tuple[dict, int]:
 
     # Try to extract basic info from filename
     # Format: GroupName-Author-Title-Format-Language-Year-ISBN-eBook
-    parts = filename.replace(".epub", "").replace(".pdf", "").replace(".cbz", "").split("-")
-    if len(parts) >= 3:
+    # Or: release_X_GroupName-Author-Title-Format...
+    min_filename_parts = 3
+    parts = filename.replace(".epub", "").replace(
+        ".pdf", "").replace(".cbz", "").split("-")
+
+    # Remove release_X_ prefix if present (for uploaded files)
+    if len(parts) > 0 and parts[0].startswith("release_") and "_" in parts[0]:
+        # Extract group name after release_X_ prefix
+        prefix_parts = parts[0].split("_", 2)
+        if len(prefix_parts) >= 3:
+            parts[0] = prefix_parts[2]  # Group name after release_X_
+
+    if len(parts) >= min_filename_parts:
         analysis["detected_group"] = parts[0] if parts else None
         analysis["detected_author"] = parts[1] if len(parts) > 1 else None
 
@@ -274,6 +295,9 @@ def analyze_file(release_id: int) -> tuple[dict, int]:
         release.release_metadata = {}
     release.release_metadata["wizard_step"] = 5
     release.release_metadata["analysis"] = analysis
+
+    # SQLAlchemy needs to be notified when JSON fields are modified
+    flag_modified(release, "release_metadata")
 
     db.session.commit()
 
@@ -323,6 +347,9 @@ def update_metadata(release_id: int) -> tuple[dict, int]:
     enriched_metadata = data.get("enriched_metadata", {})
     release.release_metadata.update(enriched_metadata)
     release.release_metadata["wizard_step"] = 6
+
+    # SQLAlchemy needs to be notified when JSON fields are modified
+    flag_modified(release, "release_metadata")
 
     db.session.commit()
 
@@ -389,6 +416,9 @@ def handle_templates(release_id: int) -> tuple[dict, int]:
     release.release_metadata["wizard_step"] = 7
     release.release_metadata["template_id"] = template_id
 
+    # SQLAlchemy needs to be notified when JSON fields are modified
+    flag_modified(release, "release_metadata")
+
     db.session.commit()
 
     return (
@@ -439,6 +469,10 @@ def update_options(release_id: int) -> tuple[dict, int]:
     if not release.release_metadata:
         release.release_metadata = {}
     release.release_metadata["wizard_step"] = 8
+
+    # SQLAlchemy needs to be notified when JSON fields are modified
+    flag_modified(release, "config")
+    flag_modified(release, "release_metadata")
 
     db.session.commit()
 
@@ -492,11 +526,15 @@ def finalize_release(release_id: int) -> tuple[dict, int]:
     if destination_id:
         release.release_metadata["destination_id"] = destination_id
 
+    # SQLAlchemy needs to be notified when JSON fields are modified
+    flag_modified(release, "release_metadata")
+
     # Update job status
     if job:
         job.status = "ready"
         if job.config_json:
             job.config_json["destination_id"] = destination_id
+            flag_modified(job, "config_json")
 
     db.session.commit()
 

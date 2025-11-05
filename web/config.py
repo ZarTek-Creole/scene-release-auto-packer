@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
 
 from dotenv import load_dotenv
 
@@ -26,8 +25,14 @@ class BaseConfig:
     # Database
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,  # Vérifier connexion avant utilisation
+        "pool_recycle": 300,  # Recycler connexions après 5 minutes
+        # Note: PyMySQL doesn't support connect_timeout in connect_args
+        # Use pool_pre_ping and pool_recycle for connection management
+    }
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "mysql+pymysql://user:password@localhost/ebook_scene_packer"
+        "DATABASE_URL", "mysql+pymysql://appuser:changeme_db_password@localhost:3306/ebook_scene_packer"
     )
 
     # JWT
@@ -45,7 +50,7 @@ class BaseConfig:
     CACHE_DEFAULT_TIMEOUT = 300
 
     # CORS
-    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "*").split(",")
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173").split(",")
 
     # Rate Limiting
     RATELIMIT_ENABLED = os.getenv("RATELIMIT_ENABLED", "true").lower() == "true"

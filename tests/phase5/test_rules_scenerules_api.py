@@ -58,7 +58,8 @@ def test_list_scenerules_rules_with_filters(client, app):
         assert all(r["section"] == "eBOOK" for r in data["rules"])
 
         # Filter by year
-        response = client.get("/api/rules/scenerules?year=2022", headers=headers)
+        response = client.get(
+            "/api/rules/scenerules?year=2022", headers=headers)
 
         assert response.status_code == 200
         data = response.get_json()
@@ -109,18 +110,22 @@ def test_download_scenerules_rule_success(client, app):
     """Test download_scenerules_rule success."""
     with app.app_context():
         # Create admin role with write permission
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -170,18 +175,22 @@ def test_download_scenerules_rule_update_existing(client, app):
     """Test download_scenerules_rule updates existing rule."""
     with app.app_context():
         # Create admin role with write permission
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -242,18 +251,22 @@ def test_download_scenerules_rule_missing_section(client, app):
     """Test download_scenerules_rule without section returns 400."""
     with app.app_context():
         # Create admin role with write permission
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -283,18 +296,22 @@ def test_download_scenerules_rule_by_url(client, app):
     """Test download_scenerules_rule using URL."""
     with app.app_context():
         # Create admin role with write permission
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
         user.roles.append(admin_role)

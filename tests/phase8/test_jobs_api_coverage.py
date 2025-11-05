@@ -276,8 +276,10 @@ def test_cancel_job_not_running(client) -> None:
     with client.application.app_context():
         db.create_all()
         
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         
         jobs_mod_permission = Permission(resource="jobs", action="mod")
         db.session.add(jobs_mod_permission)
@@ -321,8 +323,10 @@ def test_list_jobs_pagination(client) -> None:
     with client.application.app_context():
         db.create_all()
         
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         
         jobs_read_permission = Permission(resource="jobs", action="read")
         db.session.add(jobs_read_permission)

@@ -1,16 +1,15 @@
-"""Rule model."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from typing import Any
 
 from sqlalchemy import Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from web.extensions import db
+from web.models.mixins import TimestampMixin
 
 
-class Rule(db.Model):
+class Rule(TimestampMixin, db.Model):
     """Rule model for Scene rules."""
 
     __tablename__ = "rules"
@@ -23,14 +22,9 @@ class Rule(db.Model):
         db.String(100), nullable=True, index=True
     )
     year: Mapped[int | None] = mapped_column(db.Integer, nullable=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
+    # created_at et updated_at hérités de TimestampMixin
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "id": self.id,

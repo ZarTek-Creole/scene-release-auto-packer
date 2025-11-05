@@ -43,7 +43,7 @@ export function ScenerulesRulesList({
       try {
         setLoading(true);
         const response = await rulesApi.listScenerules(filters);
-        setRules(response.data?.rules || []);
+        setRules(response.rules || []);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load scenerules.org rules'
@@ -73,7 +73,7 @@ export function ScenerulesRulesList({
 
       // Refresh list to update is_downloaded status
       const response = await rulesApi.listScenerules(filters);
-      setRules(response.data?.rules || []);
+      setRules(response.rules || []);
 
       if (onDownloadSuccess) {
         onDownloadSuccess();

@@ -6,7 +6,7 @@ import pytest
 
 from web.extensions import db
 from web.models import Group, Job, Release, User
-from web.services.job_service import JobService
+from web.services.job import JobService
 
 
 def test_process_job_success(app) -> None:

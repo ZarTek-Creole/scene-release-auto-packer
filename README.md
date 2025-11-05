@@ -11,8 +11,6 @@
 
 Refonte complète (v2) de l'application eBook Scene Packer avec architecture moderne, tests complets (TDD), et documentation exhaustive.
 
-**Référence** : Version précédente conservée dans `v1/` comme référence technique et fonctionnelle.
-
 ---
 
 ## ✅ STATUT COMPLET DU PROJET
@@ -37,7 +35,8 @@ Refonte complète (v2) de l'application eBook Scene Packer avec architecture mod
 - **Couverture Globale** : 95% ✅ (≥90% requis)
 - **Fichiers Tests** : 71 fichiers test_*.py
 - **Fichiers Python** : 118 fichiers
-- **Composants Frontend** : 36 composants
+- **Composants Frontend** : 27 composants
+- **Pages Frontend** : 12 pages
 - **Documentation** : Documentation complète et à jour
 
 ---
@@ -151,7 +150,7 @@ docker-compose logs -f
 docker-compose ps
 ```
 
-**Voir** : `docs/DEPLOYMENT_PLAN.md` pour guide déploiement complet
+**Voir** : `docs/guides/deployment.md` pour guide déploiement complet
 
 ---
 
@@ -161,11 +160,11 @@ docker-compose ps
 
 - **DEVBOOK** : `docs/DEVBOOK.md` - Suivi phases/étapes ✅
 - **TodoList** : `docs/todolist.md` - Checklist complète ✅
-- **Déploiement** : `docs/DEPLOYMENT_PLAN.md` - Plan déploiement ✅
-- **Performance** : `docs/PERFORMANCE.md` - Benchmarks et optimisations ✅
-- **Sécurité** : `docs/SECURITY.md` - Revue sécurité complète ✅
-- **Monitoring** : `docs/MONITORING.md` - Monitoring et observabilité ✅
-- **Accessibilité** : `docs/ACCESSIBILITY_TESTS.md` - Tests accessibilité ✅
+- **Déploiement** : `docs/guides/deployment.md` - Plan déploiement ✅
+- **Performance** : `docs/guides/performance.md` - Benchmarks et optimisations ✅
+- **Sécurité** : `docs/guides/security.md` - Revue sécurité complète ✅
+- **Monitoring** : `docs/guides/monitoring.md` - Monitoring et observabilité ✅
+- **Accessibilité** : `docs/guides/accessibility.md` - Tests accessibilité ✅
 
 ### Architecture Decision Records (ADR)
 
@@ -237,7 +236,7 @@ docker-compose exec backend flask db upgrade
 - ✅ Password Hashing (bcrypt)
 - ✅ Input Validation (Marshmallow)
 
-**Voir** : `docs/SECURITY.md` pour détails complets
+**Voir** : `docs/guides/security.md` pour détails complets
 
 ---
 
@@ -254,7 +253,7 @@ docker-compose exec backend flask db upgrade
 - Temps réponse API : **-80%** (500ms → 100ms)
 - Temps chargement frontend : **-50%** (3s → 1.5s)
 
-**Voir** : `docs/PERFORMANCE.md` pour benchmarks détaillés
+**Voir** : `docs/guides/performance.md` pour benchmarks détaillés
 
 ---
 
@@ -268,7 +267,7 @@ docker-compose exec backend flask db upgrade
 - ✅ ARIA labels (éléments interactifs)
 - ✅ Navigation clavier (complète)
 
-**Voir** : `docs/ACCESSIBILITY_TESTS.md` pour détails complets
+**Voir** : `docs/guides/accessibility.md` pour détails complets
 
 ---
 
@@ -276,8 +275,8 @@ docker-compose exec backend flask db upgrade
 
 - **Fichiers Python** : 118 fichiers
 - **Fichiers Tests** : 71 fichiers test_*.py
-- **Composants Frontend** : 36 composants
-- **Pages Frontend** : 11 pages
+- **Composants Frontend** : 27 composants
+- **Pages Frontend** : 12 pages
 - **Blueprints Backend** : 12 blueprints
 - **Models** : 11 models
 - **Couverture Globale** : 95% ✅

@@ -39,8 +39,8 @@ export function RolesTable({
           per_page: 20,
           ...filters,
         });
-        setRoles(response.data?.roles || []);
-        setPagination(response.data?.pagination || pagination);
+        setRoles(response.roles || []);
+        setPagination(response.pagination || pagination);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load roles');
       } finally {

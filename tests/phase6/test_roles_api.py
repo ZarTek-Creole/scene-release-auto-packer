@@ -46,7 +46,10 @@ def test_create_role(client) -> None:
     """Test creating role."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -77,7 +80,10 @@ def test_update_role(client) -> None:
     """Test updating role."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -112,7 +118,10 @@ def test_delete_role(client) -> None:
     """Test deleting role."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)

@@ -2,6 +2,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 // Bootstrap Icons via CSS classes
+import { useAuth } from '../contexts/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
 
 /**
@@ -9,6 +10,7 @@ import { ThemeToggle } from './ThemeToggle';
  */
 export function Navbar() {
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Dashboard' },
@@ -81,7 +83,23 @@ export function Navbar() {
               );
             })}
           </ul>
-          <div className="d-flex">
+          <div className="d-flex align-items-center gap-3">
+            {isAuthenticated && user && (
+              <span className="navbar-text text-light">
+                <i className="bi bi-person me-1" aria-hidden="true" />
+                {user.username}
+              </span>
+            )}
+            {isAuthenticated && (
+              <button
+                className="btn btn-outline-light btn-sm"
+                onClick={logout}
+                aria-label="Déconnexion"
+              >
+                <i className="bi bi-box-arrow-right me-1" aria-hidden="true" />
+                Déconnexion
+              </button>
+            )}
             <ThemeToggle />
           </div>
         </div>

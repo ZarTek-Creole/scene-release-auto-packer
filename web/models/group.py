@@ -1,8 +1,7 @@
-"""Group model."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,7 +22,7 @@ class Group(db.Model):
     )
     description: Mapped[str | None] = mapped_column(db.Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False
+        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
     )
 
     # Relationships
@@ -31,7 +30,7 @@ class Group(db.Model):
         "User", secondary="user_groups", back_populates="groups", lazy="dynamic"
     )
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.
 
         Returns:

@@ -7,7 +7,7 @@ from unittest.mock import Mock, patch
 import pytest
 import requests
 
-from web.services.scenerules_download import ScenerulesDownloadService
+from web.services.rule import ScenerulesDownloadService
 
 
 def test_list_available_rules():

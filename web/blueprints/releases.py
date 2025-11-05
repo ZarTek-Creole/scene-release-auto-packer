@@ -5,7 +5,7 @@ from __future__ import annotations
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import String, cast
-from sqlalchemy.orm import Query, joinedload, selectinload
+from sqlalchemy.orm import Query, joinedload
 
 from web.extensions import db
 from web.models import Release, User
@@ -74,10 +74,13 @@ def list_releases() -> tuple[dict, int]:
     sort_order = request.args.get("sort_order", "desc")
 
     # Build query with eager loading to avoid N+1 queries
+    # Note: Release.jobs uses lazy="dynamic" so cannot use selectinload
+    # Jobs are accessed via release.jobs.all() when needed
     query = Release.query.options(
         joinedload(Release.user),
         joinedload(Release.group),
-        selectinload(Release.jobs),
+        # Cannot use selectinload with lazy="dynamic" relationships
+        # Jobs will be loaded separately if needed
     )
 
     # Filter by release type
@@ -148,9 +151,8 @@ def get_release(release_id: int) -> tuple[dict, int]:
         return {"message": "Release not found"}, 404
 
     # Check permissions (user can only view their own releases unless has READ permission)
-    if release.user_id != current_user_id:
-        if not check_permission(user, "releases", "read", release.user_id):
-            return {"message": "Permission denied"}, 403
+    if release.user_id != current_user_id and not check_permission(user, "releases", "read", release.user_id):
+        return {"message": "Permission denied"}, 403
 
     return {"release": release.to_dict()}, 200
 
@@ -182,9 +184,8 @@ def update_release(release_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    if release.user_id != current_user_id:
-        if not check_permission(user, "releases", "mod", release.user_id):
-            return {"message": "Permission denied"}, 403
+    if release.user_id != current_user_id and not check_permission(user, "releases", "mod", release.user_id):
+        return {"message": "Permission denied"}, 403
 
     data = request.get_json()
 
@@ -226,9 +227,8 @@ def delete_release(release_id: int) -> tuple[dict, int]:
     if not user:
         return {"message": "User not found"}, 404
 
-    if release.user_id != current_user_id:
-        if not check_permission(user, "releases", "delete", release.user_id):
-            return {"message": "Permission denied"}, 403
+    if release.user_id != current_user_id and not check_permission(user, "releases", "delete", release.user_id):
+        return {"message": "Permission denied"}, 403
 
     db.session.delete(release)
     db.session.commit()

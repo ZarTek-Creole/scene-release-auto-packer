@@ -2,9 +2,22 @@
 
 import { useEffect } from 'react';
 
+interface AnalysisResult {
+  filename?: string;
+  file_path?: string;
+  file_size?: string | number;
+  detected_group?: string;
+  detected_author?: string;
+  title?: string;
+  author?: string;
+  isbn?: string;
+  format?: string;
+  [key: string]: unknown;
+}
+
 interface StepAnalysisProps {
   filePath: string;
-  analysis?: Record<string, unknown>;
+  analysis?: AnalysisResult;
   onNext: () => void;
   loading?: boolean;
 }
@@ -18,7 +31,7 @@ export function StepAnalysis({ filePath, analysis, onNext, loading = false }: St
     // Parent component handles the API call
   }, [filePath]);
 
-  const formatValue = (value: unknown): string => {
+  const formatValue = (value: unknown): React.ReactNode => {
     if (value === null || value === undefined) return 'N/A';
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);

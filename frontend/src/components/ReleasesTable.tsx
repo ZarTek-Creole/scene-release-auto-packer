@@ -47,8 +47,8 @@ export function ReleasesTable({ filters = {} }: ReleasesTableProps) {
           per_page: 20,
           ...filters,
         });
-        setReleases(response.data?.releases || []);
-        setPagination(response.data?.pagination || pagination);
+        setReleases(response.releases || []);
+        setPagination(response.pagination || pagination);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load releases'

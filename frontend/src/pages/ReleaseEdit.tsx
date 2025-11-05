@@ -33,7 +33,7 @@ export function ReleaseEdit() {
       try {
         setLoading(true);
         const response = await releasesApi.get(parseInt(id, 10));
-        const releaseData = response.data?.release;
+        const releaseData = response.release;
         if (releaseData) {
           setRelease(releaseData);
           setFormData({

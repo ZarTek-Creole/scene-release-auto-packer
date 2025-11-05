@@ -1,0 +1,52 @@
+# Guide Sécurité
+
+Meilleures pratiques de sécurité pour eBook Scene Packer v2.
+
+## Vue d'ensemble
+
+Sécurité renforcée avec JWT, rate limiting, CORS, et security headers.
+
+## Authentification
+
+### JWT Tokens
+
+- Tokens avec expiration
+- Refresh tokens pour renouvellement
+- Password hashing avec Werkzeug
+
+## Protection
+
+### Rate Limiting
+
+Limitation des requêtes pour éviter les abus.
+
+### CORS
+
+Configuration stricte des origines autorisées.
+
+### Security Headers
+
+- Content-Security-Policy (CSP)
+- X-Frame-Options
+- X-Content-Type-Options
+- Referrer-Policy
+
+## Bonnes Pratiques
+
+### Variables d'environnement
+
+JAMAIS stocker secrets en code. Utiliser \`.env\` :
+
+\`\`\`bash
+SECRET_KEY=your-secret-key-here
+JWT_SECRET_KEY=your-jwt-secret-key-here
+\`\`\`
+
+### Validation Input
+
+Validation stricte des données avec Marshmallow schemas.
+
+## Prochaines étapes
+
+- **Déploiement** : Voir [Guide Déploiement](/docs/guides/deployment)
+- **Monitoring** : Voir [Guide Monitoring](/docs/guides/monitoring)

@@ -26,7 +26,10 @@ def test_user_role_relationship(app) -> None:
         user = User(username="testuser", email="test@example.com")
         user.set_password("password123")
 
-        role1 = Role(name="admin", description="Administrator")
+        # Get or create role1 (may already exist from conftest.py)
+        role1 = Role.query.filter_by(name="admin").first()
+        if not role1:
+            role1 = Role(name="admin", description="Administrator")
         role2 = Role(name="user", description="Regular user")
 
         db.session.add_all([user, role1, role2])
@@ -75,7 +78,8 @@ def test_role_permission_relationship(app) -> None:
     with app.app_context():
         db.create_all()
 
-        role = Role(name="admin", description="Administrator")
+        # Use a different role name to avoid conflicts with conftest.py admin role
+        role = Role(name="editor", description="Editor role")
 
         permission1 = Permission(resource="users", action="READ")
         permission2 = Permission(resource="users", action="WRITE")

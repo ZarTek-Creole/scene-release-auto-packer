@@ -34,7 +34,7 @@ describe('ReleaseDetail', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    expect(screen.getByText(/chargement/i)).toBeInTheDocument();
   });
 
   it('should render release details', async () => {

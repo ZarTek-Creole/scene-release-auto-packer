@@ -13,7 +13,7 @@ def test_list_roles_all_authenticated(client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "viewer", "password": "password"},
@@ -34,10 +34,13 @@ def test_create_role_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = db.session.query(Role).filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -45,7 +48,7 @@ def test_create_role_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -66,7 +69,8 @@ def test_create_role_viewer_permission_denied(client, app):
     """Test viewer without write permission cannot create role."""
     with app.app_context():
         viewer_role = Role(name="viewer", description="Viewer")
-        permission_read = Permission.query.filter_by(resource="roles", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="roles", action="read").first()
         if permission_read:
             viewer_role.permissions.append(permission_read)
         viewer_user = User(username="viewer", email="viewer@test.com")
@@ -74,7 +78,7 @@ def test_create_role_viewer_permission_denied(client, app):
         viewer_user.roles.append(viewer_role)
         db.session.add_all([viewer_role, viewer_user])
         db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "viewer", "password": "password"},
@@ -96,10 +100,13 @@ def test_update_role_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = db.session.query(Role).filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -107,12 +114,12 @@ def test_update_role_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-        
+
         role = Role(name="testrole", description="Test Role")
         db.session.add(role)
         db.session.commit()
         role_id = role.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -133,7 +140,8 @@ def test_update_role_viewer_permission_denied(client, app):
     """Test viewer cannot update role."""
     with app.app_context():
         viewer_role = Role(name="viewer", description="Viewer")
-        permission_read = Permission.query.filter_by(resource="roles", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="roles", action="read").first()
         if permission_read:
             viewer_role.permissions.append(permission_read)
         viewer_user = User(username="viewer", email="viewer@test.com")
@@ -143,7 +151,7 @@ def test_update_role_viewer_permission_denied(client, app):
         db.session.add_all([viewer_role, viewer_user, role])
         db.session.commit()
         role_id = role.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "viewer", "password": "password"},
@@ -164,10 +172,13 @@ def test_delete_role_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = db.session.query(Role).filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -175,12 +186,12 @@ def test_delete_role_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-        
+
         role = Role(name="testrole", description="Test Role")
         db.session.add(role)
         db.session.commit()
         role_id = role.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -200,7 +211,8 @@ def test_delete_role_viewer_permission_denied(client, app):
     """Test viewer cannot delete role."""
     with app.app_context():
         viewer_role = Role(name="viewer", description="Viewer")
-        permission_read = Permission.query.filter_by(resource="roles", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="roles", action="read").first()
         if permission_read:
             viewer_role.permissions.append(permission_read)
         viewer_user = User(username="viewer", email="viewer@test.com")
@@ -210,7 +222,7 @@ def test_delete_role_viewer_permission_denied(client, app):
         db.session.add_all([viewer_role, viewer_user, role])
         db.session.commit()
         role_id = role.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "viewer", "password": "password"},

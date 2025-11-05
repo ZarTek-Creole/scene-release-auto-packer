@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test RuleParserService - eBook Scene Packer</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #0d6efd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0b5ed7;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 4px;
+            border-left: 4px solid #0d6efd;
+        }
+        .result pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        .success {
+            background: #d1e7dd;
+            border-left-color: #198754;
+            color: #0f5132;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test RuleParserService</h1>
+        
+        <div class="test-section">
+            <h2>1. Test Parsing Complet</h2>
+            <p>Collez le contenu d'une règle Scene [2022] eBOOK :</p>
+            <textarea id="ruleContent" placeholder="[2022] eBOOK
+
+OTHER
+PDF, EPUB, CBZ, Kindle (.azw, .kf8), MOBIPOCKET (.prc, .mobi)
+
+PACKAGING
+ZIP+DIZ obligatoire
+.nfo file obligatoire
+
+DIRNAMING
+GroupName-Author-Title-Format-Language-Year-ISBN-eBook"></textarea>
+            <button onclick="testCompleteParsing()">Tester Parsing Complet</button>
+            <div id="resultComplete" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>2. Test Extraction Formats</h2>
+            <button onclick="testExtractFormats()">Tester Extraction Formats</button>
+            <div id="resultFormats" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>3. Test Extraction Format de Nommage</h2>
+            <button onclick="testExtractNaming()">Tester Extraction Nommage</button>
+            <div id="resultNaming" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        function getRuleContent() {
+            return document.getElementById('ruleContent').value || `[2022] eBOOK
+
+OTHER
+PDF, EPUB, CBZ, Kindle (.azw, .kf8), MOBIPOCKET (.prc, .mobi)
+
+PACKAGING
+ZIP+DIZ obligatoire
+.nfo file obligatoire
+
+DIRNAMING
+GroupName-Author-Title-Format-Language-Year-ISBN-eBook`;
+        }
+
+        function displayResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'result ' + (isError ? 'error' : 'success');
+            element.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        }
+
+        async function testCompleteParsing() {
+            const ruleContent = getRuleContent();
+            try {
+                const response = await fetch(`${API_BASE}/test/rule-parser`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({rule_content: ruleContent})
+                });
+                const data = await response.json();
+                displayResult('resultComplete', data, !data.success);
+            } catch (error) {
+                displayResult('resultComplete', {error: error.message}, true);
+            }
+        }
+
+        async function testExtractFormats() {
+            const ruleContent = getRuleContent();
+            try {
+                const response = await fetch(`${API_BASE}/test/rule-parser/extract-formats`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({rule_content: ruleContent})
+                });
+                const data = await response.json();
+                displayResult('resultFormats', data, !data.success);
+            } catch (error) {
+                displayResult('resultFormats', {error: error.message}, true);
+            }
+        }
+
+        async function testExtractNaming() {
+            const ruleContent = getRuleContent();
+            try {
+                const response = await fetch(`${API_BASE}/test/rule-parser/extract-naming`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({rule_content: ruleContent})
+                });
+                const data = await response.json();
+                displayResult('resultNaming', data, !data.success);
+            } catch (error) {
+                displayResult('resultNaming', {error: error.message}, true);
+            }
+        }
+    </script>
+</body>
+</html>
+

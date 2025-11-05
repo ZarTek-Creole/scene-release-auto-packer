@@ -41,8 +41,8 @@ export function RulesTable({
           per_page: 20,
           ...filters,
         });
-        setRules(response.data?.rules || []);
-        setPagination(response.data?.pagination || pagination);
+        setRules(response.rules || []);
+        setPagination(response.pagination || pagination);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load rules');
       } finally {

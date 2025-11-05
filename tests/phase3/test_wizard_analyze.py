@@ -241,6 +241,7 @@ def test_wizard_analyze_file_user_not_found(client, app) -> None:
         user.set_password("password123")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(
             user_id=user.id,
@@ -259,12 +260,19 @@ def test_wizard_analyze_file_user_not_found(client, app) -> None:
     )
     token = login_response.get_json()["access_token"]
 
-    # Delete user after login
+    # Delete user and release after login
     with app.app_context():
-        db.session.delete(user)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
-    # Try analyze
+    # Try analyze with deleted user
     response = client.post(
         f"/api/wizard/{release_id}/analyze",
         headers={"Authorization": f"Bearer {token}"},

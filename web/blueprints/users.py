@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from sqlalchemy.orm import joinedload
 
 from web.extensions import db
-from web.models import Group, Role, User
-from web.utils.permissions import check_permission, is_admin, can_manage_user
+from web.models import Role, User
+from web.utils.permissions import can_manage_user, check_permission
 
 users_bp = Blueprint("users", __name__)
 
@@ -45,8 +44,10 @@ def list_users() -> tuple[dict, int]:
     email = request.args.get("email", "")
     role_id = request.args.get("role_id", type=int)
 
-    # Build query with eager loading to avoid N+1 queries
-    query = User.query.options(joinedload(User.roles))
+    # Build query
+    # Note: User.roles uses lazy="dynamic" so cannot use joinedload
+    # Roles are accessed via user.roles.all() when needed
+    query = User.query
 
     if username:
         query = query.filter(User.username.like(f"%{username}%"))

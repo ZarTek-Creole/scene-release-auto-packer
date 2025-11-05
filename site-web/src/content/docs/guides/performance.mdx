@@ -1,0 +1,58 @@
+# Guide Performance
+
+Optimisations et meilleures pratiques pour les performances.
+
+## Vue d'ensemble
+
+eBook Scene Packer v2 est optimisé pour des performances élevées.
+
+## Optimisations Backend
+
+### Flask-Caching
+
+Cache activé pour les endpoints fréquemment accédés :
+
+- Dashboard stats : 5 minutes
+- Rules : 10 minutes
+- Scenerules : 30 minutes
+
+### Eager Loading
+
+Évite les requêtes N+1 avec SQLAlchemy :
+
+\`\`\`python
+releases = (
+    db.session.query(Release)
+    .options(
+        joinedload(Release.user),
+        joinedload(Release.group),
+        selectinload(Release.jobs)
+    )
+    .all()
+)
+\`\`\`
+
+## Optimisations Frontend
+
+### Lazy Loading
+
+Routes chargées à la demande :
+
+\`\`\`typescript
+const ReleasesList = lazy(() => import('./pages/ReleasesList'));
+\`\`\`
+
+### Code Splitting
+
+Vite génère automatiquement des chunks optimisés.
+
+## Benchmarks
+
+- **Temps réponse API** : < 200ms (p95)
+- **Temps chargement frontend** : < 2s
+- **Temps navigation** : < 100ms
+
+## Prochaines étapes
+
+- **Sécurité** : Voir [Guide Sécurité](/docs/guides/security)
+- **Monitoring** : Voir [Guide Monitoring](/docs/guides/monitoring)

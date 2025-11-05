@@ -28,7 +28,7 @@ export function StepRules({
       try {
         setLoading(true);
         const response = await wizardApi.listRules(releaseType);
-        setRules(response.data?.rules || []);
+        setRules(response.rules || []);
       } catch (err) {
         console.error('Failed to load rules:', err);
       } finally {

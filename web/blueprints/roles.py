@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from web.extensions import db

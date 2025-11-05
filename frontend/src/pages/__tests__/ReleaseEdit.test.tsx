@@ -3,29 +3,38 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { ReleaseEdit } from '../ReleaseEdit';
-import { releasesApi } from '../../services/releases';
+import * as releasesService from '../../services/releases';
 
 // Mock releasesApi
-jest.mock('../../services/releases', () => ({
+vi.mock('../../services/releases', () => ({
   releasesApi: {
-    get: jest.fn(),
-    update: jest.fn(),
+    get: vi.fn(),
+    update: vi.fn(),
   },
 }));
 
-const mockReleasesApi = releasesApi as jest.Mocked<typeof releasesApi>;
-const mockNavigate = jest.fn();
+interface MockReleasesApi {
+  get: ReturnType<typeof vi.fn>;
+  update: ReturnType<typeof vi.fn>;
+}
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-  useParams: () => ({ id: '1' }),
-}));
+const mockReleasesApi = releasesService.releasesApi as unknown as MockReleasesApi;
+const mockNavigate = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    useParams: () => ({ id: '1' }),
+  };
+});
 
 describe('ReleaseEdit', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should render loading state initially', () => {
@@ -42,16 +51,14 @@ describe('ReleaseEdit', () => {
 
   it('should render edit form when release loaded', async () => {
     mockReleasesApi.get.mockResolvedValue({
-      data: {
-        release: {
-          id: 1,
-          user_id: 1,
-          release_type: 'EBOOK',
-          status: 'draft',
-          release_metadata: { title: 'Test Book' },
-          config: { zip_size: 50 },
-          created_at: '2025-01-01T00:00:00',
-        },
+      release: {
+        id: 1,
+        user_id: 1,
+        release_type: 'EBOOK',
+        status: 'draft',
+        release_metadata: { title: 'Test Book' },
+        config: { zip_size: 50 },
+        created_at: '2025-01-01T00:00:00',
       },
     });
 
@@ -70,32 +77,28 @@ describe('ReleaseEdit', () => {
 
   it('should submit form and navigate on save', async () => {
     mockReleasesApi.get.mockResolvedValue({
-      data: {
-        release: {
-          id: 1,
-          user_id: 1,
-          release_type: 'EBOOK',
-          status: 'draft',
-          release_metadata: { title: 'Original' },
-          config: {},
-          created_at: '2025-01-01T00:00:00',
-        },
+      release: {
+        id: 1,
+        user_id: 1,
+        release_type: 'EBOOK',
+        status: 'draft',
+        release_metadata: { title: 'Original' },
+        config: {},
+        created_at: '2025-01-01T00:00:00',
       },
     });
 
     mockReleasesApi.update.mockResolvedValue({
-      data: {
-        release: {
-          id: 1,
-          user_id: 1,
-          release_type: 'EBOOK',
-          status: 'completed',
-          release_metadata: { title: 'Updated' },
-          config: {},
-          created_at: '2025-01-01T00:00:00',
-        },
-        message: 'Updated',
+      release: {
+        id: 1,
+        user_id: 1,
+        release_type: 'EBOOK',
+        status: 'completed',
+        release_metadata: { title: 'Updated' },
+        config: {},
+        created_at: '2025-01-01T00:00:00',
       },
+      message: 'Updated',
     });
 
     render(

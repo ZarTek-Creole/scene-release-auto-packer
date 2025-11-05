@@ -3,9 +3,16 @@
 import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { expect, describe, it } from 'vitest';
+import { ReactNode } from 'react';
+
+interface ButtonProps {
+  onClick?: () => void;
+  children: ReactNode;
+  'aria-label'?: string;
+}
 
 // Mock Button component - replace with actual import when Button exists
-const Button = ({ onClick, children, 'aria-label': ariaLabel }: any) => (
+const Button = ({ onClick, children, 'aria-label': ariaLabel }: ButtonProps) => (
   <button onClick={onClick} aria-label={ariaLabel}>
     {children}
   </button>
@@ -36,7 +43,9 @@ describe('Button Accessibility', () => {
       <Button onClick={() => {}}>Click me</Button>
     );
     const button = getByRole('button');
-    expect(button).toHaveAttribute('tabIndex', '0');
+    // Buttons are keyboard accessible by default, tabIndex is not required
+    expect(button).toBeInTheDocument();
+    expect(button).not.toHaveAttribute('tabIndex', '-1');
   });
 
   it('should have focus visible', () => {

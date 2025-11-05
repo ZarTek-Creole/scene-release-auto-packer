@@ -333,6 +333,7 @@ def test_wizard_upload_file_user_not_found(client, app) -> None:
         user.set_password("password123")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(user_id=user.id, release_type="EBOOK", status="draft")
         db.session.add(release)
@@ -346,9 +347,16 @@ def test_wizard_upload_file_user_not_found(client, app) -> None:
     )
     token = login_response.get_json()["access_token"]
 
-    # Delete user after login (simulate user deleted after token issued)
+    # Delete user and release after login (simulate user deleted after token issued)
     with app.app_context():
-        db.session.delete(user)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
     # Try upload

@@ -36,7 +36,7 @@ export function UserForm({ user, onSave, onCancel }: UserFormProps) {
     const fetchRoles = async () => {
       try {
         const response = await rolesApi.list({ per_page: 100 });
-        setRoles(response.data?.roles || []);
+        setRoles(response.roles || []);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load roles'
@@ -76,8 +76,8 @@ export function UserForm({ user, onSave, onCancel }: UserFormProps) {
           updateData.password = password;
         }
         const response = await usersApi.update(user.id, updateData);
-        if (onSave) {
-          onSave(response.data?.user!);
+        if (onSave && response.user) {
+          onSave(response.user);
         }
       } else {
         // Create user
@@ -92,8 +92,8 @@ export function UserForm({ user, onSave, onCancel }: UserFormProps) {
           password,
         };
         const response = await usersApi.create(createData);
-        if (onSave) {
-          onSave(response.data?.user!);
+        if (onSave && response.user) {
+          onSave(response.user);
         }
       }
     } catch (err) {

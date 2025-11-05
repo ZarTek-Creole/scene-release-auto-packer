@@ -15,8 +15,10 @@ from web.utils.permissions import (
 def test_is_admin_with_admin_role(app):
     """Test is_admin returns True for user with admin role."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         db.session.commit()
 
         user = User(username="admin", email="admin@test.com")
@@ -42,8 +44,10 @@ def test_is_admin_without_admin_role(app):
 def test_check_permission_admin_has_all(app):
     """Test check_permission returns True for admin for all resources."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         db.session.commit()
 
         user = User(username="admin", email="admin@test.com")
@@ -62,7 +66,8 @@ def test_check_permission_user_with_role_permission(app):
     """Test check_permission returns True for user with role permission."""
     with app.app_context():
         editor_role = Role(name="editor", description="Editor")
-        permission = Permission.query.filter_by(resource="releases", action="mod").first()
+        permission = Permission.query.filter_by(
+            resource="releases", action="mod").first()
         if not permission:
             permission = Permission(resource="releases", action="mod")
             db.session.add(permission)
@@ -91,15 +96,18 @@ def test_check_permission_user_own_release(app):
 
         # User can read their own releases
         assert (
-            check_permission(user, "releases", "read", release_user_id=user.id) is True
+            check_permission(user, "releases", "read",
+                             release_user_id=user.id) is True
         )
         # User can write their own releases
         assert (
-            check_permission(user, "releases", "write", release_user_id=user.id) is True
+            check_permission(user, "releases", "write",
+                             release_user_id=user.id) is True
         )
         # User can delete their own releases
         assert (
-            check_permission(user, "releases", "delete", release_user_id=user.id)
+            check_permission(user, "releases", "delete",
+                             release_user_id=user.id)
             is True
         )
 
@@ -107,8 +115,10 @@ def test_check_permission_user_own_release(app):
 def test_can_manage_user_admin_can_manage_all(app):
     """Test can_manage_user allows admin to manage all users."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         db.session.commit()
 
         admin_user = User(username="admin", email="admin@test.com")
@@ -152,8 +162,10 @@ def test_can_manage_user_cannot_manage_others(app):
 def test_get_user_permissions_admin(app):
     """Test get_user_permissions returns all permissions for admin."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         db.session.commit()
 
         user = User(username="admin", email="admin@test.com")
@@ -175,11 +187,13 @@ def test_get_user_permissions_user_with_role(app):
     """Test get_user_permissions returns permissions from role."""
     with app.app_context():
         editor_role = Role(name="editor", description="Editor")
-        permission_read = Permission.query.filter_by(resource="releases", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="releases", action="read").first()
         if not permission_read:
             permission_read = Permission(resource="releases", action="read")
             db.session.add(permission_read)
-        permission_mod = Permission.query.filter_by(resource="releases", action="mod").first()
+        permission_mod = Permission.query.filter_by(
+            resource="releases", action="mod").first()
         if not permission_mod:
             permission_mod = Permission(resource="releases", action="mod")
             db.session.add(permission_mod)
@@ -222,7 +236,8 @@ def test_get_user_permissions_user_with_role_no_releases_permission(app):
     """Test get_user_permissions adds READ for releases if role has no releases permission."""
     with app.app_context():
         rules_role = Role(name="rules_only", description="Rules only")
-        permission_read_rules = Permission.query.filter_by(resource="rules", action="read").first()
+        permission_read_rules = Permission.query.filter_by(
+            resource="rules", action="read").first()
         if not permission_read_rules:
             permission_read_rules = Permission(resource="rules", action="read")
             db.session.add(permission_read_rules)
@@ -270,11 +285,13 @@ def test_check_permission_other_user_release(app):
 
         # User1 cannot access user2's releases without permission
         assert (
-            check_permission(user1, "releases", "read", release_user_id=user2.id)
+            check_permission(user1, "releases", "read",
+                             release_user_id=user2.id)
             is False
         )
         assert (
-            check_permission(user1, "releases", "write", release_user_id=user2.id)
+            check_permission(user1, "releases", "write",
+                             release_user_id=user2.id)
             is False
         )
 
@@ -289,16 +306,20 @@ def test_check_permission_release_different_actions(app):
 
         # User can perform all actions on own releases
         assert (
-            check_permission(user, "releases", "read", release_user_id=user.id) is True
+            check_permission(user, "releases", "read",
+                             release_user_id=user.id) is True
         )
         assert (
-            check_permission(user, "releases", "write", release_user_id=user.id) is True
+            check_permission(user, "releases", "write",
+                             release_user_id=user.id) is True
         )
         assert (
-            check_permission(user, "releases", "mod", release_user_id=user.id) is True
+            check_permission(user, "releases", "mod",
+                             release_user_id=user.id) is True
         )
         assert (
-            check_permission(user, "releases", "delete", release_user_id=user.id)
+            check_permission(user, "releases", "delete",
+                             release_user_id=user.id)
             is True
         )
 
@@ -309,7 +330,8 @@ def test_require_permission_placeholder(app):
 
     # This is a placeholder function that always returns True
     assert require_permission("releases", "read") is True
-    assert require_permission("rules", "write", require_admin=True) is True
+    # Note: The function uses _require_admin parameter (with underscore)
+    assert require_permission("rules", "write", _require_admin=True) is True
 
 
 def test_create_default_permissions_empty_db(app):
@@ -331,15 +353,18 @@ def test_create_default_permissions_empty_db(app):
 
         # Verify specific permissions exist
         assert (
-            Permission.query.filter_by(resource="releases", action="read").first()
+            Permission.query.filter_by(
+                resource="releases", action="read").first()
             is not None
         )
         assert (
-            Permission.query.filter_by(resource="rules", action="write").first()
+            Permission.query.filter_by(
+                resource="rules", action="write").first()
             is not None
         )
         assert (
-            Permission.query.filter_by(resource="users", action="delete").first()
+            Permission.query.filter_by(
+                resource="users", action="delete").first()
             is not None
         )
         assert (
@@ -357,7 +382,7 @@ def test_create_default_permissions_existing_permissions(app):
         # Delete all permissions first
         Permission.query.delete()
         db.session.commit()
-        
+
         # Create one permission manually
         existing_perm = Permission(resource="releases", action="read")
         db.session.add(existing_perm)

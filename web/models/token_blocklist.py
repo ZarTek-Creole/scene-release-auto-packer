@@ -1,8 +1,7 @@
-"""Token blocklist model for JWT revocation."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,13 +22,13 @@ class TokenBlocklist(db.Model):
         db.Integer, db.ForeignKey("users.id"), nullable=True
     )
     revoked_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False, index=True
+        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False, index=True
     )
     expires_at: Mapped[datetime] = mapped_column(
         db.DateTime, nullable=False, index=True
     )
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.
 
         Returns:

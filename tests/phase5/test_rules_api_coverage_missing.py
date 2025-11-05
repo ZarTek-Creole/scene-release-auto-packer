@@ -174,18 +174,22 @@ def test_download_scenerules_rule_no_data(client) -> None:
     """Test downloading scenerules rule without data (400)."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -202,7 +206,8 @@ def test_download_scenerules_rule_no_data(client) -> None:
     # Try to download without data
     response = client.post(
         "/api/rules/scenerules/download",
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        headers={"Authorization": f"Bearer {token}",
+                 "Content-Type": "application/json"},
         data="{}",
     )
     assert response.status_code == 400
@@ -215,18 +220,22 @@ def test_download_scenerules_rule_missing_section(client) -> None:
     """Test downloading scenerules rule without section (400)."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -254,18 +263,22 @@ def test_download_scenerules_rule_by_url(client) -> None:
     """Test downloading scenerules rule by URL."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -280,8 +293,9 @@ def test_download_scenerules_rule_by_url(client) -> None:
     token = login_response.get_json()["access_token"]
 
     # Mock the download service
-    with patch("web.services.scenerules_download.ScenerulesDownloadService.download_rule_by_url") as mock_download:
-        mock_download.return_value = {
+    with patch("web.blueprints.rules.ScenerulesDownloadService") as mock_service_class:
+        mock_service = Mock()
+        mock_service.download_rule_by_url.return_value = {
             "name": "[2022] eBOOK",
             "content": "Test content",
             "section": "eBOOK",
@@ -290,6 +304,7 @@ def test_download_scenerules_rule_by_url(client) -> None:
             "source": "scenerules.org",
             "url": "https://scenerules.org/nfo/2022_eBOOK.nfo",
         }
+        mock_service_class.return_value = mock_service
 
         response = client.post(
             "/api/rules/scenerules/download",
@@ -306,18 +321,22 @@ def test_download_scenerules_rule_update_existing(client) -> None:
     """Test downloading scenerules rule updates existing."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -343,8 +362,9 @@ def test_download_scenerules_rule_update_existing(client) -> None:
     token = login_response.get_json()["access_token"]
 
     # Mock the download service
-    with patch("web.services.scenerules_download.ScenerulesDownloadService.download_rule") as mock_download:
-        mock_download.return_value = {
+    with patch("web.blueprints.rules.ScenerulesDownloadService") as mock_service_class:
+        mock_service = Mock()
+        mock_service.download_rule.return_value = {
             "name": "[2022] eBOOK",
             "content": "New content",
             "section": "eBOOK",
@@ -352,6 +372,7 @@ def test_download_scenerules_rule_update_existing(client) -> None:
             "scene": "English",
             "source": "scenerules.org",
         }
+        mock_service_class.return_value = mock_service
 
         response = client.post(
             "/api/rules/scenerules/download",
@@ -369,18 +390,22 @@ def test_download_scenerules_rule_value_error(client) -> None:
     """Test downloading scenerules rule with ValueError (404)."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -395,8 +420,11 @@ def test_download_scenerules_rule_value_error(client) -> None:
     token = login_response.get_json()["access_token"]
 
     # Mock the download service to raise ValueError
-    with patch("web.services.scenerules_download.ScenerulesDownloadService.download_rule") as mock_download:
-        mock_download.side_effect = ValueError("Rule not found: NONEXISTENT [2022]")
+    with patch("web.blueprints.rules.ScenerulesDownloadService") as mock_service_class:
+        mock_service = Mock()
+        mock_service.download_rule.side_effect = ValueError(
+            "Rule not found: NONEXISTENT [2022]")
+        mock_service_class.return_value = mock_service
 
         response = client.post(
             "/api/rules/scenerules/download",
@@ -411,18 +439,22 @@ def test_download_scenerules_rule_general_exception(client) -> None:
     """Test downloading scenerules rule with general exception (500)."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_permission = db.session.query(Permission).filter_by(
             resource="rules", action="write"
         ).first()
         if not write_permission:
             write_permission = Permission(resource="rules", action="write")
             db.session.add(write_permission)
-        
-        admin_role.permissions.append(write_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -437,8 +469,10 @@ def test_download_scenerules_rule_general_exception(client) -> None:
     token = login_response.get_json()["access_token"]
 
     # Mock the download service to raise generic Exception
-    with patch("web.services.scenerules_download.ScenerulesDownloadService.download_rule") as mock_download:
-        mock_download.side_effect = Exception("Network error")
+    with patch("web.blueprints.rules.ScenerulesDownloadService") as mock_service_class:
+        mock_service = Mock()
+        mock_service.download_rule.side_effect = Exception("Network error")
+        mock_service_class.return_value = mock_service
 
         response = client.post(
             "/api/rules/scenerules/download",
@@ -488,7 +522,13 @@ def test_upload_rule_user_not_found(client) -> None:
 
 
 def test_upload_rule_invalid_encoding(client) -> None:
-    """Test uploading rule with invalid encoding (400)."""
+    """Test uploading rule with invalid encoding (400).
+
+    NOTE: ISO-8859-1 can decode any byte sequence, so this test verifies
+    that the endpoint accepts ISO-8859-1 encoded files. The test uploads
+    a file that cannot be decoded as UTF-8 but can be decoded as ISO-8859-1,
+    which should succeed (201), not fail (400).
+    """
     with client.application.app_context():
         db.create_all()
         user = User(username="testuser", email="test@example.com")
@@ -503,18 +543,20 @@ def test_upload_rule_invalid_encoding(client) -> None:
     )
     token = login_response.get_json()["access_token"]
 
-    # Create file with invalid encoding (binary that can't be decoded as UTF-8 or ISO-8859-1)
+    # Create file with bytes that cannot be decoded as UTF-8 but can be decoded as ISO-8859-1
     from io import BytesIO
-    # Use bytes that are invalid in both UTF-8 and ISO-8859-1
-    content = b"\xff\xfe\xfd\xfc"  # Invalid bytes
+    # Use bytes that are invalid in UTF-8 but valid in ISO-8859-1
+    content = b"\xff\xfe\xfd\xfc"  # Invalid UTF-8 but valid ISO-8859-1
     file_content = BytesIO(content)
     file_content.name = "test.nfo"
 
-    # Upload rule - should fail with invalid encoding
+    # Upload rule - should succeed because ISO-8859-1 can decode any byte sequence
+    # The code tries UTF-8 first, fails, then tries ISO-8859-1, succeeds
     response = client.post(
         "/api/rules/upload",
         headers={"Authorization": f"Bearer {token}"},
         data={"file": (file_content, "test.nfo")},
     )
-    assert response.status_code == 400
-    assert "Invalid file encoding" in response.get_json()["message"]
+    # Should succeed because ISO-8859-1 can decode any byte sequence
+    assert response.status_code == 201
+    assert "rule" in response.get_json()

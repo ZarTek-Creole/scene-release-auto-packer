@@ -3,26 +3,35 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { ReleaseActions } from '../ReleaseActions';
-import { releasesApi } from '../../services/releases';
+import * as releasesService from '../../services/releases';
+import type { ActionResponse } from '../../services/releases';
+
+interface MockReleasesApi {
+  nfofix: ReturnType<typeof vi.fn>;
+  readnfo: ReturnType<typeof vi.fn>;
+  repack: ReturnType<typeof vi.fn>;
+  dirfix: ReturnType<typeof vi.fn>;
+}
 
 // Mock releasesApi
-jest.mock('../../services/releases', () => ({
+vi.mock('../../services/releases', () => ({
   releasesApi: {
-    nfofix: jest.fn(),
-    readnfo: jest.fn(),
-    repack: jest.fn(),
-    dirfix: jest.fn(),
+    nfofix: vi.fn(),
+    readnfo: vi.fn(),
+    repack: vi.fn(),
+    dirfix: vi.fn(),
   },
 }));
 
-const mockReleasesApi = releasesApi as jest.Mocked<typeof releasesApi>;
+const mockReleasesApi = releasesService.releasesApi as unknown as MockReleasesApi;
 
 describe('ReleaseActions', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Mock window.prompt for repack
-    window.prompt = jest.fn();
+    window.prompt = vi.fn();
   });
 
   const renderComponent = (props = {}) => {
@@ -44,8 +53,9 @@ describe('ReleaseActions', () => {
 
   it('should call nfofix API when NFOFIX button clicked', async () => {
     mockReleasesApi.nfofix.mockResolvedValue({
-      data: { message: 'Success', job_id: 1 },
-    });
+      message: 'Success',
+      job_id: 1,
+    } as ActionResponse);
 
     renderComponent();
 
@@ -59,8 +69,9 @@ describe('ReleaseActions', () => {
 
   it('should call readnfo API when READNFO button clicked', async () => {
     mockReleasesApi.readnfo.mockResolvedValue({
-      data: { message: 'Success', job_id: 1 },
-    });
+      message: 'Success',
+      job_id: 1,
+    } as ActionResponse);
 
     renderComponent();
 
@@ -74,8 +85,9 @@ describe('ReleaseActions', () => {
 
   it('should call dirfix API when DIRFIX button clicked', async () => {
     mockReleasesApi.dirfix.mockResolvedValue({
-      data: { message: 'Success', job_id: 1 },
-    });
+      message: 'Success',
+      job_id: 1,
+    } as ActionResponse);
 
     renderComponent();
 
@@ -88,10 +100,12 @@ describe('ReleaseActions', () => {
   });
 
   it('should call repack API with options when REPACK button clicked', async () => {
-    (window.prompt as jest.Mock).mockReturnValue('100');
+    const mockPrompt = vi.fn().mockReturnValue('100');
+    window.prompt = mockPrompt;
     mockReleasesApi.repack.mockResolvedValue({
-      data: { message: 'Success', job_id: 1 },
-    });
+      message: 'Success',
+      job_id: 1,
+    } as ActionResponse);
 
     renderComponent();
 
@@ -117,10 +131,11 @@ describe('ReleaseActions', () => {
   });
 
   it('should call onActionComplete callback after successful action', async () => {
-    const onActionComplete = jest.fn();
+    const onActionComplete = vi.fn();
     mockReleasesApi.nfofix.mockResolvedValue({
-      data: { message: 'Success', job_id: 1 },
-    });
+      message: 'Success',
+      job_id: 1,
+    } as ActionResponse);
 
     renderComponent({ onActionComplete });
 

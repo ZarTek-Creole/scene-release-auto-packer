@@ -13,7 +13,7 @@ releases_actions_bp = Blueprint("releases_actions", __name__)
 
 
 def _check_permission(
-    release: Release, current_user: User, action: str
+    release: Release, current_user: User, _action: str
 ) -> bool:
     """Check if user has permission for action.
 

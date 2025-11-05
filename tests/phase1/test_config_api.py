@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 from web.extensions import db
-from web.models import Configuration, User
+from web.models import Configuration, Role, User
 
 
 def test_list_configurations(client, app):
     """Test listing configurations."""
     with app.app_context():
-        # Create user and login
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -38,8 +41,12 @@ def test_list_configurations(client, app):
 def test_list_configurations_with_category_filter(client, app):
     """Test listing configurations with category filter."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -64,8 +71,12 @@ def test_list_configurations_with_category_filter(client, app):
 def test_list_configurations_with_key_filter(client, app):
     """Test listing configurations with key filter."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -90,8 +101,12 @@ def test_list_configurations_with_key_filter(client, app):
 def test_get_configuration(client, app):
     """Test getting configuration by ID."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -117,8 +132,12 @@ def test_get_configuration(client, app):
 def test_get_configuration_not_found(client, app):
     """Test getting non-existent configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -136,8 +155,12 @@ def test_get_configuration_not_found(client, app):
 def test_get_configuration_by_key(client, app):
     """Test getting configuration by key."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -161,8 +184,12 @@ def test_get_configuration_by_key(client, app):
 def test_get_configuration_by_key_not_found(client, app):
     """Test getting configuration by non-existent key."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -180,8 +207,12 @@ def test_get_configuration_by_key_not_found(client, app):
 def test_create_configuration(client, app):
     """Test creating configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -211,8 +242,12 @@ def test_create_configuration(client, app):
 def test_create_configuration_missing_fields(client, app):
     """Test creating configuration with missing required fields."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -243,8 +278,12 @@ def test_create_configuration_missing_fields(client, app):
 def test_create_configuration_duplicate_key(client, app):
     """Test creating configuration with duplicate key."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -271,8 +310,12 @@ def test_create_configuration_duplicate_key(client, app):
 def test_update_configuration(client, app):
     """Test updating configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -301,8 +344,12 @@ def test_update_configuration(client, app):
 def test_update_configuration_not_found(client, app):
     """Test updating non-existent configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -324,8 +371,12 @@ def test_update_configuration_not_found(client, app):
 def test_update_configuration_duplicate_key(client, app):
     """Test updating configuration with duplicate key."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -355,8 +406,12 @@ def test_update_configuration_duplicate_key(client, app):
 def test_delete_configuration(client, app):
     """Test deleting configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
@@ -383,8 +438,12 @@ def test_delete_configuration(client, app):
 def test_delete_configuration_not_found(client, app):
     """Test deleting non-existent configuration."""
     with app.app_context():
+        # Create user with admin role
+        admin_role = Role.query.filter_by(name="admin").first()
         user = User(username="testuser", email="test@test.com")
         user.set_password("password")
+        if admin_role:
+            user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 

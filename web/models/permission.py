@@ -1,8 +1,7 @@
-"""Permission model."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -21,7 +20,7 @@ class Permission(db.Model):
     resource: Mapped[str] = mapped_column(db.String(100), nullable=False, index=True)
     action: Mapped[str] = mapped_column(db.String(50), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False
+        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
     )
 
     # Relationships
@@ -35,7 +34,7 @@ class Permission(db.Model):
     # Composite unique constraint
     __table_args__ = (db.UniqueConstraint("resource", "action", name="uq_permission"),)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.
 
         Returns:

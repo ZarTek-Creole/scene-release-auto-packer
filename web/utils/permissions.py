@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 def check_permission(
-    user: "User", resource: str, action: str, release_user_id: int | None = None
+    user: User, resource: str, action: str, release_user_id: int | None = None
 ) -> bool:
     """Check if user has permission for resource and action.
 
@@ -29,8 +29,10 @@ def check_permission(
         return True
 
     # Check if user has permission through role
-    for role in user.roles:
-        for permission in role.permissions:
+    # Note: user.roles is lazy="dynamic", so we need to use .all()
+    for role in user.roles.all():
+        # Note: role.permissions is lazy="dynamic", so we need to use .all()
+        for permission in role.permissions.all():
             if permission.resource == resource and permission.action == action:
                 return True
 
@@ -48,7 +50,7 @@ def check_permission(
     return False
 
 
-def require_permission(resource: str, action: str, require_admin: bool = False) -> bool:
+def require_permission(_resource: str, _action: str, _require_admin: bool = False) -> bool:
     """Require permission decorator helper.
 
     Args:
@@ -68,7 +70,7 @@ def require_permission(resource: str, action: str, require_admin: bool = False) 
     return True
 
 
-def get_user_permissions(user: "User") -> dict[str, list[str]]:
+def get_user_permissions(user: User) -> dict[str, list[str]]:
     """Get all permissions for a user grouped by resource.
 
     Args:
@@ -88,8 +90,10 @@ def get_user_permissions(user: "User") -> dict[str, list[str]]:
         return permissions
 
     # Collect permissions from roles
-    for role in user.roles:
-        for permission in role.permissions:
+    # Note: user.roles is lazy="dynamic", so we need to use .all()
+    for role in user.roles.all():
+        # Note: role.permissions is lazy="dynamic", so we need to use .all()
+        for permission in role.permissions.all():
             if permission.resource not in permissions:
                 permissions[permission.resource] = []
             if permission.action not in permissions[permission.resource]:
@@ -106,7 +110,7 @@ def get_user_permissions(user: "User") -> dict[str, list[str]]:
     return permissions
 
 
-def is_admin(user: "User") -> bool:
+def is_admin(user: User) -> bool:
     """Check if user is admin.
 
     Admin is determined by having a role named "admin" or "administrator".
@@ -120,7 +124,7 @@ def is_admin(user: "User") -> bool:
     return user.is_admin()
 
 
-def can_manage_user(current_user: "User", target_user_id: int) -> bool:
+def can_manage_user(current_user: User, target_user_id: int) -> bool:
     """Check if current user can manage target user.
 
     Args:

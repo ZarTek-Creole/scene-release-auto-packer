@@ -26,13 +26,13 @@ export function Users() {
     const fetchRoles = async () => {
       try {
         const response = await rolesApi.list({ per_page: 100 });
-        setRoles(response.data?.roles || []);
+        setRoles(response.roles || []);
       } catch (err) {
         console.error('Failed to load roles:', err);
       }
     };
     fetchRoles();
-  });
+  }, []);
 
   const handleCreate = () => {
     setSelectedUser(null);

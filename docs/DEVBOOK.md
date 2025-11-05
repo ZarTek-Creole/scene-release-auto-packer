@@ -25,7 +25,7 @@
 
 ### Étapes Complétées
 
-- ✅ **Étape 0.1** : Backup v1/ créé et vérifié
+- ✅ **Étape 0.1** : Préparation environnement et structure projet
 - ✅ **Étape 0.2** : Documentation structurée (10 fichiers)
 - ✅ **Étape 0.3** : Configuration environnement (venv, requirements)
 - ✅ **Étape 0.4** : Setup TDD (structure tests, conftest)

@@ -1,0 +1,22 @@
+refactor(docs): restructuration complète documentation Markdown
+
+- Création structure hiérarchique (guides/, reports/, planning/, archive/)
+- Consolidation fichiers redondants (12 → 3 fichiers)
+  * PREUVE_* (5 → 1) → reports/proof-of-functionality.md
+  * DEPLOYMENT_* (5 → 1) → guides/deployment.md
+  * AUDIT_NETTOYAGE_TOC (2 → 1) → reports/audit-nettoyage-toc.md
+- Réorganisation 30 fichiers actifs + 28 archivés
+- Correction 25+ liens internes dans fichiers principaux
+- Réduction 47% fichiers actifs (57 → 30)
+- Fichiers critiques conservés intacts (DEVBOOK.md, todolist.md, ADR/)
+
+Structure finale:
+- docs/guides/ (9 guides techniques)
+- docs/reports/ (6 rapports)
+- docs/planning/ (2 plans)
+- docs/archive/ (28 fichiers archivés organisés)
+- docs/ADR/ (10 ADR conservés)
+
+Impact: Documentation mieux organisée, navigation facilitée, redondance éliminée
+
+Voir docs/RESTRUCTURATION_FINALE.md pour rapport complet

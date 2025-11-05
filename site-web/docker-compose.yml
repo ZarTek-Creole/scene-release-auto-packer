@@ -1,0 +1,32 @@
+# Docker Compose pour développement et production
+# Suit les meilleures pratiques Docker Compose 2025
+
+version: '3.8'
+
+services:
+  site-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ebook-scene-packer-site-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      - NEXT_TELEMETRY_DISABLED=1
+    env_file:
+      - .env.local
+    restart: unless-stopped
+    networks:
+      - site-web-network
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  site-web-network:
+    driver: bridge

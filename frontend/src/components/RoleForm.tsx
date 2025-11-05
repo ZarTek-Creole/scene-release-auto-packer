@@ -27,10 +27,10 @@ export function RoleForm({ role, onSave, onCancel }: RoleFormProps) {
     const fetchPermissions = async () => {
       try {
         const response = await permissionsApi.list();
-        setPermissions(response.data?.permissions || []);
+        setPermissions(response.permissions || []);
       } catch (err) {
         // Silently fail - permissions list might not be available yet
-        console.warn('Failed to load permissions:', err);
+        // Error handling is done silently to avoid UI noise
         setPermissions([]);
       }
     };
@@ -62,8 +62,8 @@ export function RoleForm({ role, onSave, onCancel }: RoleFormProps) {
           permission_ids: selectedPermissionIds,
         };
         const response = await rolesApi.update(role.id, updateData);
-        if (onSave) {
-          onSave(response.data?.role!);
+        if (onSave && response.role) {
+          onSave(response.role);
         }
       } else {
         // Create role
@@ -73,8 +73,8 @@ export function RoleForm({ role, onSave, onCancel }: RoleFormProps) {
           permission_ids: selectedPermissionIds,
         };
         const response = await rolesApi.create(createData);
-        if (onSave) {
-          onSave(response.data?.role!);
+        if (onSave && response.role) {
+          onSave(response.role);
         }
       }
     } catch (err) {

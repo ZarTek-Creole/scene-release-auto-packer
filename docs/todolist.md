@@ -23,7 +23,7 @@ Le projet eBook Scene Packer v2 est maintenant **production-ready** avec :
 
 ## ✅ PHASE 0 : PRÉPARATION (100%)
 
-- ✅ Backup v1/ créé et vérifié
+- ✅ Préparation environnement et structure projet
 - ✅ Documentation structurée (10 fichiers)
 - ✅ Configuration environnement (venv, requirements)
 - ✅ Setup TDD (structure tests)
@@ -183,7 +183,7 @@ Le projet eBook Scene Packer v2 est maintenant **production-ready** avec :
 - ✅ Pre-commit hooks configurés
 
 ### Documentation ✅
-- ✅ `docs/DEPLOYMENT_PLAN.md` présent (complet)
+- ✅ `docs/guides/deployment.md` présent (complet)
 - ✅ `DEPLOYMENT.md` présent (guide rapide)
 
 ---

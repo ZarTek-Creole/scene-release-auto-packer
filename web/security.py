@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
-from flask import current_app
-from flask_jwt_extended import JWTManager
-
-from web.extensions import db
 from web.models import TokenBlocklist, User
+
+if TYPE_CHECKING:
+    from flask_jwt_extended import JWTManager
 
 
 def init_jwt(jwt: JWTManager) -> None:
@@ -19,7 +18,7 @@ def init_jwt(jwt: JWTManager) -> None:
     """
 
     @jwt.token_in_blocklist_loader
-    def check_if_token_revoked(jwt_header: dict, jwt_payload: dict) -> bool:
+    def check_if_token_revoked(_jwt_header: dict, jwt_payload: dict) -> bool:
         """Check if token is revoked.
 
         Args:
@@ -37,36 +36,58 @@ def init_jwt(jwt: JWTManager) -> None:
         return token is not None
 
     @jwt.user_identity_loader
-    def user_identity_lookup(user: User) -> int:
+    def user_identity_lookup(identity: int | str | User) -> str:
         """User identity loader.
 
+        This callback is called when creating a token. It should return
+        the identity to be stored in the token (typically user ID as string).
+
         Args:
-            user: User instance.
+            identity: User ID (int/str) or User instance (if passed directly).
 
         Returns:
-            User ID.
+            User ID as string (required by Flask-JWT-Extended).
         """
-        return user.id
+        # If identity is already a string, return it
+        if isinstance(identity, str):
+            return identity
+        # If identity is an integer, convert to string
+        if isinstance(identity, int):
+            return str(identity)
+        # If identity is a User object, return its ID as string
+        if isinstance(identity, User):
+            return str(identity.id)
+        # Fallback: convert to string
+        return str(identity)
 
     @jwt.user_lookup_loader
-    def user_lookup_callback(jwt_header: dict, jwt_payload: dict) -> User | None:
+    def user_lookup_callback(_jwt_header: dict, jwt_payload: dict) -> User | None:
         """User lookup callback.
+
+        This callback is called when using @jwt_required() to load
+        the user from the token's identity (subject).
 
         Args:
             jwt_header: JWT header.
-            jwt_payload: JWT payload.
+            jwt_payload: JWT payload containing 'sub' (subject) field.
 
         Returns:
-            User instance or None.
+            User instance or None if not found or inactive.
         """
         identity = jwt_payload.get("sub")
         if identity is None:
             return None
 
-        return User.query.filter_by(id=identity, active=True).first()
+        # Ensure identity is converted to integer (it's stored as string in token)
+        try:
+            user_id = int(identity) if not isinstance(identity, int) else identity
+        except (ValueError, TypeError):
+            return None
+
+        return User.query.filter_by(id=user_id, active=True).first()
 
     @jwt.expired_token_loader
-    def expired_token_callback(jwt_header: dict, jwt_payload: dict) -> tuple[dict, int]:
+    def expired_token_callback(_jwt_header: dict, _jwt_payload: dict) -> tuple[dict, int]:
         """Expired token callback.
 
         Args:

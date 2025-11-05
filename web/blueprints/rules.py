@@ -8,9 +8,9 @@ from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.utils import secure_filename
 
-from web.extensions import db
+from web.extensions import cache, db
 from web.models import Rule, User
-from web.services.scenerules_download import ScenerulesDownloadService
+from web.services.rule import ScenerulesDownloadService
 from web.utils.permissions import check_permission
 
 rules_bp = Blueprint("rules", __name__)

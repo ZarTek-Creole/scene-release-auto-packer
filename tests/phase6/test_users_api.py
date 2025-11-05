@@ -13,7 +13,13 @@ def test_list_users(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and user
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+            db.session.add(admin_role)
         user1 = User(username="user1", email="user1@example.com")
         user1.set_password("password123")
         user1.roles.append(admin_role)
@@ -46,7 +52,10 @@ def test_create_user(client) -> None:
     """Test creating user."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -81,7 +90,10 @@ def test_update_user(client) -> None:
     """Test updating user."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         admin = User(username="admin", email="admin@example.com")
         admin.set_password("password123")
         admin.roles.append(admin_role)
@@ -114,7 +126,10 @@ def test_delete_user(client) -> None:
     """Test deleting user."""
     with client.application.app_context():
         db.create_all()
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         admin = User(username="admin", email="admin@example.com")
         admin.set_password("password123")
         admin.roles.append(admin_role)

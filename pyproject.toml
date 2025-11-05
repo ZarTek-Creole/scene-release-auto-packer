@@ -11,6 +11,14 @@ select = [
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "SIM", # flake8-simplify
+    "PIE", # flake8-pie
+    "TCH", # flake8-type-checking
+    "ARG", # flake8-unused-arguments
+    "PTH", # flake8-use-pathlib
+    "ERA", # eradicate (détecte code commenté)
+    "PL",  # Pylint
 ]
 ignore = [
     "E501",  # line too long (handled by black)
@@ -35,14 +43,15 @@ skip_gitignore = true
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
-disallow_untyped_defs = false
-disallow_incomplete_defs = false
+disallow_untyped_defs = true  # Strict: nécessite type hints partout
+disallow_incomplete_defs = true  # Strict: signatures complètes
 check_untyped_defs = true
 no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
 strict_equality = true
+strict = true  # Mode strict activé
 
 [[tool.mypy.overrides]]
 module = [
@@ -56,8 +65,13 @@ module = [
     "marshmallow.*",
     "pymysql.*",
     "requests.*",
+    "ebooklib.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["web.models.*", "web.extensions"]
+ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -73,7 +87,7 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
-    "--cov-fail-under=90",
+    "--cov-fail-under=90",  # Coverage minimum 90%
 ]
 markers = [
     "unit: Unit tests",

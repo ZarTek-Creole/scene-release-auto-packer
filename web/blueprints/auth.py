@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
@@ -17,6 +17,12 @@ from web.extensions import db, limiter
 from web.models import TokenBlocklist, User
 
 auth_bp = Blueprint("auth", __name__)
+
+
+@auth_bp.route("/auth/login", methods=["OPTIONS"])
+def login_options():
+    """Handle OPTIONS preflight request for login."""
+    return "", 200
 
 
 @auth_bp.route("/auth/login", methods=["POST"])
@@ -45,9 +51,10 @@ def login() -> tuple[dict, int]:
     if not user.active:
         return {"message": "User account is inactive"}, 403
 
-    # Create tokens
-    access_token = create_access_token(identity=user)
-    refresh_token = create_refresh_token(identity=user)
+    # Create tokens (identity is user ID as string)
+    # Flask-JWT-Extended requires identity to be JSON-serializable (string, int, etc.)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
 
     return (
         {
@@ -74,7 +81,8 @@ def refresh() -> tuple[dict, int]:
     if not user or not user.active:
         return {"message": "User not found or inactive"}, 404
 
-    access_token = create_access_token(identity=user)
+    # Create new access token with user ID as string
+    access_token = create_access_token(identity=str(user.id))
 
     return {"access_token": access_token}, 200
 

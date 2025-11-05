@@ -28,7 +28,7 @@ export function ReleaseDetail() {
       try {
         setLoading(true);
         const response = await releasesApi.get(parseInt(id, 10));
-        setRelease(response.data?.release || null);
+        setRelease(response.release || null);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Erreur lors du chargement'
@@ -218,8 +218,8 @@ export function ReleaseDetail() {
           const fetchRelease = async () => {
             try {
               const response = await releasesApi.get(release.id);
-              if (response.data?.release) {
-                setRelease(response.data.release);
+              if (response.release) {
+                setRelease(response.release);
               }
             } catch {
               // Ignore errors

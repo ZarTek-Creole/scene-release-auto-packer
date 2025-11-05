@@ -13,6 +13,7 @@ def test_nfofix_release_user_not_found(client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(
             user_id=user.id,
@@ -30,8 +31,15 @@ def test_nfofix_release_user_not_found(client, app):
         )
         token = login_response.get_json()["access_token"]
 
-        # Delete user (simulate user deleted after token issued)
-        db.session.delete(user)
+        # Delete user and release (simulate user deleted after token issued)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
         response = client.post(
@@ -51,6 +59,7 @@ def test_readnfo_release_user_not_found(client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(
             user_id=user.id,
@@ -69,8 +78,15 @@ def test_readnfo_release_user_not_found(client, app):
         )
         token = login_response.get_json()["access_token"]
 
-        # Delete user (simulate user deleted after token issued)
-        db.session.delete(user)
+        # Delete user and release (simulate user deleted after token issued)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
         response = client.post(
@@ -125,6 +141,7 @@ def test_repack_release_user_not_found(client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(
             user_id=user.id,
@@ -142,8 +159,15 @@ def test_repack_release_user_not_found(client, app):
         )
         token = login_response.get_json()["access_token"]
 
-        # Delete user (simulate user deleted after token issued)
-        db.session.delete(user)
+        # Delete user and release (simulate user deleted after token issued)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
         response = client.post(
@@ -197,6 +221,7 @@ def test_dirfix_release_user_not_found(client, app):
         user.set_password("password")
         db.session.add(user)
         db.session.commit()
+        user_id = user.id
 
         release = Release(
             user_id=user.id,
@@ -214,8 +239,15 @@ def test_dirfix_release_user_not_found(client, app):
         )
         token = login_response.get_json()["access_token"]
 
-        # Delete user (simulate user deleted after token issued)
-        db.session.delete(user)
+        # Delete user and release (simulate user deleted after token issued)
+        # Delete release first to avoid foreign key constraint
+        release = db.session.get(Release, release_id)
+        if release:
+            db.session.delete(release)
+        # Then delete user
+        user = db.session.get(User, user_id)
+        if user:
+            db.session.delete(user)
         db.session.commit()
 
         response = client.post(

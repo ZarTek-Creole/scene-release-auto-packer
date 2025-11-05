@@ -1,0 +1,157 @@
+# Architecture
+
+Vue d'ensemble de l'architecture d'eBook Scene Packer v2.
+
+## Vue d'ensemble
+
+eBook Scene Packer v2 est une application full-stack moderne avec :
+
+- **Backend** : Flask 3.1.2 (Python 3.11+)
+- **Frontend** : React 19.2.0 (TypeScript strict)
+- **Base de données** : MySQL 8.0
+- **ORM** : SQLAlchemy 2.0
+- **Authentification** : JWT (Flask-JWT-Extended)
+- **Build** : Vite (frontend)
+
+## Architecture Backend (Flask)
+
+### Pattern Application Factory
+
+\`\`\`python
+# web/app.py
+def create_app(config_name='development'):
+    app = Flask(__name__)
+    # Configuration, extensions, blueprints...
+    return app
+\`\`\`
+
+### Structure Backend
+
+\`\`\`
+web/
+├── app.py                 # Application factory
+├── config.py             # Configurations multi-environnement
+├── blueprints/           # Blueprints modulaires
+│   ├── api/             # API REST
+│   │   ├── wizard.py    # Wizard endpoints
+│   │   ├── releases.py  # Releases CRUD
+│   │   └── ...
+│   └── admin/           # Administration
+├── models/              # SQLAlchemy models
+│   ├── user.py
+│   ├── release.py
+│   └── ...
+├── services/            # Services métier
+│   ├── packaging/
+│   ├── metadata/
+│   └── ...
+└── utils/              # Utilitaires
+\`\`\`
+
+### Blueprints
+
+- **API Blueprints** : Endpoints REST pour le frontend
+- **Admin Blueprints** : Interface d'administration
+
+### Services Métier
+
+- **PackagingService** : Création de packages Scene
+- **MetadataExtractionService** : Extraction métadonnées
+- **RuleParserService** : Parsing règles Scene
+- **NFOGeneratorService** : Génération NFO
+
+## Architecture Frontend (React)
+
+### Structure Frontend
+
+\`\`\`
+frontend/
+├── src/
+│   ├── components/      # Composants réutilisables
+│   │   ├── wizard/     # Composants Wizard
+│   │   └── ...
+│   ├── pages/          # Pages React
+│   ├── contexts/       # Contextes React
+│   ├── services/       # Services API
+│   └── App.tsx         # Composant racine
+├── public/             # Assets statiques
+└── vite.config.mjs     # Configuration Vite
+\`\`\`
+
+### Routing
+
+- **React Router v6** : Routing côté client
+- **Routes protégées** : Authentification JWT
+- **Lazy loading** : Code splitting automatique
+
+### State Management
+
+- **Context API** : Pour état global (auth, theme)
+- **useState/useEffect** : Pour état local
+
+## Base de données
+
+### MySQL 8.0
+
+- **Engine** : InnoDB (obligatoire)
+- **Charset** : utf8mb4
+- **Collation** : utf8mb4_unicode_ci
+
+### Modèles Principaux
+
+- **User** : Utilisateurs et authentification
+- **Release** : Releases créées
+- **Rule** : Règles Scene
+- **Job** : Jobs de traitement
+- **Configuration** : Configurations API/FTP
+
+### Relations
+
+- User → Release (one-to-many)
+- Release → Rule (many-to-one)
+- User → Role (many-to-many)
+
+## Sécurité
+
+### Authentification
+
+- **JWT** : Tokens avec expiration
+- **Password Hashing** : Werkzeug security
+
+### Protection
+
+- **CORS** : Configuration stricte
+- **Rate Limiting** : Flask-Limiter
+- **Security Headers** : CSP, X-Frame-Options, etc.
+
+## Performance
+
+### Backend
+
+- **Caching** : Flask-Caching (dashboard, rules)
+- **Eager Loading** : SQLAlchemy (éviter N+1)
+- **Database Indexes** : Sur colonnes fréquentes
+
+### Frontend
+
+- **Lazy Loading** : React.lazy() pour routes
+- **Code Splitting** : Vite automatique
+- **Memoization** : useMemo, useCallback
+
+## Déploiement
+
+### Docker
+
+- **docker-compose.yml** : Stack complète
+- **Dockerfile** : Backend et Frontend
+- **Nginx** : Reverse proxy
+
+### CI/CD
+
+- **GitHub Actions** : Tests, build, déploiement
+- **Pre-commit Hooks** : Validation avant commit
+
+## Prochaines étapes
+
+- **API Reference** : Voir [API Reference](/docs/api)
+- **Guides** : Voir [Guides](/docs/guides)

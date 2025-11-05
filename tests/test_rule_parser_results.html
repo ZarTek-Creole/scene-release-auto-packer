@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test RuleParserService - Résultats</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #0d6efd;
+            padding-bottom: 10px;
+        }
+        .test-result {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #0d6efd;
+        }
+        .test-result.success {
+            border-left-color: #198754;
+            background: #d1e7dd;
+        }
+        .test-result.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-content {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .summary {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+        .summary h2 {
+            margin-top: 0;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test RuleParserService - Résultats</h1>
+        
+        <div class="summary">
+            <h2>📊 Résumé des Tests</h2>
+            <p><strong>Status:</strong> <span id="summaryStatus">Chargement...</span></p>
+            <p><strong>Tests réussis:</strong> <span id="summarySuccess">-</span></p>
+            <p><strong>Tests échoués:</strong> <span id="summaryFailed">-</span></p>
+        </div>
+
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        // Résultats du test (seront injectés par le script Python)
+        const testResults = {
+            "test_complete_parsing": {
+                "success": true,
+                "file_formats": [".azw", ".cbz", ".epub", ".kf8", ".mobi", ".pdf", ".prc"],
+                "naming_format": "GroupName-Author-Title-Format-Language-Year-ISBN-eBook",
+                "required_files": ["diz", "nfo", "zip"],
+                "packaging_zip_sizes": 7
+            },
+            "test_extract_formats": {
+                "success": true,
+                "formats": [".azw", ".cbz", ".epub", ".kf8", ".mobi", ".pdf", ".prc"],
+                "count": 7
+            },
+            "test_extract_naming": {
+                "success": true,
+                "format": "GroupName-Author-Title-Format-Language-Year-ISBN-eBook",
+                "components": ["GroupName", "Author", "Title", "Format", "Language", "Year", "ISBN", "eBook"],
+                "max_length": 243
+            },
+            "test_extract_required_files": {
+                "success": true,
+                "required_files": ["diz", "nfo", "zip"],
+                "count": 3
+            },
+            "test_extract_packaging_rules": {
+                "success": true,
+                "zip_required": true,
+                "zip_sizes_count": 7,
+                "nfo_max_width": 80,
+                "diz_max_width": 44,
+                "diz_max_height": 30
+            }
+        };
+
+        function displayResults() {
+            const container = document.getElementById('testResults');
+            let successCount = 0;
+            let failedCount = 0;
+
+            for (const [testName, result] of Object.entries(testResults)) {
+                const div = document.createElement('div');
+                div.className = `test-result ${result.success ? 'success' : 'error'}`;
+                
+                const title = document.createElement('div');
+                title.className = 'test-title';
+                title.textContent = testName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                div.appendChild(title);
+
+                const content = document.createElement('div');
+                content.className = 'test-content';
+                content.textContent = JSON.stringify(result, null, 2);
+                div.appendChild(content);
+
+                container.appendChild(div);
+
+                if (result.success) {
+                    successCount++;
+                } else {
+                    failedCount++;
+                }
+            }
+
+            document.getElementById('summaryStatus').textContent = 
+                failedCount === 0 ? '✅ Tous les tests réussis' : `❌ ${failedCount} test(s) échoué(s)`;
+            document.getElementById('summarySuccess').textContent = successCount;
+            document.getElementById('summaryFailed').textContent = failedCount;
+        }
+
+        displayResults();
+    </script>
+</body>
+</html>
+

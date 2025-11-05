@@ -51,9 +51,11 @@ def test_user_relationships(app) -> None:
         user = User(username="testuser", email="test@example.com")
         user.set_password("password123")
 
-        # Create role
-        role = Role(name="admin", description="Administrator")
-        db.session.add(role)
+        # Get or create role (may already exist from conftest.py)
+        role = Role.query.filter_by(name="admin").first()
+        if not role:
+            role = Role(name="admin", description="Administrator")
+            db.session.add(role)
 
         # Create group
         group = Group(name="developers", description="Developers group")

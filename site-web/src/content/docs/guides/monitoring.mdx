@@ -1,0 +1,45 @@
+# Guide Monitoring
+
+Monitoring et observabilité pour eBook Scene Packer v2.
+
+## Vue d'ensemble
+
+Système de monitoring avec structlog, Prometheus, et Grafana.
+
+## Logging
+
+### Structlog
+
+Logs structurés JSON pour faciliter l'analyse :
+
+\`\`\`python
+import structlog
+
+logger = structlog.get_logger()
+logger.info("user_login", user_id=user.id, username=user.username)
+\`\`\`
+
+## Métriques
+
+### Prometheus
+
+Métriques exposées via Prometheus-Flask-Exporter.
+
+### Grafana
+
+Dashboards pour visualiser les métriques.
+
+## Health Checks
+
+### Endpoint /api/health
+
+Vérification de l'état de l'application :
+
+\`\`\`bash
+curl http://localhost:5000/api/health
+\`\`\`
+
+## Prochaines étapes
+
+- **Performance** : Voir [Guide Performance](/docs/guides/performance)
+- **Sécurité** : Voir [Guide Sécurité](/docs/guides/security)

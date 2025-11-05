@@ -9,7 +9,10 @@ from web.models import Role, User
 def test_list_users_with_username_filter(client, app):
     """Test listing users with username filter."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user1 = User(username="user1", email="user1@test.com")
         user1.set_password("password")
         user1.roles.append(admin_role)
@@ -34,7 +37,10 @@ def test_list_users_with_username_filter(client, app):
 def test_list_users_with_email_filter(client, app):
     """Test listing users with email filter."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user1 = User(username="user1", email="user1@test.com")
         user1.set_password("password")
         user1.roles.append(admin_role)
@@ -50,7 +56,8 @@ def test_list_users_with_email_filter(client, app):
         token = login_response.get_json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        response = client.get("/api/users?email=user1@test.com", headers=headers)
+        response = client.get(
+            "/api/users?email=user1@test.com", headers=headers)
         assert response.status_code == 200
         data = response.get_json()
         assert all("user1@test.com" in u["email"] for u in data["users"])
@@ -105,7 +112,10 @@ def test_get_user_not_found(client, app):
 def test_create_user_missing_fields(client, app):
     """Test creating user with missing required fields."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -147,7 +157,10 @@ def test_create_user_missing_fields(client, app):
 def test_create_user_no_data(client, app):
     """Test creating user with no data."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -171,7 +184,10 @@ def test_create_user_no_data(client, app):
 def test_create_user_duplicate_username(client, app):
     """Test creating user with duplicate username."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -200,13 +216,17 @@ def test_create_user_duplicate_username(client, app):
             headers=headers,
         )
         assert response.status_code == 400
-        assert "username already exists" in response.get_json()["message"].lower()
+        assert "username already exists" in response.get_json()[
+            "message"].lower()
 
 
 def test_create_user_duplicate_email(client, app):
     """Test creating user with duplicate email."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -261,7 +281,10 @@ def test_update_user_not_found(client, app):
 def test_update_user_no_data(client, app):
     """Test updating user with no data."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user = User(username="admin", email="admin@test.com")
         user.set_password("password")
         user.roles.append(admin_role)
@@ -290,7 +313,10 @@ def test_update_user_no_data(client, app):
 def test_update_user_duplicate_username(client, app):
     """Test updating user with duplicate username."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user1 = User(username="user1", email="user1@test.com")
         user1.set_password("password")
         user1.roles.append(admin_role)
@@ -313,13 +339,17 @@ def test_update_user_duplicate_username(client, app):
             headers=headers,
         )
         assert response.status_code == 400
-        assert "username already exists" in response.get_json()["message"].lower()
+        assert "username already exists" in response.get_json()[
+            "message"].lower()
 
 
 def test_update_user_duplicate_email(client, app):
     """Test updating user with duplicate email."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         user1 = User(username="user1", email="user1@test.com")
         user1.set_password("password")
         user1.roles.append(admin_role)
@@ -348,7 +378,10 @@ def test_update_user_duplicate_email(client, app):
 def test_update_user_with_roles(client, app):
     """Test updating user with roles."""
     with app.app_context():
-        admin_role = Role(name="admin", description="Administrator")
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
         admin_user = User(username="admin", email="admin@test.com")
         admin_user.set_password("password")
         admin_user.roles.append(admin_role)

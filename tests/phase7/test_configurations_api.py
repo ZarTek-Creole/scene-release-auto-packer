@@ -13,27 +13,34 @@ def test_list_configurations(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and assign to user
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         # Get or create permissions
         read_config_permission = db.session.query(Permission).filter_by(
             resource="config", action="read"
         ).first()
         if not read_config_permission:
-            read_config_permission = Permission(resource="config", action="read")
+            read_config_permission = Permission(
+                resource="config", action="read")
             db.session.add(read_config_permission)
-        
-        admin_role.permissions.append(read_config_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if read_config_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(read_config_permission)
+
         user = User(username="testuser", email="test@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
-        config1 = Configuration(key="app.name", value="Scene Packer", category="app")
-        config2 = Configuration(key="app.version", value="2.0.0", category="app")
+        config1 = Configuration(
+            key="app.name", value="Scene Packer", category="app")
+        config2 = Configuration(
+            key="app.version", value="2.0.0", category="app")
         db.session.add_all([config1, config2])
         db.session.commit()
 
@@ -62,26 +69,33 @@ def test_list_configurations_with_filters(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and assign to user
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         read_config_permission = db.session.query(Permission).filter_by(
             resource="config", action="read"
         ).first()
         if not read_config_permission:
-            read_config_permission = Permission(resource="config", action="read")
+            read_config_permission = Permission(
+                resource="config", action="read")
             db.session.add(read_config_permission)
-        
-        admin_role.permissions.append(read_config_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if read_config_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(read_config_permission)
+
         user = User(username="testuser", email="test@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
-        config1 = Configuration(key="app.name", value="Scene Packer", category="app")
-        config2 = Configuration(key="db.host", value="localhost", category="database")
+        config1 = Configuration(
+            key="app.name", value="Scene Packer", category="app")
+        config2 = Configuration(
+            key="db.host", value="localhost", category="database")
         db.session.add_all([config1, config2])
         db.session.commit()
 
@@ -113,7 +127,8 @@ def test_get_configuration(client) -> None:
         db.session.add(user)
         db.session.commit()
 
-        config = Configuration(key="app.name", value="Scene Packer", category="app")
+        config = Configuration(
+            key="app.name", value="Scene Packer", category="app")
         db.session.add(config)
         db.session.commit()
         config_id = config.id
@@ -146,7 +161,8 @@ def test_get_configuration_by_key(client) -> None:
         db.session.add(user)
         db.session.commit()
 
-        config = Configuration(key="app.name", value="Scene Packer", category="app")
+        config = Configuration(
+            key="app.name", value="Scene Packer", category="app")
         db.session.add(config)
         db.session.commit()
 
@@ -173,18 +189,23 @@ def test_create_configuration(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and assign to user
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_config_permission = db.session.query(Permission).filter_by(
             resource="config", action="write"
         ).first()
         if not write_config_permission:
-            write_config_permission = Permission(resource="config", action="write")
+            write_config_permission = Permission(
+                resource="config", action="write")
             db.session.add(write_config_permission)
-        
-        admin_role.permissions.append(write_config_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_config_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_config_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
@@ -221,25 +242,31 @@ def test_update_configuration(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and assign to user
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         write_config_permission = db.session.query(Permission).filter_by(
             resource="config", action="write"
         ).first()
         if not write_config_permission:
-            write_config_permission = Permission(resource="config", action="write")
+            write_config_permission = Permission(
+                resource="config", action="write")
             db.session.add(write_config_permission)
-        
-        admin_role.permissions.append(write_config_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if write_config_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(write_config_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
-        config = Configuration(key="app.name", value="Scene Packer", category="app")
+        config = Configuration(
+            key="app.name", value="Scene Packer", category="app")
         db.session.add(config)
         db.session.commit()
         config_id = config.id
@@ -268,25 +295,31 @@ def test_delete_configuration(client) -> None:
     with client.application.app_context():
         db.create_all()
         # Create admin role and assign to user
-        admin_role = Role(name="admin", description="Administrator")
-        db.session.add(admin_role)
-        
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+
         delete_config_permission = db.session.query(Permission).filter_by(
             resource="config", action="delete"
         ).first()
         if not delete_config_permission:
-            delete_config_permission = Permission(resource="config", action="delete")
+            delete_config_permission = Permission(
+                resource="config", action="delete")
             db.session.add(delete_config_permission)
-        
-        admin_role.permissions.append(delete_config_permission)
-        
+
+        # Check if permission already attached to avoid duplicate
+        if delete_config_permission not in admin_role.permissions.all():
+            admin_role.permissions.append(delete_config_permission)
+
         user = User(username="admin", email="admin@example.com")
         user.set_password("password123")
         user.roles.append(admin_role)
         db.session.add(user)
         db.session.commit()
 
-        config = Configuration(key="app.name", value="Scene Packer", category="app")
+        config = Configuration(
+            key="app.name", value="Scene Packer", category="app")
         db.session.add(config)
         db.session.commit()
         config_id = config.id

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import func
 

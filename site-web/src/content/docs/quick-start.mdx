@@ -1,0 +1,93 @@
+# Démarrage rapide
+
+Guide rapide pour démarrer avec eBook Scene Packer v2.
+
+## Première connexion
+
+### 1. Accéder à l'application
+
+Après l'installation, accédez à :
+- **Frontend** : http://localhost:5173 (développement) ou http://localhost:8081 (Docker)
+
+### 2. Créer un utilisateur admin
+
+\`\`\`bash
+# Via CLI Flask
+flask create-admin
+
+# Ou via API (si endpoint disponible)
+curl -X POST http://localhost:5000/api/auth/register \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "username": "admin",
+    "email": "admin@example.com",
+    "password": "secure_password"
+  }'
+\`\`\`
+
+### 3. Se connecter
+
+1. Aller sur la page de connexion
+2. Entrer vos identifiants
+3. Vous serez redirigé vers le Dashboard
+
+## Créer votre première release
+
+### Étape 1 : Accéder au Wizard
+
+1. Cliquer sur "Nouvelle Release" dans la navigation
+2. Ou aller sur \`/releases/new\`
+
+### Étape 2 : Compléter le Wizard (9 étapes)
+
+1. **Groupe** : Entrer le nom du groupe Scene (ex: "TestGroup")
+2. **Type** : Sélectionner le type (EBOOK, TV, DOCS)
+3. **Règle** : Sélectionner une règle Scene
+4. **Fichier** : Uploader le fichier de release
+5. **Analyse** : Vérifier les métadonnées extraites
+6. **Enrichissement** : Compléter les métadonnées si nécessaire
+7. **Template** : Sélectionner le template NFO
+8. **Options** : Configurer les options de packaging
+9. **Destination** : Sélectionner la destination finale
+
+### Étape 3 : Finaliser
+
+Cliquer sur "Créer Release" pour finaliser. Le packaging sera créé automatiquement.
+
+## Explorer les fonctionnalités
+
+### Dashboard
+
+Le Dashboard affiche :
+- Statistiques globales (nombre de releases, utilisateurs, etc.)
+- Graphiques d'activité
+- Dernières releases créées
+
+### Liste des Releases
+
+Accéder à \`/releases\` pour voir toutes les releases avec :
+- Filtres (type, statut, groupe)
+- Recherche textuelle
+- Tri par colonnes
+- Pagination
+
+### Gestion des Rules
+
+Accéder à \`/rules\` pour :
+- Voir les règles locales
+- Télécharger depuis scenerules.org
+- Uploader une nouvelle règle
+- Visualiser le contenu NFO
+
+### Configuration
+
+Accéder à \`/config\` pour :
+- Gérer les APIs externes
+- Configurer les destinations FTP/SSH
+- Paramétrer les options globales
+
+## Prochaines étapes
+
+- **Documentation complète** : Voir [Architecture](/docs/architecture)
+- **API Reference** : Voir [API Reference](/docs/api)
+- **Guides** : Voir [Guides](/docs/guides)

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap (à mettre à jour avec la vraie URL)
+Sitemap: https://ebook-scene-packer.example.com/sitemap.xml

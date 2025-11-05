@@ -1,0 +1,71 @@
+/* Styles pour Landing Page */
+
+.hero-section {
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+.hero-image-wrapper {
+  position: relative;
+}
+
+.hero-placeholder {
+  aspect-ratio: 16/9;
+  min-height: 300px;
+}
+
+.screenshot-gallery .card {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  cursor: pointer;
+}
+
+.screenshot-gallery .card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.screenshot-gallery .card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.features-section .card {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  border: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.features-section .card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.features-section .card-link {
+  color: var(--primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.features-section .card-link:hover {
+  color: var(--primary-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: auto;
+    padding: 3rem 0;
+  }
+
+  .min-vh-75 {
+    min-height: auto;
+  }
+}

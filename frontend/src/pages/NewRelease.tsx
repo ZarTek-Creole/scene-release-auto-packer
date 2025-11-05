@@ -240,14 +240,14 @@ export function NewRelease() {
       case 2:
         return (
           <StepReleaseType
-            releaseType={wizardData.releaseType}
+            initialValue={wizardData.releaseType}
             onNext={handleStep2Next}
           />
         );
       case 3:
         return (
           <StepRules
-            releaseType={wizardData.releaseType}
+            releaseType={wizardData.releaseType || ''}
             onNext={handleStep3Next}
           />
         );

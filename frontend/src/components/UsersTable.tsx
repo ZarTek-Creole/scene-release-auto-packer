@@ -41,8 +41,8 @@ export function UsersTable({
           per_page: 20,
           ...filters,
         });
-        setUsers(response.data?.users || []);
-        setPagination(response.data?.pagination || pagination);
+        setUsers(response.users || []);
+        setPagination(response.pagination || pagination);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load users');
       } finally {

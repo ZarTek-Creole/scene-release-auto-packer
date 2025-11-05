@@ -1,0 +1,162 @@
+# CI/CD Workflow pour Site Web Next.js
+# Suit les meilleures pratiques GitHub Actions 2025
+
+name: CI - Site Web
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'site-web/**'
+      - '.github/workflows/site-web-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'site-web/**'
+      - '.github/workflows/site-web-ci.yml'
+
+jobs:
+  lint:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site-web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site-web
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: site-web
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        working-directory: site-web
+        run: npm run format:check
+
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site-web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site-web
+        run: npm ci
+
+      - name: Run TypeScript check
+        working-directory: site-web
+        run: npx tsc --noEmit
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site-web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site-web
+        run: npm ci
+
+      - name: Run tests
+        working-directory: site-web
+        run: npm run test
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./site-web/coverage/coverage-final.json
+          flags: site-web
+          name: site-web-coverage
+
+  build:
+    name: Build Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site-web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site-web
+        run: npm ci
+
+      - name: Build application
+        working-directory: site-web
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://ebook-scene-packer.example.com' }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: site-web/.next
+          retention-days: 7
+
+  deploy-preview:
+    name: Deploy Preview (Vercel)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    needs: [lint, type-check, test, build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: site-web
+
+  deploy-production:
+    name: Deploy Production (Vercel)
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [lint, type-check, test, build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: site-web
+

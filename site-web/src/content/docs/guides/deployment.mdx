@@ -1,0 +1,68 @@
+# Guide de Déploiement
+
+Guide complet pour déployer eBook Scene Packer v2 en production.
+
+## Vue d'ensemble
+
+Ce guide décrit le déploiement complet avec Docker, Nginx, Gunicorn, et CI/CD.
+
+## Déploiement Docker (Recommandé)
+
+### 1. Prérequis
+
+- Docker 20.10+
+- Docker Compose 2.0+
+
+### 2. Configuration
+
+\`\`\`bash
+# Cloner le repository
+git clone https://github.com/yourusername/ebook-scene-packer.git
+cd ebook-scene-packer
+
+# Variables d'environnement
+cp .env.example .env
+# Éditer .env avec vos configurations production
+\`\`\`
+
+### 3. Démarrage
+
+\`\`\`bash
+# Build et démarrage
+docker-compose up -d --build
+
+# Migrations
+docker-compose exec backend flask db upgrade
+\`\`\`
+
+## Déploiement Manuel
+
+### Backend (Gunicorn)
+
+\`\`\`bash
+# Installer Gunicorn
+pip install gunicorn
+
+# Lancer avec Gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 wsgi:app
+\`\`\`
+
+### Frontend (Nginx)
+
+Configurer Nginx pour servir les fichiers statiques React.
+
+## CI/CD
+
+### GitHub Actions
+
+Workflows automatiques pour :
+- Tests automatiques
+- Build Docker
+- Déploiement automatique
+
+Voir \`.github/workflows/\` pour les workflows.
+
+## Prochaines étapes
+
+- **Performance** : Voir [Guide Performance](/docs/guides/performance)
+- **Sécurité** : Voir [Guide Sécurité](/docs/guides/security)

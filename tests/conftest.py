@@ -49,6 +49,18 @@ def app(tmp_path: Path) -> Iterator["Flask"]:
         except Exception:
             pass  # Permissions may already exist
         
+        # Create admin role with all permissions for easier testing
+        from web.models import Permission, Role
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not admin_role:
+            admin_role = Role(name="admin", description="Administrator")
+            db.session.add(admin_role)
+            # Add all permissions to admin role
+            permissions = Permission.query.all()
+            for perm in permissions:
+                admin_role.permissions.append(perm)
+            db.session.commit()
+        
         yield app
         db.session.remove()
         db.drop_all()

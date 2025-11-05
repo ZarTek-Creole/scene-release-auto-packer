@@ -6,13 +6,13 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 
 from web.config import get_config
-from web.extensions import db, migrate, cache, cors, limiter
+from web.extensions import cache, cors, db, limiter, migrate
 from web.security import init_jwt
 
 
 def add_security_headers(app: Flask) -> None:
     """Add security headers to all responses.
-    
+
     Args:
         app: Flask application instance.
     """
@@ -23,10 +23,23 @@ def add_security_headers(app: Flask) -> None:
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         
+        # Content Security Policy (CSP) - Protection XSS
+        response.headers['Content-Security-Policy'] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: https:; "
+            "font-src 'self' data:; "
+            "connect-src 'self' http://localhost:5000 http://127.0.0.1:5000;"
+        )
+        
+        # Referrer Policy - Contrôle information référent
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+
         # Only add HSTS in production
         if not app.config.get('DEBUG', False):
             response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-        
+
         return response
 
 
@@ -47,28 +60,52 @@ def create_app(config_name: str | None = None) -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     cache.init_app(app)
+
+    # Initialize CORS FIRST (before security headers)
+    cors_origins = app.config.get("CORS_ORIGINS", ["http://localhost:5173"])
+    if isinstance(cors_origins, str):
+        cors_origins = [origin.strip() for origin in cors_origins.split(",")]
     
-    # Initialize CORS
-    cors.init_app(app, resources={
-        r"/api/*": {
-            "origins": app.config.get("CORS_ORIGINS", "*"),
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
-        }
-    })
-    
+    cors.init_app(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": cors_origins,
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+                "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+                "supports_credentials": True,
+                "expose_headers": ["Content-Type", "Authorization"],
+            }
+        },
+        supports_credentials=True,
+    )
+
+    # Add security headers (after CORS)
+    add_security_headers(app)
+
     # Initialize Rate Limiting
     limiter.init_app(app)
     limiter.enabled = app.config.get("RATELIMIT_ENABLED", True)
-
-    # Add security headers
-    add_security_headers(app)
 
     # Initialize JWT
     jwt = JWTManager(app)
     init_jwt(jwt)
 
     # Import models to register them with SQLAlchemy
+    # Register blueprints
+    from web.blueprints.auth import auth_bp
+    from web.blueprints.config import config_bp
+    from web.blueprints.dashboard import dashboard_bp
+    from web.blueprints.health import health_bp
+    from web.blueprints.jobs import jobs_bp
+    from web.blueprints.releases import releases_bp
+    from web.blueprints.releases_actions import releases_actions_bp
+    from web.blueprints.roles import roles_bp
+    from web.blueprints.rules import rules_bp
+    from web.blueprints.test_metadata import test_metadata_bp
+    from web.blueprints.test_parser import test_parser_bp
+    from web.blueprints.users import users_bp
+    from web.blueprints.wizard import wizard_bp
     from web.models import (  # noqa: F401
         Configuration,
         Group,
@@ -81,19 +118,6 @@ def create_app(config_name: str | None = None) -> Flask:
         User,
     )
 
-    # Register blueprints
-    from web.blueprints.auth import auth_bp
-    from web.blueprints.config import config_bp
-    from web.blueprints.dashboard import dashboard_bp
-    from web.blueprints.health import health_bp
-    from web.blueprints.jobs import jobs_bp
-    from web.blueprints.releases import releases_bp
-    from web.blueprints.releases_actions import releases_actions_bp
-    from web.blueprints.roles import roles_bp
-    from web.blueprints.rules import rules_bp
-    from web.blueprints.users import users_bp
-    from web.blueprints.wizard import wizard_bp
-
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api")
     app.register_blueprint(dashboard_bp, url_prefix="/api")
@@ -105,5 +129,24 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(roles_bp, url_prefix="/api")
     app.register_blueprint(config_bp, url_prefix="/api")
     app.register_blueprint(jobs_bp, url_prefix="/api")
+    app.register_blueprint(test_parser_bp, url_prefix="/api")
+    app.register_blueprint(test_metadata_bp, url_prefix="/api")
+
+    # Register error handlers
+    @app.errorhandler(404)
+    def not_found(_error) -> tuple[dict[str, str], int]:
+        """Handle 404 errors.
+
+        Args:
+            _error: The error object (unused but required by Flask).
+
+        Returns:
+            JSON error response.
+        """
+        return {
+            "error": "Ressource introuvable",
+            "error_type": "NotFound",
+            "success": False,
+        }, 404
 
     return app

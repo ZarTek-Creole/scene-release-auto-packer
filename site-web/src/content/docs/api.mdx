@@ -1,0 +1,168 @@
+# API Reference
+
+Documentation complète de l'API REST d'eBook Scene Packer v2.
+
+## Introduction
+
+L'API REST d'eBook Scene Packer v2 permet d'interagir avec l'application via des requêtes HTTP.
+
+### Base URL
+
+- **Développement** : \`http://localhost:5000/api\`
+- **Production** : \`https://yourdomain.com/api\`
+
+### Authentification
+
+La plupart des endpoints nécessitent une authentification JWT. Inclure le token dans le header :
+
+\`\`\`
+Authorization: Bearer <token>
+\`\`\`
+
+### Format des réponses
+
+Toutes les réponses sont au format JSON :
+
+\`\`\`json
+{
+  "data": {...},
+  "message": "Success",
+  "status": 200
+}
+\`\`\`
+
+### Codes de statut HTTP
+
+- **200** : Succès
+- **201** : Créé
+- **400** : Requête invalide
+- **401** : Non authentifié
+- **403** : Non autorisé
+- **404** : Non trouvé
+- **500** : Erreur serveur
+
+## Authentification
+
+### POST /api/auth/login
+
+Connexion utilisateur.
+
+**Body** :
+\`\`\`json
+{
+  "username": "admin",
+  "password": "password"
+}
+\`\`\`
+
+**Réponse** :
+\`\`\`json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@example.com"
+  }
+}
+\`\`\`
+
+### POST /api/auth/refresh
+
+Rafraîchir le token.
+
+**Headers** :
+\`\`\`
+Authorization: Bearer <refresh_token>
+\`\`\`
+
+## Wizard
+
+### POST /api/wizard/draft
+
+Créer un draft de release (étapes 1-3).
+
+**Body** :
+\`\`\`json
+{
+  "group": "TestGroup",
+  "release_type": "EBOOK",
+  "rule_id": 1
+}
+\`\`\`
+
+### POST /api/wizard/:id/upload
+
+Uploader un fichier (étape 4).
+
+**Form Data** :
+- \`file\`: File
+
+### POST /api/wizard/:id/analyze
+
+Analyser le fichier uploadé (étape 5).
+
+### GET /api/wizard/:id/metadata
+
+Récupérer métadonnées (étape 6).
+
+### POST /api/wizard/:id/metadata
+
+Mettre à jour métadonnées (étape 6).
+
+### GET /api/wizard/:id/templates
+
+Récupérer templates disponibles (étape 7).
+
+### POST /api/wizard/:id/options
+
+Configurer options (étape 8).
+
+### POST /api/wizard/:id/finalize
+
+Finaliser la release (étape 9).
+
+## Releases
+
+### GET /api/releases
+
+Liste des releases avec pagination et filtres.
+
+**Query Parameters** :
+- \`page\`: Numéro de page (défaut: 1)
+- \`per_page\`: Items par page (défaut: 20)
+- \`type\`: Filtrer par type
+- \`status\`: Filtrer par statut
+- \`search\`: Recherche textuelle
+
+### GET /api/releases/:id
+
+Détails d'une release.
+
+### PUT /api/releases/:id
+
+Mettre à jour une release.
+
+### DELETE /api/releases/:id
+
+Supprimer une release.
+
+## Rules
+
+### GET /api/rules
+
+Liste des règles locales.
+
+### POST /api/rules
+
+Uploader une règle locale.
+
+### GET /api/rules/scenerules
+
+Télécharger depuis scenerules.org.
+
+## Prochaines étapes
+
+- **Guides** : Voir [Guides](/docs/guides)
+- **Exemples** : Voir [Exemples](/docs/examples)

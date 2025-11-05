@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from web.services.rule_parser import RuleParserService
+from web.services.rule import RuleParserService
 
 
 def test_extract_file_formats_default() -> None:

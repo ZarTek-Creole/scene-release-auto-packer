@@ -1,0 +1,106 @@
+# Exemples
+
+Exemples d'utilisation de l'API et de l'application.
+
+## Créer une release via API
+
+### Exemple complet avec curl
+
+\`\`\`bash
+# 1. Login
+TOKEN=$(curl -X POST http://localhost:5000/api/auth/login \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "username": "admin",
+    "password": "password"
+  }' | jq -r '.access_token')
+
+# 2. Créer draft
+DRAFT_ID=$(curl -X POST http://localhost:5000/api/wizard/draft \\
+  -H "Authorization: Bearer $TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "group": "TestGroup",
+    "release_type": "EBOOK",
+    "rule_id": 1
+  }' | jq -r '.id')
+
+# 3. Upload fichier
+curl -X POST http://localhost:5000/api/wizard/$DRAFT_ID/upload \\
+  -H "Authorization: Bearer $TOKEN" \\
+  -F "file=@/path/to/file.epub"
+
+# 4. Analyser
+curl -X POST http://localhost:5000/api/wizard/$DRAFT_ID/analyze \\
+  -H "Authorization: Bearer $TOKEN"
+
+# 5. Finaliser
+curl -X POST http://localhost:5000/api/wizard/$DRAFT_ID/finalize \\
+  -H "Authorization: Bearer $TOKEN"
+\`\`\`
+
+## Utiliser avec Python
+
+\`\`\`python
+import requests
+
+BASE_URL = "http://localhost:5000/api"
+
+# Login
+response = requests.post(
+    f"{BASE_URL}/auth/login",
+    json={"username": "admin", "password": "password"}
+)
+token = response.json()["access_token"]
+headers = {"Authorization": f"Bearer {token}"}
+
+# Créer draft
+response = requests.post(
+    f"{BASE_URL}/wizard/draft",
+    headers=headers,
+    json={
+        "group": "TestGroup",
+        "release_type": "EBOOK",
+        "rule_id": 1
+    }
+)
+draft_id = response.json()["id"]
+
+# Upload fichier
+with open("file.epub", "rb") as f:
+    files = {"file": f}
+    response = requests.post(
+        f"{BASE_URL}/wizard/{draft_id}/upload",
+        headers=headers,
+        files=files
+    )
+
+# Analyser
+response = requests.post(
+    f"{BASE_URL}/wizard/{draft_id}/analyze",
+    headers=headers
+)
+
+# Finaliser
+response = requests.post(
+    f"{BASE_URL}/wizard/{draft_id}/finalize",
+    headers=headers
+)
+\`\`\`
+
+## Lister les releases
+
+\`\`\`bash
+# Avec filtres
+curl "http://localhost:5000/api/releases?type=EBOOK&page=1&per_page=20" \\
+  -H "Authorization: Bearer $TOKEN"
+
+# Recherche textuelle
+curl "http://localhost:5000/api/releases?search=test" \\
+  -H "Authorization: Bearer $TOKEN"
+\`\`\`
+
+## Prochaines étapes
+
+- **API Reference** : Voir [API Reference](/docs/api) pour tous les endpoints
+- **FAQ** : Voir [FAQ](/docs/faq) pour questions fréquentes

@@ -1,8 +1,7 @@
-"""Release model (skeleton for Phase 2)."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -24,11 +23,11 @@ class Release(db.Model):
     )
     release_type: Mapped[str] = mapped_column(db.String(50), nullable=False)
     status: Mapped[str] = mapped_column(db.String(50), default="draft", nullable=False)
-    release_metadata: Mapped[dict] = mapped_column(JSON, nullable=True)
-    config: Mapped[dict] = mapped_column(JSON, nullable=True)
+    release_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=True)
+    config: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=True)
     file_path: Mapped[str | None] = mapped_column(db.String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False
+        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
     )
 
     # Relationships
@@ -36,7 +35,7 @@ class Release(db.Model):
     group = relationship("Group", backref="releases")
     jobs = relationship("Job", back_populates="release", lazy="dynamic")
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "id": self.id,

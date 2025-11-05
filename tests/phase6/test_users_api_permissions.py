@@ -11,10 +11,13 @@ def test_list_users_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = Role.query.filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -22,7 +25,7 @@ def test_list_users_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -42,7 +45,8 @@ def test_list_users_editor_permission_denied(client, app):
     """Test editor without read permission cannot list users."""
     with app.app_context():
         editor_role = Role(name="editor", description="Editor")
-        permission_read = Permission.query.filter_by(resource="releases", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="releases", action="read").first()
         if permission_read:
             editor_role.permissions.append(permission_read)
         editor_user = User(username="editor", email="editor@test.com")
@@ -50,7 +54,7 @@ def test_list_users_editor_permission_denied(client, app):
         editor_user.roles.append(editor_role)
         db.session.add_all([editor_role, editor_user])
         db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "editor", "password": "password"},
@@ -71,10 +75,13 @@ def test_create_user_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = Role.query.filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -82,7 +89,7 @@ def test_create_user_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -107,7 +114,8 @@ def test_create_user_editor_permission_denied(client, app):
     """Test editor without write permission cannot create user."""
     with app.app_context():
         editor_role = Role(name="editor", description="Editor")
-        permission_read = Permission.query.filter_by(resource="users", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="users", action="read").first()
         if permission_read:
             editor_role.permissions.append(permission_read)
         editor_user = User(username="editor", email="editor@test.com")
@@ -115,7 +123,7 @@ def test_create_user_editor_permission_denied(client, app):
         editor_user.roles.append(editor_role)
         db.session.add_all([editor_role, editor_user])
         db.session.commit()
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "editor", "password": "password"},
@@ -141,10 +149,13 @@ def test_update_user_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = Role.query.filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -152,13 +163,13 @@ def test_update_user_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-        
+
         target_user = User(username="target", email="target@test.com")
         target_user.set_password("password")
         db.session.add(target_user)
         db.session.commit()
         target_user_id = target_user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -183,7 +194,7 @@ def test_update_user_self_allowed(client, app):
         db.session.add(user)
         db.session.commit()
         user_id = user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "selfuser", "password": "password"},
@@ -207,7 +218,7 @@ def test_update_user_cannot_change_own_roles(client, app):
         db.session.add(user)
         db.session.commit()
         user_id = user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "selfuser", "password": "password"},
@@ -221,14 +232,16 @@ def test_update_user_cannot_change_own_roles(client, app):
     )
 
     assert response.status_code == 403
-    assert "cannot change your own roles" in response.get_json()["message"].lower()
+    assert "cannot change your own roles" in response.get_json()[
+        "message"].lower()
 
 
 def test_update_user_other_permission_denied(client, app):
     """Test editor cannot update other users."""
     with app.app_context():
         editor_role = Role(name="editor", description="editoor")
-        permission_read = Permission.query.filter_by(resource="users", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="users", action="read").first()
         if permission_read:
             editor_role.permissions.append(permission_read)
         editor_user = User(username="editor", email="editor@test.com")
@@ -239,7 +252,7 @@ def test_update_user_other_permission_denied(client, app):
         db.session.add_all([editor_role, editor_user, target_user])
         db.session.commit()
         target_user_id = target_user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "editor", "password": "password"},
@@ -260,10 +273,13 @@ def test_delete_user_admin_success(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = Role.query.filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -271,13 +287,13 @@ def test_delete_user_admin_success(client, app):
             admin_user.roles.append(admin_role)
             db.session.add(admin_user)
             db.session.commit()
-        
+
         target_user = User(username="target", email="target@test.com")
         target_user.set_password("password")
         db.session.add(target_user)
         db.session.commit()
         target_user_id = target_user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -298,10 +314,13 @@ def test_delete_user_admin_cannot_delete_self(client, app):
     with app.app_context():
         admin_role = db.session.query(Role).filter_by(name="admin").first()
         if not admin_role:
-            admin_role = Role(name="admin", description="Administrator")
+            admin_role = Role.query.filter_by(name="admin").first()
+            if not admin_role:
+                admin_role = Role(name="admin", description="Administrator")
+                db.session.add(admin_role)
             db.session.add(admin_role)
             db.session.commit()
-        
+
         admin_user = db.session.query(User).filter_by(username="admin").first()
         if not admin_user:
             admin_user = User(username="admin", email="admin@test.com")
@@ -310,7 +329,7 @@ def test_delete_user_admin_cannot_delete_self(client, app):
             db.session.add(admin_user)
             db.session.commit()
         admin_user_id = admin_user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "admin", "password": "password"},
@@ -330,7 +349,8 @@ def test_delete_user_editor_permission_denied(client, app):
     """Test editor cannot delete users."""
     with app.app_context():
         editor_role = Role(name="editor", description="Editor")
-        permission_read = Permission.query.filter_by(resource="users", action="read").first()
+        permission_read = Permission.query.filter_by(
+            resource="users", action="read").first()
         if permission_read:
             editor_role.permissions.append(permission_read)
         editor_user = User(username="editor", email="editor@test.com")
@@ -341,7 +361,7 @@ def test_delete_user_editor_permission_denied(client, app):
         db.session.add_all([editor_role, editor_user, target_user])
         db.session.commit()
         target_user_id = target_user.id
-    
+
     login_response = client.post(
         "/api/auth/login",
         json={"username": "editor", "password": "password"},

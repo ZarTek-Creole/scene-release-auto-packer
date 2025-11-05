@@ -1,0 +1,156 @@
+# FAQ
+
+Questions fréquentes sur eBook Scene Packer v2.
+
+## Questions Générales
+
+### Qu'est-ce qu'eBook Scene Packer v2 ?
+
+eBook Scene Packer v2 est une application moderne et complète pour créer automatiquement des packages de releases eBook conformes aux règles Scene officielles. L'application guide les utilisateurs à travers un processus en 9 étapes, garantissant une conformité stricte et une génération automatique de fichiers NFO.
+
+### Quelles technologies sont utilisées ?
+
+eBook Scene Packer v2 est construit avec des technologies modernes et éprouvées :
+
+- **Backend** : Flask 3.1.2 (Python 3.11+)
+- **Frontend** : React 19.2.0 avec TypeScript strict
+- **Base de données** : MySQL 8.0 avec SQLAlchemy 2.0
+- **Authentification** : JWT (Flask-JWT-Extended)
+- **Build** : Vite pour le frontend, Gunicorn pour la production
+
+### Le projet est-il production-ready ?
+
+Oui ! Toutes les phases 0-9 sont complétées à 100% avec tests complets (unitaires, intégration, E2E), couverture ≥90%, et documentation exhaustive. L'application est prête pour un déploiement en production.
+
+## Installation
+
+### Comment installer l'application ?
+
+Plusieurs méthodes d'installation sont disponibles :
+
+1. **Installation locale** : Suivez le [Guide d'Installation](/docs/installation) pour une installation complète avec Python, Node.js et MySQL.
+2. **Docker** : Méthode recommandée pour un déploiement rapide et isolé. Voir [Guide de Déploiement](/docs/guides/deployment).
+
+### Quels sont les prérequis système ?
+
+- **OS** : Linux (Debian/Ubuntu recommandé), macOS, ou Windows avec WSL2
+- **Python** : 3.11 ou supérieur
+- **Node.js** : 18.x ou supérieur
+- **MySQL** : 8.0 ou supérieur
+- **Docker** : 20.10+ (optionnel, pour déploiement Docker)
+
+### Puis-je utiliser Docker pour le développement ?
+
+Oui, Docker est recommandé pour le développement et le déploiement. Cela garantit un environnement cohérent et facilite le déploiement. Voir [Guide de Déploiement](/docs/guides/deployment) pour les instructions Docker complètes.
+
+## Utilisation
+
+### Comment créer une release ?
+
+Utilisez le **Wizard 9 étapes** accessible via "Nouvelle Release" dans la navigation principale. Le wizard guide pas à pas :
+
+1. Sélection du groupe Scene
+2. Choix du type de release (EBOOK, TV, DOCS)
+3. Sélection des règles Scene
+4. Upload et validation du fichier
+5. Analyse automatique des métadonnées
+6. Enrichissement optionnel
+7. Sélection du template NFO
+8. Configuration des options
+9. Packaging et finalisation
+
+### Quels types de fichiers sont supportés ?
+
+Actuellement, l'application supporte les formats eBook courants :
+- **EPUB** : Format standard pour les eBooks
+- **PDF** : Format PDF avec extraction de métadonnées
+- **Autres formats** : Support extensible via plugins
+
+### Comment gérer les règles Scene ?
+
+L'application offre plusieurs options pour gérer les règles Scene :
+
+1. **Règles locales** : Gestion via l'interface web (`/rules`)
+2. **Téléchargement automatique** : Intégration avec scenerules.org
+3. **Règles personnalisées** : Création et modification de règles spécifiques
+
+### Comment configurer les destinations FTP/SSH ?
+
+Accédez à `/configurations` pour gérer les destinations de packaging. Vous pouvez configurer :
+- Connexions FTP/SSH avec authentification sécurisée
+- Chemins de destination
+- Options de transfert
+- Configurations par environnement
+
+## Technique
+
+### Comment contribuer au projet ?
+
+eBook Scene Packer v2 est un projet open source sous licence MIT. Les contributions sont les bienvenues !
+
+1. **Fork** le repository sur GitHub
+2. Créez une branche pour votre fonctionnalité
+3. Suivez les conventions du projet (TDD, TypeScript strict)
+4. Créez une Pull Request avec description détaillée
+
+Voir [About](/about) pour plus d'informations sur la contribution.
+
+### Où trouver la documentation API complète ?
+
+La documentation API complète est disponible dans [API Reference](/docs/api). Elle inclut :
+- Tous les endpoints disponibles
+- Exemples de requêtes/réponses
+- Authentification JWT
+- Codes d'erreur et validation
+
+### Comment signaler un bug ou demander une fonctionnalité ?
+
+Créez une issue sur GitHub avec :
+- **Description détaillée** du problème ou de la demande
+- **Étapes de reproduction** (pour les bugs)
+- **Environnement** (OS, versions Python/Node.js)
+- **Logs** pertinents (si applicable)
+
+### Le projet supporte-t-il les APIs d'enrichissement ?
+
+Oui, l'application supporte des APIs d'enrichissement configurables pour :
+- Extraction de métadonnées améliorées
+- Recherche de couvertures
+- Enrichissement de données IMDb/TMDB
+- APIs personnalisées via configuration
+
+### Comment sécuriser l'application en production ?
+
+Voir [Guide de Sécurité](/docs/guides/security) pour les meilleures pratiques :
+- Configuration JWT sécurisée
+- Headers de sécurité (CSP, HSTS)
+- Rate limiting
+- Validation des entrées
+- Gestion des secrets
+
+## Performance
+
+### Quelle est la performance de l'application ?
+
+L'application est optimisée pour la performance :
+- **Caching** : Flask-Caching pour les requêtes fréquentes
+- **Lazy Loading** : React.lazy() pour le code splitting
+- **Optimisation DB** : Indexes, eager loading SQLAlchemy
+- **Compression** : Gzip pour les réponses HTTP
+
+Voir [Guide de Performance](/docs/guides/performance) pour plus de détails.
+
+### Comment monitorer l'application en production ?
+
+L'application supporte plusieurs outils de monitoring :
+- **Structlog** : Logging structuré
+- **Prometheus** : Métriques exposées sur `/metrics`
+- **Grafana** : Visualisation des métriques
+
+Voir [Guide de Monitoring](/docs/guides/monitoring) pour la configuration complète.
+
+## Prochaines étapes
+
+- **Documentation complète** : Consultez la [Documentation](/docs) pour explorer toutes les fonctionnalités
+- **Installation** : Suivez le [Guide d'Installation](/docs/installation) pour démarrer
+- **Démarrage rapide** : Accédez au [Guide de Démarrage Rapide](/docs/quick-start) pour créer votre première release

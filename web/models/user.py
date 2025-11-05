@@ -1,8 +1,7 @@
-"""User model."""
-
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import Any
 
 from sqlalchemy.orm import Mapped, mapped_column
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -27,13 +26,13 @@ class User(db.Model):
     active: Mapped[bool] = mapped_column(db.Boolean, default=True, nullable=False)
     note: Mapped[str | None] = mapped_column(db.Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        db.DateTime, default=datetime.utcnow, nullable=False
+        db.DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
     )
     created_by: Mapped[int | None] = mapped_column(
         db.Integer, db.ForeignKey("users.id"), nullable=True
     )
     modify_at: Mapped[datetime | None] = mapped_column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True
+        db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=True
     )
 
     # Relationships
@@ -69,7 +68,7 @@ class User(db.Model):
         """
         return check_password_hash(self.password_hash, password)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.
 
         Returns:
